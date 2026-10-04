@@ -58,6 +58,8 @@ public/assets/moments/thumbnails/*
 .zcode/
 .codex-*.log
 research/
+.pnpm-store/
+.mimosa/
 
 # playwright
 .playwright-cli/
