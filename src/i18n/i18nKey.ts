@@ -343,6 +343,12 @@ enum I18nKey {
 	tagGalaxy = "tagGalaxy",
 	tagGalaxyHint = "tagGalaxyHint",
 	tagGalaxyAriaLabel = "tagGalaxyAriaLabel",
+
+	// Quote widget（今日一言）
+	quoteTitle = "quoteTitle",
+
+	// Fun easter eggs（趣味彩蛋）
+	easterEggKonami = "easterEggKonami",
 }
 
 export default I18nKey;

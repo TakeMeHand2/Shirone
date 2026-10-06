@@ -13,6 +13,7 @@ import { Icon } from "astro-icon/components";
  * 严格遵循【零额外负担】原则：评论系统未启用或当前文章禁用评论时，不输出评论按钮。
  */
 import { commentConfig, fabConfig, resolveCommentOptions } from "@/config";
+import { announcementConfig } from "@/config/announcementConfig";
 import { BANNER_HEIGHT } from "@/constants/constants";
 import type { SidebarPage } from "@/types/sidebarConfig";
 
@@ -33,6 +34,25 @@ const tocItem = enabledItems.find((i) => i.type === "toc");
 const commentItem = enabledItems.find((i) => i.type === "comment");
 const homeItem = enabledItems.find((i) => i.type === "home");
 const topItem = enabledItems.find((i) => i.type === "top");
+const announcementItem = enabledItems.find((i) => i.type === "announcement");
+
+// 公告内容（含可选链接）；为空时公告板按钮整体不渲染（零 DOM）
+const announcementText =
+	announcementConfig.content || announcementConfig.text || "";
+const announcementTitle =
+	announcementConfig.title || i18n(I18nKey.announcement);
+const announcementLink =
+	announcementConfig.link &&
+	announcementConfig.link.enable !== false &&
+	announcementConfig.link.text &&
+	announcementConfig.link.url
+		? announcementConfig.link
+		: null;
+const announcementLinkExternal =
+	announcementLink &&
+	(announcementLink.external === true ||
+		(/^https?:\/\//i.test(announcementLink.url) &&
+			announcementLink.external !== false));
 
 // 零额外负担：全局评论系统未启用或未配置时，不渲染评论 FAB 按钮
 const isCommentSystemEnabled = Boolean(resolveCommentOptions(commentConfig));
@@ -99,7 +119,67 @@ const isHomeItemVisible = homeItem
 		</FloatingActionButton>
 	)}
 
-	<!-- 3. 返回首页 -->
+	<!-- 3. 公告板：轻量弹窗（announcementConfig 有内容时才渲染） -->
+	{announcementItem && announcementText && (
+		<div
+			data-fab-slot
+			class:list={[
+				"relative",
+				resolveDeviceClasses(announcementItem.devices),
+				{
+					"is-page-hidden": !isWidgetVisibleOnPage(announcementItem.pages, page),
+				},
+			]}
+		>
+			<div
+				id="fab-announcement-panel"
+				class="m3-fab-announcement"
+				role="dialog"
+				aria-label={announcementTitle}
+				data-open="false"
+			>
+				<div class="m3-fab-announcement__head">
+					<span class="m3-fab-announcement__title">{announcementTitle}</span>
+					<button
+						type="button"
+						class="m3-fab-announcement__close m3-state-layer"
+						aria-label={i18n(I18nKey.close)}
+						data-announcement-close
+					>
+						<Icon name="material-symbols:close-rounded" class="text-lg" />
+					</button>
+				</div>
+				<p class="m3-fab-announcement__text">{announcementText}</p>
+				{announcementLink && (
+					<a
+						class="m3-fab-announcement__link m3-state-layer"
+						href={announcementLink.url}
+						target={announcementLinkExternal ? "_blank" : "_self"}
+						rel={announcementLinkExternal ? "noopener noreferrer" : undefined}
+					>
+						{announcementLink.text}
+						{announcementLinkExternal && (
+							<Icon name="material-symbols:arrow-outward-rounded" class="text-sm" />
+						)}
+					</a>
+				)}
+			</div>
+			<FloatingActionButton
+				id="fab-announcement-btn"
+				type="announcement"
+				ariaLabel={announcementTitle}
+				devices={announcementItem.devices}
+				pages={announcementItem.pages}
+				size={fabConfig.size}
+				class={!isWidgetVisibleOnPage(announcementItem.pages, page) ? "is-page-hidden" : ""}
+				onclick="window.__shironeFab?.toggleAnnouncement()"
+			>
+				<Icon name="material-symbols:campaign-outline-rounded" class="text-xl" />
+			</FloatingActionButton>
+		</div>
+	)}
+
+	<!-- 4. 返回首页 -->
 	{homeItem && (
 		<FloatingActionButton
 			id="fab-home-btn"
@@ -116,7 +196,7 @@ const isHomeItemVisible = homeItem
 		</FloatingActionButton>
 	)}
 
-	<!-- 4. 返回顶部（默认带滚动阈值隐藏） -->
+	<!-- 5. 返回顶部（默认带滚动阈值隐藏） -->
 	{topItem && (
 		<FloatingActionButton
 			id="fab-top-btn"
@@ -155,6 +235,79 @@ const isHomeItemVisible = homeItem
 	&--start
 		right: auto
 		left: var(--fab-inline-offset)
+
+/* 公告板弹窗：M3E 侧浮卡（非模态），开合走 data-open，无框架依赖 */
+.m3-fab-announcement
+	position: absolute
+	right: 0
+	bottom: calc(100% + var(--m3e-space-2))
+	width: unquote("min(20rem, calc(100vw - (2 * var(--fab-inline-offset))))")
+	padding: var(--m3e-space-4)
+	border-radius: var(--shape-corner-xl)
+	background: var(--float-panel-bg, var(--surface-container-low))
+	border: 1px solid var(--outline-variant)
+	box-shadow: var(--m3e-elevation-3)
+	opacity: 0
+	transform: translateY(var(--m3e-space-2)) scale(0.96)
+	transform-origin: bottom right
+	pointer-events: none
+	transition:
+		opacity var(--m3e-duration-short) var(--m3e-easing-standard),
+		transform var(--m3e-duration-medium) var(--m3e-easing-standard)
+
+	&[data-open="true"]
+		opacity: 1
+		transform: translateY(0) scale(1)
+		pointer-events: auto
+
+	&__head
+		display: flex
+		align-items: center
+		justify-content: space-between
+		gap: var(--m3e-space-2)
+		margin-bottom: var(--m3e-space-2)
+
+	&__title
+		font: var(--m3e-type-title-medium)
+		color: var(--on-surface)
+
+	&__close
+		display: inline-flex
+		align-items: center
+		justify-content: center
+		width: 2rem
+		height: 2rem
+		border: none
+		border-radius: var(--shape-corner-full)
+		background: transparent
+		color: var(--on-surface-variant)
+		cursor: pointer
+
+	&__text
+		margin: 0
+		font: var(--m3e-type-body-medium)
+		line-height: 1.6
+		color: var(--on-surface-variant)
+		white-space: pre-line
+		word-break: break-word
+
+	&__link
+		display: inline-flex
+		align-items: center
+		gap: var(--m3e-space-1)
+		margin-top: var(--m3e-space-3)
+		padding: 0 var(--m3e-space-3)
+		height: 2rem
+		border-radius: var(--shape-corner-m)
+		background: var(--secondary-container)
+		color: var(--on-secondary-container)
+		font: var(--m3e-type-label-medium)
+		font-weight: 500
+		text-decoration: none
+
+@media (prefers-reduced-motion: reduce)
+	.m3-fab-announcement
+		transition: none
 
 @media (prefers-reduced-motion: reduce)
 	.m3-floating-controls-container

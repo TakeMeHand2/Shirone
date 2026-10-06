@@ -358,4 +358,8 @@ export const tr: Translation = {
 		"Odaklanmak için üzerine gel · Etiket yazılarını görmek için tıkla",
 	[Key.tagGalaxyAriaLabel]:
 		"Etiket galaksisi: düğüm boyutu yazı sayısını, çizgiler etiket birlikteliğini gösterir",
+
+	// Quote widget & easter eggs
+	[Key.quoteTitle]: "Günün Sözü",
+	[Key.easterEggKonami]: "Sürpriz yumurta açıldı: sakura yağmuru ✨",
 };

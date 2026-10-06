@@ -353,4 +353,8 @@ export const ja: Translation = {
 	[Key.tagGalaxyHint]: "ホバーでフォーカス · クリックでタグの記事へ",
 	[Key.tagGalaxyAriaLabel]:
 		"タグ星図：ノードの大きさは記事数、線はタグの共起を表します",
+
+	// Quote widget & easter eggs
+	[Key.quoteTitle]: "今日の一言",
+	[Key.easterEggKonami]: "隠しコマンド発動：桜吹雪 ✨",
 };

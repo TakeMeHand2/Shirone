@@ -207,6 +207,18 @@ export const CONFIG_DOMAINS = Object.freeze([
 		module: "@/types/i18nConfig",
 	},
 	{
+		key: "quote",
+		file: "quote",
+		type: "QuoteConfig",
+		module: "@/types/quoteConfig",
+	},
+	{
+		key: "fun",
+		file: "fun",
+		type: "FunConfig",
+		module: "@/types/funConfig",
+	},
+	{
 		key: "series",
 		file: "series",
 		type: "SeriesConfig",

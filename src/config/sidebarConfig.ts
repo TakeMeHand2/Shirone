@@ -29,6 +29,7 @@ export const sidebarConfig: SidebarConfig = withUserConfig("sidebar", {
 	components: [
 		{ type: "profile", enable: true, slot: "top" },
 		{ type: "music", enable: true, slot: "top" },
+		{ type: "quote", enable: true, slot: "top" },
 		{ type: "announcement", enable: true, slot: "top", pages: ["home"] },
 		{
 			type: "categories",

@@ -359,4 +359,8 @@ export const id: Translation = {
 	[Key.tagGalaxyHint]: "Arahkan kursor untuk fokus · Klik untuk melihat tag",
 	[Key.tagGalaxyAriaLabel]:
 		"Galaksi tag: ukuran node menunjukkan jumlah tulisan, garis menunjukkan kemunculan tag bersama",
+
+	// Quote widget & easter eggs
+	[Key.quoteTitle]: "Kutipan Hari Ini",
+	[Key.easterEggKonami]: "Easter egg terbuka: hujan sakura ✨",
 };

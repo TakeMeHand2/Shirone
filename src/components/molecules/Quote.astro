@@ -1,0 +1,164 @@
+---
+import { Icon } from "astro-icon/components";
+import { quoteConfig } from "@/config/quoteConfig";
+import { siteConfig } from "@/config/siteConfig";
+import { type QuoteItem, quotes } from "@/data/quotes";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import WidgetLayout from "./WidgetLayout.astro";
+
+/**
+ * 今日一言 widget：默认本地语料按天轮换（站点时区），SSR 直出、零请求；
+ * provider 为 "hitokoto" 时运行时从一言 API 拉取，失败/超时静默回退本地语料。
+ * 语料为空或 quoteConfig.enable 为 false 时不渲染（零 DOM）。
+ */
+interface Props {
+	class?: string;
+	style?: string;
+}
+const className = Astro.props.class;
+const style = Astro.props.style;
+
+const pool: QuoteItem[] = quotes.filter((item) => item.text.trim());
+
+// 按站点时区的日期键（YYYYMMDD 数值）轮换，构建期确定、全天稳定
+const initial = (() => {
+	if (pool.length === 0) return null;
+	const dayKey = Number(
+		new Intl.DateTimeFormat("en-CA", {
+			timeZone: siteConfig.timeZone,
+			year: "numeric",
+			month: "2-digit",
+			day: "2-digit",
+		})
+			.format(new Date())
+			.replaceAll("-", ""),
+	);
+	return pool[dayKey % pool.length];
+})();
+---
+
+{
+	initial && quoteConfig.enable && (
+		<WidgetLayout
+			name={i18n(I18nKey.quoteTitle)}
+			id="quote"
+			class={className}
+			style={style}
+		>
+			<div
+				class="quote-wrapper flex flex-col"
+				data-quote-provider={quoteConfig.provider}
+				data-quote-api={quoteConfig.api}
+				data-quote-timeout={String(quoteConfig.timeout ?? 5000)}
+			>
+				<Icon
+					name="material-symbols:format-quote-rounded"
+					class="quote-wrapper__mark"
+					aria-hidden="true"
+				/>
+				<p class="quote-wrapper__text" data-quote-text>
+					{initial.text}
+				</p>
+				{initial.source && (
+					<span class="quote-wrapper__source" data-quote-source>
+						{initial.source}
+					</span>
+				)}
+				{quoteConfig.provider === "hitokoto" && (
+					<span
+						class="quote-wrapper__fallback"
+						data-quote-fallback
+						data-fallback-text={initial.text}
+						data-fallback-source={initial.source ?? ""}
+						hidden
+					></span>
+				)}
+			</div>
+		</WidgetLayout>
+	)
+}
+
+<style lang="stylus">
+.quote-wrapper
+	display: flex
+	flex-direction: column
+	gap: var(--m3e-space-2)
+
+	&__mark
+		width: 1.25rem
+		height: 1.25rem
+		color: var(--primary)
+		opacity: 0.75
+
+	&__text
+		margin: 0
+		font: var(--m3e-type-body-large)
+		line-height: 1.7
+		color: var(--on-surface)
+		word-break: break-word
+
+	&__source
+		font: var(--m3e-type-label-medium)
+		color: var(--text-50)
+		text-align: right
+
+	/* hitokoto 模式的回退语料（display:none，仅供脚本读取） */
+	&__fallback
+		display: none
+</style>
+
+<script>
+	// hitokoto 运行时数据面：仅在 provider === "hitokoto" 时发起请求。
+	// 显式超时 + 失败静默回退 SSR 语料；幂等绑定，Swup 持久壳不重复挂载。
+	const wrapper = document.querySelector<HTMLElement>(".quote-wrapper");
+	const textEl = wrapper?.querySelector<HTMLElement>("[data-quote-text]");
+	const sourceEl = wrapper?.querySelector<HTMLElement>("[data-quote-source]");
+	const fallbackEl = wrapper?.querySelector<HTMLElement>("[data-quote-fallback]");
+
+	const windowObj = window as unknown as { __shironeQuoteBound?: boolean };
+
+	interface HitokotoResponse {
+		hitokoto?: string;
+		from?: string;
+	}
+
+	async function refreshQuote(): Promise<void> {
+		if (!wrapper || !textEl) return;
+		if (wrapper.dataset.quoteProvider !== "hitokoto") return;
+		const api = wrapper.dataset.quoteApi || "https://v1.hitokoto.cn/";
+		const parsedTimeout = Number(wrapper.dataset.quoteTimeout || "5000");
+		const timeout =
+			Number.isFinite(parsedTimeout) && parsedTimeout > 0 ? parsedTimeout : 5000;
+		try {
+			const response = await fetch(api, {
+				headers: { Accept: "application/json" },
+				signal: AbortSignal.timeout(timeout),
+			});
+			if (!response.ok) throw new Error(`quote api ${response.status}`);
+			const data = (await response.json()) as HitokotoResponse;
+			const text = data.hitokoto?.trim();
+			if (!text) throw new Error("quote api empty text");
+			textEl.textContent = text;
+			if (sourceEl) {
+				const from = data.from?.trim() || "";
+				sourceEl.textContent = from;
+				sourceEl.hidden = !from;
+			}
+		} catch {
+			// 失败回退：还原 SSR 语料
+			const fallbackText = fallbackEl?.dataset.fallbackText?.trim();
+			const fallbackSource = fallbackEl?.dataset.fallbackSource?.trim();
+			if (fallbackText) textEl.textContent = fallbackText;
+			if (sourceEl) {
+				sourceEl.textContent = fallbackSource || "";
+				sourceEl.hidden = !fallbackSource;
+			}
+		}
+	}
+
+	if (wrapper && !windowObj.__shironeQuoteBound) {
+		windowObj.__shironeQuoteBound = true;
+		void refreshQuote();
+	}
+</script>

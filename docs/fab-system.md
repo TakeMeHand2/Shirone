@@ -107,6 +107,13 @@ resolveDeviceClasses(undefined)              => "flex"              // 全设备
   - 支持快捷键 `Escape` 或点击面板外部区域无感关闭；
   - 具备标准无障碍属性：`role="dialog"`、`aria-modal="true"`、`aria-label`。
 
+### 4.2 公告板弹窗（`FabAnnouncementConfig`，type: "announcement"）
+
+- **数据源**：复用 `src/config/announcementConfig.ts`（标题/内容/可选链接），与侧栏公告 widget 同源；
+- **呈现**：M3E 侧浮卡（非模态）：`--float-panel-bg` 材质 + `--shape-corner-xl` 圆角 + `var(--m3e-elevation-3)` 阴影，锚定按钮上方，内容 `pre-line` 展示；
+- **交互**：按钮 `toggleAnnouncement()` 开合（`data-open` 驱动）、`Escape` / 点击外部 / Swup `visit:start` 自动收起、关闭按钮回收焦点安全（面板内按钮可聚焦）；
+- **零额外负担**：`announcementConfig` 内容为空或条目 `enable: false` 时按钮 + 面板整体 0 DOM；默认仅 `mobile` / `tablet` 设备渲染（桌面端有侧栏公告）。
+
 ---
 
 ## 5. 零额外负担（Zero Extra Burden）与评论协同

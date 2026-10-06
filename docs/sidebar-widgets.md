@@ -22,6 +22,7 @@ SideBar 通过 `src/config/sidebarConfig.ts` 中的 `components` 数组动态编
 | `stats` | `SiteStats` | top | 站点统计规格表 |
 | `calendar` | `Calendar` | sticky | 月度文章历（SSR 直出 + 水合岛） |
 | `music` | `MusicSidebar` | top | 持久音乐播放器（全局配置 + widget 双开关，默认关闭） |
+| `quote` | `Quote` | top | 今日一言（`quoteConfig` 控制开关与数据源，本地语料按天轮换） |
 | `toc` | `SidebarTOC` | sticky | 当前文章目录（通常只在文章页显示） |
 
 ### 1.1 通用字段
@@ -126,6 +127,16 @@ interface SidebarWidgetBase {
 - **渲染**：`WidgetLayout` 外壳 + 复用数据驱动的 `CategoryList` 原子（名称 + 数量徽标），按最近更新降序；超出 `collapseAfter`（默认 5）时在卡片底部给出「查看全部系列」入口指向 `/series/`；
 - **开关**：受 `src/config/seriesConfig.ts` 的 `enable` 门控——关闭时连取数都跳过，且不产出任何 DOM；站点没有任何系列实体时同样不渲染（零额外负担）；
 - **页面范围**：默认条目 `pages` 覆盖常规内容页，不含 `"series"` 自身页面（避免系列页上重复列出系列）。
+
+---
+
+## 11.5 Quote — 今日一言
+
+- **数据源**：`src/data/quotes.ts` 本地语料（`QuoteItem[]`）+ `src/config/quoteConfig.ts` 行为配置；
+- **渲染**：`WidgetLayout` 外壳 + 引号图标 + 正文与出处；按站点时区日期键（YYYYMMDD）确定性轮换，构建期 SSR 直出，同一天内所有页面一致；
+- **数据源模式**：`provider: "local"`（默认，零外部请求）| `"hitokoto"`（运行时拉取一言 API：显式超时 + 失败静默回退 SSR 语料，幂等绑定防 Swup 重复挂载）；
+- **开关与零负担**：`quoteConfig.enable: false` 或语料为空时不渲染；语料条目 `text` 为空白会被过滤；
+- **页面范围**：默认全页显示，由 sidebarConfig `pages` 控制。
 
 ---
 

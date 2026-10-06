@@ -178,8 +178,27 @@ class FabController {
 			if (e.key === "Escape" && this.state.tocOpen) {
 				e.preventDefault();
 				this.closeToc();
+			} else if (e.key === "Escape") {
+				this.closeAnnouncement();
 			} else if (e.key === "Tab" && this.state.tocOpen && panel) {
 				this.trapFocus(e, panel);
+			}
+		});
+
+		// 公告板：关闭按钮与点击外部收起
+		document
+			.querySelector("#fab-announcement-panel [data-announcement-close]")
+			?.addEventListener("click", () => this.closeAnnouncement());
+		document.addEventListener("click", (e) => {
+			const announcementPanel = document.getElementById(
+				"fab-announcement-panel",
+			);
+			if (
+				announcementPanel?.dataset.open === "true" &&
+				!announcementPanel.contains(e.target as Node) &&
+				!(e.target as Element | null)?.closest?.("#fab-announcement-btn")
+			) {
+				this.closeAnnouncement();
 			}
 		});
 
@@ -287,6 +306,29 @@ class FabController {
 		} else {
 			window.location.href = homeUrl;
 		}
+	}
+
+	public toggleAnnouncement(): void {
+		const panel = document.getElementById("fab-announcement-panel");
+		if (!panel) return;
+		if (panel.dataset.open === "true") {
+			this.closeAnnouncement();
+			return;
+		}
+		panel.dataset.open = "true";
+		panel.querySelector("button")?.focus();
+		document
+			.querySelector("#fab-announcement-btn button")
+			?.setAttribute("aria-expanded", "true");
+	}
+
+	public closeAnnouncement(): void {
+		const panel = document.getElementById("fab-announcement-panel");
+		if (panel?.dataset.open !== "true") return;
+		panel.dataset.open = "false";
+		document
+			.querySelector("#fab-announcement-btn button")
+			?.setAttribute("aria-expanded", "false");
 	}
 
 	public syncPageState(): void {
@@ -496,7 +538,10 @@ class FabController {
 		}
 		swup.hooks.on("content:replace", () => this.syncPageState());
 		swup.hooks.on("page:view", () => this.syncPageState());
-		swup.hooks.on("visit:start", () => this.closeToc());
+		swup.hooks.on("visit:start", () => {
+			this.closeToc();
+			this.closeAnnouncement();
+		});
 	}
 }
 

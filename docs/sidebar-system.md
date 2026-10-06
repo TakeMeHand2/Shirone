@@ -190,6 +190,7 @@ export const sidebarConfig: SidebarConfig = {
 | `stats` | `SiteStats` | `getSiteStats` | `WidgetLayout` | — |
 | `calendar` | `Calendar` | `getCalendarData` | `WidgetLayout` | `startOfWeek?`（默认 `"mon"`） |
 | `music` | `MusicSidebar`（organisms） | `musicConfig` | `WidgetLayout` | —（内容与初始状态来自全局配置） |
+| `quote` | `Quote` | `quoteConfig` + `src/data/quotes.ts` | `WidgetLayout` | —（`provider: "hitokoto"` 时运行时拉取并带回退） |
 | `toc` | `SidebarTOC` | 当前文章 headings | `WidgetLayout` | —（通常限定 `pages: ["post"]`） |
 
 逐个文档见 `sidebar-widgets.md`。

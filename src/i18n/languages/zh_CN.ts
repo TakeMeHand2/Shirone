@@ -342,4 +342,8 @@ export const zh_CN: Translation = {
 	[Key.tagGalaxyHint]: "悬停聚焦 · 点击查看该标签的文章",
 	[Key.tagGalaxyAriaLabel]:
 		"标签星图：节点大小代表文章数量，连线代表标签共现关系",
+
+	// Quote widget & easter eggs
+	[Key.quoteTitle]: "今日一言",
+	[Key.easterEggKonami]: "彩蛋解锁：樱花纷飞 ✨",
 };

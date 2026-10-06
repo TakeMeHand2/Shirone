@@ -48,6 +48,11 @@ export const fabConfig: FabConfig = withUserConfig("fab", {
 			pages: ["post"],
 		},
 		{
+			type: "announcement",
+			enable: true,
+			devices: ["mobile", "tablet"],
+		},
+		{
 			type: "home",
 			enable: true,
 			devices: ["mobile", "tablet"],

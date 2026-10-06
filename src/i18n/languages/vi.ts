@@ -356,4 +356,8 @@ export const vi: Translation = {
 	[Key.tagGalaxyHint]: "Di chuột để tập trung · Nhấn để xem bài của thẻ",
 	[Key.tagGalaxyAriaLabel]:
 		"Chòm sao thẻ: kích thước nút thể hiện số bài viết, đường nối thể hiện thẻ đồng xuất hiện",
+
+	// Quote widget & easter eggs
+	[Key.quoteTitle]: "Lời nói hôm nay",
+	[Key.easterEggKonami]: "Mở mã bí mật: mưa hoa anh đào ✨",
 };

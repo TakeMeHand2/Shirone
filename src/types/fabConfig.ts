@@ -60,12 +60,19 @@ export interface FabHomeConfig extends BaseFabItemConfig {
 	onlySubPages?: boolean;
 }
 
+/** 5. 公告板（AnnouncementBoard）：轻量弹窗展示 announcementConfig 公告 */
+export interface FabAnnouncementConfig extends BaseFabItemConfig {
+	type: "announcement";
+	/** 公告内容为空时按钮整体不渲染（零 DOM） */
+}
+
 /** 判别联合类型：FAB 项配置集 */
 export type FabItemConfig =
 	| FabTopConfig
 	| FabTocConfig
 	| FabCommentConfig
-	| FabHomeConfig;
+	| FabHomeConfig
+	| FabAnnouncementConfig;
 
 /**
  * FAB 导航系统全局总配置

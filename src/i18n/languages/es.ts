@@ -357,4 +357,8 @@ export const es: Translation = {
 		"Pasa el cursor para enfocar · Haz clic para ver la etiqueta",
 	[Key.tagGalaxyAriaLabel]:
 		"Constelación de etiquetas: el tamaño del nodo codifica el número de publicaciones y las líneas la coocurrencia de etiquetas",
+
+	// Quote widget & easter eggs
+	[Key.quoteTitle]: "Frase del día",
+	[Key.easterEggKonami]: "Huevo de pascua desbloqueado: lluvia de pétalos ✨",
 };

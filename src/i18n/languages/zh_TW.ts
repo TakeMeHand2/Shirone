@@ -342,4 +342,8 @@ export const zh_TW: Translation = {
 	[Key.tagGalaxyHint]: "懸停聚焦 · 點擊查看該標籤的文章",
 	[Key.tagGalaxyAriaLabel]:
 		"標籤星圖：節點大小代表文章數量，連線代表標籤共現關係",
+
+	// Quote widget & easter eggs
+	[Key.quoteTitle]: "今日一言",
+	[Key.easterEggKonami]: "彩蛋解鎖：櫻花紛飛 ✨",
 };

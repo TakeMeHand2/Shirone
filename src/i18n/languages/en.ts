@@ -354,4 +354,8 @@ export const en: Translation = {
 	[Key.tagGalaxyHint]: "Hover to focus · Click to browse the tag",
 	[Key.tagGalaxyAriaLabel]:
 		"Tag galaxy: node size encodes post count, lines encode tag co-occurrence",
+
+	// Quote widget & easter eggs
+	[Key.quoteTitle]: "Quote of the Day",
+	[Key.easterEggKonami]: "Easter egg unlocked: sakura shower ✨",
 };

@@ -251,6 +251,16 @@ const hasMonoFont =
 	</body>
 </html>
 
+<script>
+	import { initKonami } from "@utils/konami";
+
+	// 趣味彩蛋（Konami 秘技樱花雨）：持久壳一次性初始化，
+	// funConfig 关闭时内部短路，零监听器
+	if (typeof window !== "undefined") {
+		initKonami();
+	}
+</script>
+
 <style lang="stylus" is:global>
 @import "../styles/variables.styl"
 </style>

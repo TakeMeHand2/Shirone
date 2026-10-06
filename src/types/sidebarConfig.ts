@@ -145,6 +145,16 @@ export interface MusicWidget {
 	pages?: SidebarPage[];
 }
 
+/** 今日一言（语料来自 src/data/quotes.ts，quoteConfig 控制开关与数据源） */
+export interface QuoteWidget {
+	type: "quote";
+	enable: boolean;
+	slot: SidebarWidgetSlot;
+	column?: SidebarColumn;
+	/** 限定显示的页面，省略或空数组表示所有页面 */
+	pages?: SidebarPage[];
+}
+
 export type SidebarWidget =
 	| ProfileWidget
 	| CategoriesWidget
@@ -154,7 +164,8 @@ export type SidebarWidget =
 	| StatsWidget
 	| CalendarWidget
 	| TocWidget
-	| MusicWidget;
+	| MusicWidget
+	| QuoteWidget;
 
 /**
  * 侧栏整体配置。components 渲染顺序 = 数组顺序，top 恒排在 sticky 之前。

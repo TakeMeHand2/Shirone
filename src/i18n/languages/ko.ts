@@ -353,4 +353,8 @@ export const ko: Translation = {
 	[Key.tagGalaxyHint]: "가리켜서 집중 · 클릭해서 태그 글 보기",
 	[Key.tagGalaxyAriaLabel]:
 		"태그 은하: 노드 크기는 게시글 수를, 선은 태그 동시 출현을 나타냅니다",
+
+	// Quote widget & easter eggs
+	[Key.quoteTitle]: "오늘의 한마디",
+	[Key.easterEggKonami]: "숨겨진 이스터에그: 벚꽃 소나기 ✨",
 };

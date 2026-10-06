@@ -341,4 +341,8 @@ export const th: Translation = {
 	[Key.tagGalaxyHint]: "ชี้เพื่อโฟกัส · คลิกเพื่อดูบทความของแท็ก",
 	[Key.tagGalaxyAriaLabel]:
 		"กาแล็กซีแท็ก: ขนาดโหนดแทนจำนวนบทความ เส้นเชื่อมแทนการเกิดร่วมของแท็ก",
+
+	// Quote widget & easter eggs
+	[Key.quoteTitle]: "คำคมวันนี้",
+	[Key.easterEggKonami]: "ปลดล็อกอีสเตอร์เอกก์: สายฝนกลีบซากุระ ✨",
 };

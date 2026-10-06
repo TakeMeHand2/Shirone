@@ -42,6 +42,7 @@ export {
 } from "./fontConfig";
 export { footerConfig } from "./footerConfig";
 export { friendsConfig } from "./friendsConfig";
+export { funConfig } from "./funConfig";
 export { gamesConfig } from "./gamesConfig";
 export { i18nConfig } from "./i18nConfig";
 export {
@@ -62,6 +63,7 @@ export { permalinkConfig } from "./permalinkConfig";
 export { POST_CARD_MIN_WIDTH, postListConfig } from "./postListConfig";
 export { profileConfig } from "./profileConfig";
 export { projectsConfig } from "./projectsConfig";
+export { quoteConfig } from "./quoteConfig";
 export { seriesConfig } from "./seriesConfig";
 export { sidebarConfig } from "./sidebarConfig";
 export {
