@@ -331,6 +331,18 @@ enum I18nKey {
 	feedHowToUseDesc = "feedHowToUseDesc",
 	feedOpenXml = "feedOpenXml",
 	feedRecentPosts = "feedRecentPosts",
+
+	// Archive heatmap（归档热力图）
+	archiveHeatmap = "archiveHeatmap",
+	archiveHeatmapStats = "archiveHeatmapStats",
+	archiveHeatmapLess = "archiveHeatmapLess",
+	archiveHeatmapMore = "archiveHeatmapMore",
+	archiveHeatmapCell = "archiveHeatmapCell",
+
+	// Tag galaxy（标签星图）
+	tagGalaxy = "tagGalaxy",
+	tagGalaxyHint = "tagGalaxyHint",
+	tagGalaxyAriaLabel = "tagGalaxyAriaLabel",
 }
 
 export default I18nKey;

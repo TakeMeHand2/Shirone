@@ -343,4 +343,18 @@ export const es: Translation = {
 		"Añade esta URL a tu lector RSS/Atom favorito (como NetNewsWire, Feedly, Inoreader o Follow) para recibir actualizaciones.",
 	[Key.feedOpenXml]: "Ver XML original",
 	[Key.feedRecentPosts]: "Artículos recientes del canal",
+
+	// Archive heatmap
+	[Key.archiveHeatmap]: "Mapa de calor del archivo",
+	[Key.archiveHeatmapStats]: "{count} publicaciones · {days} días activos",
+	[Key.archiveHeatmapLess]: "Menos",
+	[Key.archiveHeatmapMore]: "Más",
+	[Key.archiveHeatmapCell]: "{date} · {count} publicaciones",
+
+	// Tag galaxy
+	[Key.tagGalaxy]: "Constelación de etiquetas",
+	[Key.tagGalaxyHint]:
+		"Pasa el cursor para enfocar · Haz clic para ver la etiqueta",
+	[Key.tagGalaxyAriaLabel]:
+		"Constelación de etiquetas: el tamaño del nodo codifica el número de publicaciones y las líneas la coocurrencia de etiquetas",
 };

@@ -346,4 +346,17 @@ export const id: Translation = {
 		"Tambahkan URL umpan di atas ke pembaca RSS/Atom favorit Anda (seperti NetNewsWire, Feedly, Inoreader, Follow) untuk menerima pembaruan.",
 	[Key.feedOpenXml]: "Lihat XML Asli",
 	[Key.feedRecentPosts]: "Artikel Terbaru di Umpan",
+
+	// Archive heatmap
+	[Key.archiveHeatmap]: "Peta Panas Arsip",
+	[Key.archiveHeatmapStats]: "{count} tulisan · {days} hari aktif",
+	[Key.archiveHeatmapLess]: "Sedikit",
+	[Key.archiveHeatmapMore]: "Banyak",
+	[Key.archiveHeatmapCell]: "{date} · {count} tulisan",
+
+	// Tag galaxy
+	[Key.tagGalaxy]: "Galaksi Tag",
+	[Key.tagGalaxyHint]: "Arahkan kursor untuk fokus · Klik untuk melihat tag",
+	[Key.tagGalaxyAriaLabel]:
+		"Galaksi tag: ukuran node menunjukkan jumlah tulisan, garis menunjukkan kemunculan tag bersama",
 };

@@ -341,4 +341,17 @@ export const en: Translation = {
 		"Add this feed URL to your favorite RSS/Atom reader (e.g. NetNewsWire, Feedly, Inoreader, Follow) to get instant updates.",
 	[Key.feedOpenXml]: "View Raw XML",
 	[Key.feedRecentPosts]: "Recent Posts in Feed",
+
+	// Archive heatmap
+	[Key.archiveHeatmap]: "Archive Heatmap",
+	[Key.archiveHeatmapStats]: "{count} posts · {days} active days",
+	[Key.archiveHeatmapLess]: "Less",
+	[Key.archiveHeatmapMore]: "More",
+	[Key.archiveHeatmapCell]: "{date} · {count} posts",
+
+	// Tag galaxy
+	[Key.tagGalaxy]: "Tag Galaxy",
+	[Key.tagGalaxyHint]: "Hover to focus · Click to browse the tag",
+	[Key.tagGalaxyAriaLabel]:
+		"Tag galaxy: node size encodes post count, lines encode tag co-occurrence",
 };

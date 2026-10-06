@@ -328,4 +328,17 @@ export const th: Translation = {
 		"เพิ่ม URL ฟีดด้านบนลงในโปรแกรมอ่าน RSS/Atom (เช่น NetNewsWire, Feedly, Inoreader, Follow) เพื่อรับการแจ้งเตือนบทความใหม่",
 	[Key.feedOpenXml]: "ดู XML ต้นฉบับ",
 	[Key.feedRecentPosts]: "บทความล่าสุดในฟีด",
+
+	// Archive heatmap
+	[Key.archiveHeatmap]: "แผนภาพความร้อนของคลังบทความ",
+	[Key.archiveHeatmapStats]: "{count} บทความ · เขียน {days} วัน",
+	[Key.archiveHeatmapLess]: "น้อย",
+	[Key.archiveHeatmapMore]: "มาก",
+	[Key.archiveHeatmapCell]: "{date} · {count} บทความ",
+
+	// Tag galaxy
+	[Key.tagGalaxy]: "กาแล็กซีแท็ก",
+	[Key.tagGalaxyHint]: "ชี้เพื่อโฟกัส · คลิกเพื่อดูบทความของแท็ก",
+	[Key.tagGalaxyAriaLabel]:
+		"กาแล็กซีแท็ก: ขนาดโหนดแทนจำนวนบทความ เส้นเชื่อมแทนการเกิดร่วมของแท็ก",
 };

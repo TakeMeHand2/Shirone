@@ -340,4 +340,17 @@ export const ko: Translation = {
 		"위 주소를 선호하는 RSS/Atom 리더기(NetNewsWire, Feedly, Inoreader, Follow 등)에 등록하여 새 글 알림을 받아보세요.",
 	[Key.feedOpenXml]: "원본 XML 보기",
 	[Key.feedRecentPosts]: "피드 최신 글",
+
+	// Archive heatmap
+	[Key.archiveHeatmap]: "아카이브 히트맵",
+	[Key.archiveHeatmapStats]: "게시글 {count}편 · 집필일 {days}일",
+	[Key.archiveHeatmapLess]: "적음",
+	[Key.archiveHeatmapMore]: "많음",
+	[Key.archiveHeatmapCell]: "{date} · {count}편",
+
+	// Tag galaxy
+	[Key.tagGalaxy]: "태그 은하",
+	[Key.tagGalaxyHint]: "가리켜서 집중 · 클릭해서 태그 글 보기",
+	[Key.tagGalaxyAriaLabel]:
+		"태그 은하: 노드 크기는 게시글 수를, 선은 태그 동시 출현을 나타냅니다",
 };

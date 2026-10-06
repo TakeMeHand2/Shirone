@@ -329,4 +329,17 @@ export const zh_CN: Translation = {
 		"将上方订阅地址添加到任意 RSS/Atom 阅读器（如 NetNewsWire、Feedly、Inoreader、Follow 等），即可即时接收新文章推送。",
 	[Key.feedOpenXml]: "查看原始 XML",
 	[Key.feedRecentPosts]: "最新推送文章",
+
+	// Archive heatmap
+	[Key.archiveHeatmap]: "归档热力图",
+	[Key.archiveHeatmapStats]: "{count} 篇 · {days} 个写作日",
+	[Key.archiveHeatmapLess]: "少",
+	[Key.archiveHeatmapMore]: "多",
+	[Key.archiveHeatmapCell]: "{date} · {count} 篇",
+
+	// Tag galaxy
+	[Key.tagGalaxy]: "标签星图",
+	[Key.tagGalaxyHint]: "悬停聚焦 · 点击查看该标签的文章",
+	[Key.tagGalaxyAriaLabel]:
+		"标签星图：节点大小代表文章数量，连线代表标签共现关系",
 };

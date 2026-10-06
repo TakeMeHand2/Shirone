@@ -340,4 +340,17 @@ export const ja: Translation = {
 		"上記の購読 URL をお好みの RSS/Atom リーダー（NetNewsWire、Feedly、Inoreader、Follow など）に登録すると、最新記事が通知されます。",
 	[Key.feedOpenXml]: "XML を直接表示",
 	[Key.feedRecentPosts]: "最新の配信記事",
+
+	// Archive heatmap
+	[Key.archiveHeatmap]: "アーカイブヒートマップ",
+	[Key.archiveHeatmapStats]: "投稿 {count} 件 · 執筆日 {days} 日",
+	[Key.archiveHeatmapLess]: "少ない",
+	[Key.archiveHeatmapMore]: "多い",
+	[Key.archiveHeatmapCell]: "{date} · {count} 件",
+
+	// Tag galaxy
+	[Key.tagGalaxy]: "タグ星図",
+	[Key.tagGalaxyHint]: "ホバーでフォーカス · クリックでタグの記事へ",
+	[Key.tagGalaxyAriaLabel]:
+		"タグ星図：ノードの大きさは記事数、線はタグの共起を表します",
 };

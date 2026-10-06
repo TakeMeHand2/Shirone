@@ -344,4 +344,18 @@ export const tr: Translation = {
 		"Yeni yazı bildirimleri almak için yukarıdaki bağlantıyı dilediğiniz RSS/Atom okuyucusuna (NetNewsWire, Feedly, Inoreader, Follow vb.) ekleyin.",
 	[Key.feedOpenXml]: "Ham XML'i Görüntüle",
 	[Key.feedRecentPosts]: "Akıştaki Son Yazılar",
+
+	// Archive heatmap
+	[Key.archiveHeatmap]: "Arşiv Isı Haritası",
+	[Key.archiveHeatmapStats]: "{count} yazı · {days} aktif gün",
+	[Key.archiveHeatmapLess]: "Az",
+	[Key.archiveHeatmapMore]: "Çok",
+	[Key.archiveHeatmapCell]: "{date} · {count} yazı",
+
+	// Tag galaxy
+	[Key.tagGalaxy]: "Etiket Galaksisi",
+	[Key.tagGalaxyHint]:
+		"Odaklanmak için üzerine gel · Etiket yazılarını görmek için tıkla",
+	[Key.tagGalaxyAriaLabel]:
+		"Etiket galaksisi: düğüm boyutu yazı sayısını, çizgiler etiket birlikteliğini gösterir",
 };

@@ -343,4 +343,17 @@ export const vi: Translation = {
 		"Thêm URL nguồn cấp ở trên vào trình đọc RSS/Atom yêu thích của bạn (như NetNewsWire, Feedly, Inoreader, Follow) để nhận thông báo bài viết mới.",
 	[Key.feedOpenXml]: "Xem XML gốc",
 	[Key.feedRecentPosts]: "Bài viết mới nhất trong nguồn cấp",
+
+	// Archive heatmap
+	[Key.archiveHeatmap]: "Bản đồ nhiệt lưu trữ",
+	[Key.archiveHeatmapStats]: "{count} bài viết · {days} ngày viết",
+	[Key.archiveHeatmapLess]: "Ít",
+	[Key.archiveHeatmapMore]: "Nhiều",
+	[Key.archiveHeatmapCell]: "{date} · {count} bài",
+
+	// Tag galaxy
+	[Key.tagGalaxy]: "Chòm sao thẻ",
+	[Key.tagGalaxyHint]: "Di chuột để tập trung · Nhấn để xem bài của thẻ",
+	[Key.tagGalaxyAriaLabel]:
+		"Chòm sao thẻ: kích thước nút thể hiện số bài viết, đường nối thể hiện thẻ đồng xuất hiện",
 };

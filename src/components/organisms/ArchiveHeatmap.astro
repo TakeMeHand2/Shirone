@@ -1,0 +1,169 @@
+---
+import Card from "@components/atoms/display/Card.svelte";
+import PageHeader from "@components/atoms/display/PageHeader.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { getArchiveHeatmapData } from "@utils/archive-heatmap";
+
+/**
+ * 归档热力图（按年份分段）：构建期聚合文章发布日，纯 SSR 直出。
+ * 每个有文章的年份渲染一条整年周列网格；单元格用 native title 提示，
+ * 网格 role="img" + 摘要 aria-label，避免数百个网格单元污染读屏顺序；
+ * 无文章时整体短路，零 DOM。
+ */
+const data = await getArchiveHeatmapData();
+
+const statsText = i18n(I18nKey.archiveHeatmapStats)
+	.replace("{count}", String(data.total))
+	.replace("{days}", String(data.activeDays));
+const cellTemplate = i18n(I18nKey.archiveHeatmapCell);
+const cellTitle = (count: number, date: string) =>
+	cellTemplate.replace("{date}", date).replace("{count}", String(count));
+const yearStats = (year: (typeof data.years)[number]) =>
+	i18n(I18nKey.archiveHeatmapStats)
+		.replace("{count}", String(year.total))
+		.replace("{days}", String(year.activeDays));
+const LEGEND_LEVELS = [0, 1, 2, 3, 4] as const;
+---
+
+{
+	data.total > 0 && (
+		<Card color="var(--card-bg)" radius="l" class="heatmap px-8 py-6">
+			<PageHeader
+				icon="material-symbols:calendar-view-month-rounded"
+				title={i18n(I18nKey.archiveHeatmap)}
+				subtitle={statsText}
+			/>
+			{data.years.map((year) => (
+				<section class="heatmap__year" aria-label={String(year.year)}>
+					<h3 class="heatmap__year-title" aria-hidden="true">
+						{year.year}
+					</h3>
+					<div
+						class="heatmap__canvas"
+						role="img"
+						aria-label={`${year.year} · ${yearStats(year)}`}
+					>
+						<div class="heatmap__scroll">
+							<div class="heatmap__months">
+								{year.monthLabels.map((month) => (
+									<span
+										class="heatmap__month"
+										style={`grid-column-start: ${month.column + 1};`}
+									>
+										{month.label}
+									</span>
+								))}
+							</div>
+							<div class="heatmap__grid" aria-hidden="true">
+								{year.weeks.map((week) =>
+									week.map((cell) =>
+										cell ? (
+											<span
+												class={`heatmap__cell heatmap__cell--l${cell.level}`}
+												title={
+													cell.count > 0
+														? cellTitle(cell.count, cell.date)
+														: undefined
+												}
+											/>
+										) : (
+											<span class="heatmap__cell heatmap__cell--void" />
+										),
+									),
+								)}
+							</div>
+						</div>
+					</div>
+				</section>
+			))}
+			<div class="heatmap__legend" aria-hidden="true">
+				<span class="heatmap__legend-text">
+					{i18n(I18nKey.archiveHeatmapLess)}
+				</span>
+				{LEGEND_LEVELS.map((level) => (
+					<span class={`heatmap__cell heatmap__cell--l${level}`} />
+				))}
+				<span class="heatmap__legend-text">
+					{i18n(I18nKey.archiveHeatmapMore)}
+				</span>
+			</div>
+		</Card>
+	)
+}
+
+<style lang="stylus">
+.heatmap
+	display: block
+
+	&__year
+		display: block
+
+		& + &
+			margin-top: var(--m3e-space-5)
+
+	&__year-title
+		margin: 0 0 var(--m3e-space-2)
+		font: var(--m3e-type-title-medium)
+		color: var(--text-75)
+		font-variant-numeric: tabular-nums
+
+	&__canvas
+		display: block
+
+	&__scroll
+		overflow-x: auto
+		padding-bottom: var(--m3e-space-2)
+
+	&__months
+		display: grid
+		grid-template-columns: repeat(53, 11px)
+		gap: 3px
+		width: max-content
+		margin-bottom: var(--m3e-space-2)
+
+	&__month
+		grid-row: 1
+		white-space: nowrap
+		font: var(--m3e-type-label-small)
+		color: var(--text-50)
+
+	&__grid
+		display: grid
+		grid-auto-flow: column
+		grid-template-rows: repeat(7, 11px)
+		gap: 3px
+		width: max-content
+
+	&__cell
+		display: inline-block
+		width: 11px
+		height: 11px
+		border-radius: var(--shape-corner-xs)
+		background: var(--surface-container)
+
+		&--void
+			visibility: hidden
+
+		/* 档位色：以 primary 向表面色混合，HCT 动态配色与暗色模式自动跟随 */
+		&--l1
+			background: unquote("color-mix(in oklab, var(--primary) 28%, var(--surface-container))")
+		&--l2
+			background: unquote("color-mix(in oklab, var(--primary) 48%, var(--surface-container))")
+		&--l3
+			background: unquote("color-mix(in oklab, var(--primary) 72%, var(--surface-container))")
+		&--l4
+			background: var(--primary)
+
+	&__legend
+		display: flex
+		align-items: center
+		justify-content: flex-end
+		gap: 4px
+		margin-top: var(--m3e-space-2)
+
+	&__legend-text
+		margin: 0 var(--m3e-space-1)
+		font: var(--m3e-type-label-small)
+		color: var(--text-50)
+</style>
