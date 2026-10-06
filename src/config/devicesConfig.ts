@@ -18,27 +18,15 @@ export const devicesConfig: DevicesConfig = withUserConfig("devices", {
 	categories: [
 		{
 			key: "desk",
-			label: "Desk Setup",
+			label: "桌面装备",
 			icon: "material-symbols:desktop-windows-outline-rounded",
-			description: "Workstation & home office hardware",
+			description: "主力电脑与桌面硬件",
 		},
 		{
 			key: "mobile",
-			label: "Mobile & EDC",
+			label: "移动设备",
 			icon: "material-symbols:phone-iphone",
-			description: "Daily portable devices & smart gadgets",
-		},
-		{
-			key: "audio",
-			label: "Audio & Visual",
-			icon: "material-symbols:headphones-rounded",
-			description: "Headphones, speakers & monitoring gears",
-		},
-		{
-			key: "peripheral",
-			label: "Peripherals",
-			icon: "material-symbols:keyboard-outline-rounded",
-			description: "Keyboards, mice & desk accessories",
+			description: "随身携带的手机与数码配件",
 		},
 	],
 	// disabledIds: [],

@@ -6,67 +6,28 @@ import type { DeviceItem } from "@/types/devicesConfig";
 
 export const devicesData: DeviceItem[] = [
 	{
-		id: "macbook-pro-16",
-		name: 'MacBook Pro 16"',
-		brand: "Apple",
+		id: "kuangshi-g16",
+		name: "旷世 G16 游戏本",
+		brand: "机械革命",
 		category: "desk",
 		status: "active",
-		specs: "M3 Max / 64GB / 2TB",
+		specs:
+			"i7-12650H / RTX 4060 Laptop / 16GB (8G×2) 3200MHz / 1TB 长江存储 SSD",
 		description:
-			"Primary workstation for development, design, and heavy rendering workloads.",
-		icon: "material-symbols:laptop-mac-rounded",
+			"日常主力机：写代码、打游戏、看番、折腾这个博客都在它上面，系统是 Windows 11 专业工作站版。",
+		icon: "material-symbols:laptop-windows",
 		featured: true,
-		year: "2024",
-		link: "https://www.apple.com/macbook-pro/",
 	},
 	{
-		id: "iphone-16-pro",
-		name: "iPhone 16 Pro",
-		brand: "Apple",
+		id: "oneplus-ace-5-ultra",
+		name: "一加 Ace 5 至尊版",
+		brand: "一加",
 		category: "mobile",
 		status: "active",
-		specs: "Natural Titanium / 256GB",
-		description:
-			"Daily driver smartphone with outstanding cameras and a smooth 120Hz ProMotion display.",
-		icon: "material-symbols:phone-iphone",
+		specs: "天玑 9400+ / 12GB + 512GB",
+		description: "随身主力机：刷 B 站、听歌、拍照和地铁上的游戏时间全靠它。",
+		icon: "material-symbols:smartphone",
 		featured: true,
-		year: "2024",
-	},
-	{
-		id: "sony-wh1000xm5",
-		name: "Sony WH-1000XM5",
-		brand: "Sony",
-		category: "audio",
-		status: "active",
-		specs: "Silver / ANC / LDAC",
-		description:
-			"Industry-leading noise-canceling headphones for immersive coding sessions and travels.",
-		icon: "material-symbols:headphones-rounded",
-		year: "2023",
-	},
-	{
-		id: "custom-keyboard-75",
-		name: "Custom 75% Mechanical Keyboard",
-		brand: "Custom",
-		category: "peripheral",
-		status: "active",
-		specs: "Anodized Aluminum / Linear Switches",
-		description:
-			"Custom gasket-mounted keyboard tuned for deep, quiet typing acoustics.",
-		icon: "material-symbols:keyboard-outline-rounded",
-		year: "2025",
-	},
-	{
-		id: "ipad-pro-11",
-		name: 'iPad Pro 11"',
-		brand: "Apple",
-		category: "mobile",
-		status: "backup",
-		specs: "Space Gray / 128GB",
-		description:
-			"Secondary mobile screen and digital notepad for sketching ideas and reading papers.",
-		icon: "material-symbols:tablet-mac-rounded",
-		year: "2021",
 	},
 ];
 

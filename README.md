@@ -150,6 +150,7 @@ Shirone keeps theme source, personal site content, and npm publishing responsibi
 | `src/config/commentConfig.ts` | Optional comments via Twikoo or Giscus |
 | `src/config/musicConfig.ts` | Optional local, custom, Meting, or mixed music source |
 | `src/config/animeConfig.ts` | Anime page and local/Bangumi/Bilibili snapshot source |
+| `src/config/live2dConfig.ts` | Optional Live2D mascot widget (oh-my-live2d, CDN-loaded) |
 
 ## Writing a Post
 

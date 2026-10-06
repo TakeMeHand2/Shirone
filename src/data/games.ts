@@ -6,46 +6,56 @@
  * - src/assets 相对路径（如本文件所用，走 Astro 图片管线自动优化为 webp/avif）；
  * - /public 绝对路径（如 "/assets/games/xxx.webp"，原样输出）；
  * - 远程 URL（https://…）。
- *
- * 注：以下为演示条目——评分 / 时长 / 状态是占位数值，请按自己的实际情况调整；
- * 封面取自各游戏官方商店页或官网主视觉。
  */
 import type { GameItem } from "@/types/gamesConfig";
 
 export const gamesData: GameItem[] = [
 	{
-		id: "nte-neverness-to-everness",
-		name: "NTE: Neverness to Everness",
-		developer: "Hotta Studio",
+		id: "genshin-impact",
+		name: "原神",
+		developer: "HoYoverse",
 		category: "open-world",
 		status: "playing",
-		cover: "assets/games/yihuan-hero.jpg",
+		cover: "assets/games/genshin-hero.jpg",
 		icon: "material-symbols:explore-outline-rounded",
-		rating: 4.5,
-		hours: 86,
 		platform: "PC",
-		year: "2026",
-		tags: ["Open World", "Urban", "Supernatural"],
+		year: "2020",
+		tags: ["开放世界", "二次元", "冒险"],
 		description:
-			"A supernatural urban open-world RPG. As an anomaly-user who senses the “waves” of people and anomalies, you join E.T.D Squad Six and investigate the city's paranormal events.",
-		link: "https://yh.wanmei.com/main.html",
+			"提瓦特大陆悠闲旅行中，每天清体力做日常。至于十连三金？根本没有的事。",
+		link: "https://ys.mihoyo.com/",
 		featured: true,
 	},
 	{
-		id: "minecraft",
-		name: "Minecraft",
-		developer: "Mojang Studios",
-		category: "sandbox",
+		id: "honkai-star-rail",
+		name: "崩坏：星穹铁道",
+		developer: "HoYoverse",
+		category: "rpg",
 		status: "playing",
-		cover: "assets/games/minecraft-hero.jpg",
-		icon: "material-symbols:widgets-rounded",
-		rating: 5,
-		hours: 420,
+		cover: "assets/games/hkrpg-hero.png",
+		icon: "material-symbols:rocket-launch-outline-rounded",
 		platform: "PC",
-		year: "2011",
-		tags: ["Sandbox", "Survival", "Building"],
+		year: "2023",
+		tags: ["回合制", "RPG", "二次元"],
 		description:
-			"A blocky sandbox where you mine, craft and build across procedurally generated worlds. Survive the night, or just keep building — alone or with friends.",
-		link: "https://www.minecraft.net/",
+			"跟着星穹列车穿越银河的开拓之旅。回合制玩的是配队与策略，就是抽卡规划永远赶不上版本更新。",
+		link: "https://sr.mihoyo.com/",
+		featured: true,
+	},
+	{
+		id: "zenless-zone-zero",
+		name: "绝区零",
+		developer: "HoYoverse",
+		category: "action",
+		status: "playing",
+		cover: "assets/games/zzz-hero.png",
+		icon: "material-symbols:sports-esports-outline-rounded",
+		platform: "PC",
+		year: "2024",
+		tags: ["动作", "都市", "二次元"],
+		description:
+			"新艾利都的绳匠日常。切人、闪避、连携打击感一流，打完一场空洞副本格外解压。",
+		link: "https://zzz.mihoyo.com/",
+		featured: true,
 	},
 ];

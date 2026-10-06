@@ -62,9 +62,9 @@ export const musicConfig: MusicConfig = withUserConfig("music", {
 	// 	},
 	// ],
 	meting: {
-		server: "netease",
+		server: "tencent",
 		type: "playlist",
-		id: "14164869977",
+		id: "9041353293",
 		// 进入视口时预取歌单元数据（仅元信息，不预取音频流）：
 		// "metadata"（取）| "none"（默认，不取；交互后才请求，卡片显示「尚未请求」占位）
 		preload: "none",
