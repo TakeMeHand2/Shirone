@@ -56,6 +56,9 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		// 以 "/" 开头的 public 路径与远程 URL 仍可用，但会保留原图、不生成候选。
 		// desktop 用于 >= 1024px；mobile 仅用于 < 1024px 的首页，手机非首页不显示壁纸。
 		// 数组顺序就是轮播顺序；只需要静态 Banner 时，每组保留一张图片即可。
+		// 轮播序列可混入视频项 { video: "/videos/bg.mp4", poster: "..." }：
+		// 静音循环自动播放（建议 mp4/webm 放 public/videos/），poster 为
+		// 缓冲期与 reduced-motion 回退画面（走图片优化管线）。
 		src: {
 			desktop: ["assets/images/banner/desktop/12.webp"],
 			mobile: ["assets/images/banner/mobile/6.webp"],
@@ -100,6 +103,13 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 			fadeDuration: 1200,
 			// 运镜呼吸动画模式："ken-burns"（默认，循环运镜）| "zoom-in"（推进）| "zoom-out"（拉远）| "pan-left"（左移）| "pan-right"（右移）| "none"（无运镜）。
 			animation: "ken-burns",
+		},
+		scrollBlur: {
+			// 滚动渐模糊：页面下滚时对 hero 壁纸施加轻微递增模糊（增强滚动层次）。
+			// reduced-motion 访客自动禁用；不需要时改为 false。
+			enable: true,
+			// 模糊上限（px，0-24）。
+			maxBlur: 12,
 		},
 		waves: {
 			// 在 Banner 底部渲染页面背景色水波纹；关闭后不输出波浪 DOM。

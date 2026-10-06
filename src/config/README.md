@@ -111,7 +111,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 | 文件 | 职责 |
 |---|---|
 | `footerConfig.ts` | 页脚自定义 HTML 注入开关（控制是否读取并注入 `src/config/FooterConfig.html`，关闭时零开销） |
-| `siteConfig.ts` | 站点部署 URL / base 路径 / 标题标识 / 语言 / IANA 时区 / HCT 主题色 / 背景纹理系统 / 显示设置浮层开关 / 横幅 / TOC 深度 / 进度条 / favicon（含 `getDefaultStyle` / `getDefaultSpec` / `resolveDisplaySettings` 回退值） |
+| `siteConfig.ts` | 站点部署 URL / base 路径 / 标题标识 / 语言 / IANA 时区 / HCT 主题色 / 背景纹理系统 / 显示设置浮层开关 / 横幅（图片与视频项混排轮播、滚动渐模糊）/ TOC 深度 / 进度条 / favicon（含 `getDefaultStyle` / `getDefaultSpec` / `resolveDisplaySettings` 回退值） |
 | `profileConfig.ts` | 博主资料：头像 / 名称 / 简介 / 社交链接 |
 | `licenseConfig.ts` | 文章版权声明 |
 | `expressiveCodeConfig.ts` | 代码块明暗主题 |
@@ -123,6 +123,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 | `postListConfig.ts` | 文章列表：分页大小 + 布局（list/grid 模式、封面位置、grid 卡片宽度档位） |
 | `articleConfig.ts` | 文章详情：最后更新提示、延伸阅读（相关/随机文章抽样）、以及文章尾部分享区块（总开关、海报生成与封面配置） |
 | `commentConfig.ts` | 评论系统：全局开关（默认关闭）、Provider 选择（Twikoo / Giscus）、视口懒加载与服务凭据配置；Giscus 基于 GitHub Discussions（需公开仓库 + 安装 giscus App + 从 giscus.app 取 repoId/categoryId），主题明暗双值跟随站点切换 |
+| `coverConfig.ts` | 无封面文章回退封面池：按 slug 确定性轮换取图（列表卡片 + 文章页横幅），条目支持 /public 绝对路径与远程 URL；池为空时零开销 |
 | `contextMenuConfig.ts` | 桌面端右键增强：可选开关（当前默认开启）；配置允许页面与操作顺序，关闭时零 DOM、零监听器、零客户端资源 |
 | `umamiConfig.ts` | Umami 统计：全局开关（默认关闭）、公开分享统计读取，以及可选的官方访问采集脚本配置；支持内容仓 `config/umami.yaml` 覆盖（领域键 `umami`） |
 | `integrationsConfig.ts` | 所有模式（源码仓 + npm 包项目）共用的集成选项，唯一装载入口是 `src/integration/index.ts`：swup / astro-icon / expressive-code / svelte / mdx 的选项、`vite.build` 共用部分、`trailingSlash` 与 `image.endpoint.route` 的配对、音乐侧栏虚拟模块 id。**本目录里唯一的例外**：不走 barrel、不经 `withUserConfig`、也不被 `loadConfigModule` 动态加载（包模式在构建期把它打进 `dist/index.js`），所以它没有用户覆盖层，用户项目里的那份拷贝是死的 |

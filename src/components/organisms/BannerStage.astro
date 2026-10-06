@@ -5,6 +5,7 @@ import { resolveImageAsset } from "@utils/asset-utils";
 import { url } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import { siteConfig } from "@/config";
+import type { BannerSourceItem } from "@/types/config";
 import type { SidebarPage } from "@/types/sidebarConfig";
 
 interface Props {
@@ -81,9 +82,17 @@ const optimizeBannerImage = async (
 	};
 };
 
-function normalizeBannerSource(source: unknown, name: string): { light: string[]; dark: string[] } {
+function normalizeBannerSource(
+	source: unknown,
+	name: string,
+): { light: BannerSourceItem[]; dark: BannerSourceItem[] } {
+	const isValidItem = (item: unknown): item is BannerSourceItem =>
+		typeof item === "string" ||
+		(typeof item === "object" &&
+			item !== null &&
+			typeof (item as { video?: unknown }).video === "string");
 	if (Array.isArray(source)) {
-		const list = source.filter((item): item is string => typeof item === "string");
+		const list = source.filter(isValidItem);
 		return { light: list, dark: list };
 	}
 	if (typeof source === "object" && source !== null) {
@@ -94,15 +103,43 @@ function normalizeBannerSource(source: unknown, name: string): { light: string[]
 			);
 		}
 		return {
-			light: obj.light.filter((item): item is string => typeof item === "string"),
-			dark: obj.dark.filter((item): item is string => typeof item === "string"),
+			light: obj.light.filter(isValidItem),
+			dark: obj.dark.filter(isValidItem),
 		};
 	}
 	return { light: [], dark: [] };
 }
 
-const desktopSource = normalizeBannerSource(siteConfig.banner.src.desktop, "desktop");
-const mobileSource = normalizeBannerSource(siteConfig.banner.src.mobile, "mobile");
+/** 轮播序列中的运行时媒体项（图片走 AVIF/WebP 优化，视频项携带海报帧） */
+type BannerMediaItem =
+	| { kind: "image"; src: string }
+	| { kind: "video"; src: string; poster?: string };
+
+const toMediaItems = (
+	items: BannerSourceItem[],
+	viewport: "desktop" | "mobile",
+): Promise<BannerMediaItem[]> =>
+	Promise.all(
+		items.map(async (item) => {
+			if (typeof item === "string") {
+				const optimized = await getOptimized(item, viewport);
+				return { kind: "image", src: optimized.fallback } as BannerMediaItem;
+			}
+			const poster = item.poster
+				? (await getOptimized(item.poster, viewport)).fallback
+				: undefined;
+			return { kind: "video", src: item.video, poster } as BannerMediaItem;
+		}),
+	);
+
+const desktopSource = normalizeBannerSource(
+	siteConfig.banner.src.desktop,
+	"desktop",
+);
+const mobileSource = normalizeBannerSource(
+	siteConfig.banner.src.mobile,
+	"mobile",
+);
 
 // 对图片按路径去重进行优化缓存
 const optimizationCache = new Map<string, Promise<ResponsiveBannerImage>>();
@@ -116,26 +153,32 @@ const getOptimized = (src: string, viewport: "desktop" | "mobile") => {
 	return p;
 };
 
-const desktopLightResponsive = await Promise.all(
-	desktopSource.light.map((src) => getOptimized(src, "desktop")),
-);
-const desktopDarkResponsive = await Promise.all(
-	desktopSource.dark.map((src) => getOptimized(src, "desktop")),
-);
-const mobileLightResponsive = await Promise.all(
-	mobileSource.light.map((src) => getOptimized(src, "mobile")),
-);
-const mobileDarkResponsive = await Promise.all(
-	mobileSource.dark.map((src) => getOptimized(src, "mobile")),
-);
+const [desktopLightMedia, desktopDarkMedia, mobileLightMedia, mobileDarkMedia] =
+	await Promise.all([
+		toMediaItems(desktopSource.light, "desktop"),
+		toMediaItems(desktopSource.dark, "desktop"),
+		toMediaItems(mobileSource.light, "mobile"),
+		toMediaItems(mobileSource.dark, "mobile"),
+	]);
+const desktopMedia = { light: desktopLightMedia, dark: desktopDarkMedia };
+const mobileMedia = { light: mobileLightMedia, dark: mobileDarkMedia };
+const mediaHasVideo = [
+	...desktopLightMedia,
+	...desktopDarkMedia,
+	...mobileLightMedia,
+	...mobileDarkMedia,
+].some((item) => item.kind === "video");
 
-const desktopImages = {
-	light: desktopLightResponsive.map(({ fallback }) => fallback),
-	dark: desktopDarkResponsive.map(({ fallback }) => fallback),
-};
-const mobileImages = {
-	light: mobileLightResponsive.map(({ fallback }) => fallback),
-	dark: mobileDarkResponsive.map(({ fallback }) => fallback),
+// 首屏 <picture> 候选：跳过视频项（视频走 <video> 层），取首个图片项或视频海报帧
+const findInitialResponsive = async (
+	items: BannerSourceItem[],
+	viewport: "desktop" | "mobile",
+): Promise<ResponsiveBannerImage | undefined> => {
+	for (const item of items) {
+		const src = typeof item === "string" ? item : item.poster;
+		if (src) return getOptimized(src, viewport);
+	}
+	return undefined;
 };
 
 const dimOpacity = Math.min(Math.max(siteConfig.banner.dim.opacity, 0), 1);
@@ -150,11 +193,19 @@ const carouselFadeDuration = Math.min(
 	3000,
 );
 const carouselAnimation = siteConfig.banner.carousel?.animation ?? "ken-burns";
-const initialDesktopSrc = desktopImages.light[0] ?? "";
-const initialMobileSrc = mobileImages.light[0] ?? "";
+const scrollBlur = siteConfig.banner.scrollBlur ?? { enable: false };
+const scrollBlurMax = Math.min(Math.max(scrollBlur.maxBlur ?? 12, 0), 24);
+const initialDesktopImage = await findInitialResponsive(
+	desktopSource.light,
+	"desktop",
+);
+const initialMobileImage = await findInitialResponsive(
+	mobileSource.light,
+	"mobile",
+);
+const initialDesktopSrc = initialDesktopImage?.fallback ?? "";
+const initialMobileSrc = initialMobileImage?.fallback ?? "";
 const initialSrc = initialDesktopSrc || initialMobileSrc;
-const initialDesktopImage = desktopLightResponsive[0];
-const initialMobileImage = mobileLightResponsive[0];
 const initialImage = initialDesktopImage ?? initialMobileImage;
 const initialMobileBanner = page === "home";
 ---
@@ -165,8 +216,8 @@ const initialMobileBanner = page === "home";
 	aria-label={initialLabel}
 	data-copy-mode={initialCopyMode}
 	data-context-motion="idle"
-	data-desktop-images={JSON.stringify(desktopImages)}
-	data-mobile-images={JSON.stringify(mobileImages)}
+	data-desktop-media={JSON.stringify(desktopMedia)}
+	data-mobile-media={JSON.stringify(mobileMedia)}
 	data-carousel-enabled={String(siteConfig.banner.carousel.enable)}
 	data-carousel-interval={String(Math.max(siteConfig.banner.carousel.interval, 3000))}
 	data-carousel-fade-duration={String(carouselFadeDuration)}
@@ -180,6 +231,8 @@ const initialMobileBanner = page === "home";
 	data-subtitle-typewriter-speed={String(Math.max(typewriter.speed, 1))}
 	data-subtitle-typewriter-delete-speed={String(Math.max(typewriter.deleteSpeed ?? 50, 1))}
 	data-subtitle-typewriter-pause-time={String(Math.max(typewriter.pauseTime ?? 2000, 0))}
+	data-scroll-blur-enabled={String(scrollBlur.enable && scrollBlurMax > 0)}
+	data-scroll-blur-max={String(scrollBlurMax)}
 >
 	<div class="banner-stage__media" aria-hidden="true">
 		<picture>
@@ -214,6 +267,17 @@ const initialMobileBanner = page === "home";
 			/>
 		</picture>
 		<img class="banner-stage__image banner-stage__image--back" alt="" />
+		{mediaHasVideo && (
+			<video
+				class="banner-stage__video"
+				muted
+				loop
+				playsinline
+				preload="metadata"
+				disablepictureinpicture
+				aria-hidden="true"
+			></video>
+		)}
 	</div>
 	{siteConfig.banner.dim.enable && (
 		<div class="banner-stage__scrim" style={`--banner-dim-opacity: ${dimOpacity}`}></div>
@@ -271,7 +335,7 @@ const initialMobileBanner = page === "home";
 		activeGroup: BannerViewport | null;
 		activeIndex: number;
 		activeLayer: 0 | 1;
-		images: Record<BannerViewport, { light: string[]; dark: string[] }>;
+		media: Record<BannerViewport, { light: BannerMediaItem[]; dark: BannerMediaItem[] }>;
 		activeTheme: "light" | "dark";
 		preloaded: HTMLImageElement | null;
 		subtitleGeneration: number;
@@ -287,6 +351,11 @@ const initialMobileBanner = page === "home";
 		carouselMediaPrepared: boolean;
 	}
 
+	/** 轮播媒体项：图片或视频（与 SSR 序列化结构一致） */
+	type BannerMediaItem =
+		| { kind: "image"; src: string }
+		| { kind: "video"; src: string; poster?: string };
+
 	declare global {
 		interface Window {
 			__shironeBannerBound?: boolean;
@@ -297,6 +366,7 @@ const initialMobileBanner = page === "home";
 	const layers = stage
 		? [...stage.querySelectorAll<HTMLImageElement>(".banner-stage__image")]
 		: [];
+	const videoEl = stage?.querySelector<HTMLVideoElement>(".banner-stage__video");
 	const subtitle = stage?.querySelector<HTMLParagraphElement>(
 		"[data-banner-home-copy] p",
 	);
@@ -315,18 +385,38 @@ const initialMobileBanner = page === "home";
 	const contextDate = stage?.querySelector<HTMLTimeElement>(
 		"[data-banner-context-date]",
 	);
-	function parseThemeImages(value: string | undefined): { light: string[]; dark: string[] } {
+	function parseThemeMedia(value: string | undefined): {
+		light: BannerMediaItem[];
+		dark: BannerMediaItem[];
+	} {
+		const parseItem = (item: unknown): BannerMediaItem | null => {
+			if (typeof item === "string") return { kind: "image", src: item };
+			if (typeof item === "object" && item !== null) {
+				const record = item as { kind?: unknown; src?: unknown; video?: unknown; poster?: unknown };
+				if (typeof record.src === "string" && record.kind === "image") {
+					return { kind: "image", src: record.src };
+				}
+				if (typeof record.video === "string" && record.kind === "video") {
+					return {
+						kind: "video",
+						src: record.video,
+						poster: typeof record.poster === "string" ? record.poster : undefined,
+					};
+				}
+			}
+			return null;
+		};
+		const parseGroup = (input: unknown): BannerMediaItem[] =>
+			Array.isArray(input)
+				? input.map(parseItem).filter((item): item is BannerMediaItem => item !== null)
+				: [];
 		if (!value) return { light: [], dark: [] };
 		try {
 			const parsed = JSON.parse(value);
-			if (Array.isArray(parsed)) {
-				const list = parsed.filter((item): item is string => typeof item === "string");
-				return { light: list, dark: list };
-			}
 			if (typeof parsed === "object" && parsed !== null) {
 				return {
-					light: Array.isArray(parsed.light) ? parsed.light.filter((i: unknown): i is string => typeof i === "string") : [],
-					dark: Array.isArray(parsed.dark) ? parsed.dark.filter((i: unknown): i is string => typeof i === "string") : [],
+					light: parseGroup(parsed.light),
+					dark: parseGroup(parsed.dark),
 				};
 			}
 			return { light: [], dark: [] };
@@ -339,8 +429,8 @@ const initialMobileBanner = page === "home";
 		return document.documentElement.classList.contains("dark");
 	}
 
-	function getActiveImages(viewport: BannerViewport): string[] {
-		const store = runtime.images[viewport];
+	function getActiveMedia(viewport: BannerViewport): BannerMediaItem[] {
+		const store = runtime.media[viewport];
 		const mode = isDarkMode() ? "dark" : "light";
 		return store[mode] ?? [];
 	}
@@ -349,9 +439,9 @@ const initialMobileBanner = page === "home";
 		activeGroup: null,
 		activeIndex: 0,
 		activeLayer: 0,
-		images: {
-			desktop: parseThemeImages(stage?.dataset.desktopImages),
-			mobile: parseThemeImages(stage?.dataset.mobileImages),
+		media: {
+			desktop: parseThemeMedia(stage?.dataset.desktopMedia),
+			mobile: parseThemeMedia(stage?.dataset.mobileMedia),
 		},
 		activeTheme: isDarkMode() ? "dark" : "light",
 		preloaded: null,
@@ -546,24 +636,32 @@ const initialMobileBanner = page === "home";
 		step();
 	}
 
-	function preloadNext(images: string[], index: number) {
-		if (images.length < 2) return;
-		const schedulePreload = () => {
-			const load = () => {
-				runtime.preloaded = new Image();
-				runtime.preloaded.src = images[(index + 1) % images.length];
-			};
-			if (typeof window.requestIdleCallback === "function") {
-				window.requestIdleCallback(load, { timeout: 3000 });
-			} else {
-				window.setTimeout(load, 1500);
+	function preloadNext(media: BannerMediaItem[], index: number) {
+		if (media.length < 2) return;
+		// 找到下一个图片项预载；视频项按需缓冲，不做大文件预下载
+		for (let step = 1; step <= media.length; step += 1) {
+			const candidate = media[(index + step) % media.length];
+			if (candidate && candidate.kind === "image") {
+				const src = candidate.src;
+				const schedulePreload = () => {
+					const load = () => {
+						runtime.preloaded = new Image();
+						runtime.preloaded.src = src;
+					};
+					if (typeof window.requestIdleCallback === "function") {
+						window.requestIdleCallback(load, { timeout: 3000 });
+					} else {
+						window.setTimeout(load, 1500);
+					}
+				};
+				const current = layers[runtime.activeLayer];
+				if (current && !current.complete) {
+					current.addEventListener("load", schedulePreload, { once: true });
+				} else {
+					schedulePreload();
+				}
+				return;
 			}
-		};
-		const current = layers[runtime.activeLayer];
-		if (current && !current.complete) {
-			current.addEventListener("load", schedulePreload, { once: true });
-		} else {
-			schedulePreload();
 		}
 	}
 
@@ -606,8 +704,8 @@ const initialMobileBanner = page === "home";
 	}
 
 	// Remove the `<picture><source>` elements after the carousel takes over; otherwise, modifying `src` on the `<img>` tag at runtime will be overridden by the initial `<source>` element
-	function prepareCarouselMedia(images: string[]) {
-		if (runtime.carouselMediaPrepared || !stage || images.length < 2) return;
+	function prepareCarouselMedia(media: BannerMediaItem[]) {
+		if (runtime.carouselMediaPrepared || !stage || media.length < 2) return;
 		if (stage.dataset.carouselEnabled !== "true") return;
 		stage.querySelectorAll("picture source").forEach((source) => source.remove());
 		runtime.carouselMediaPrepared = true;
@@ -655,6 +753,7 @@ const initialMobileBanner = page === "home";
 
 		runtime.layerMotions[previousLayer]?.cancel();
 		runtime.layerMotions[previousLayer] = null;
+		deactivateVideo();
 
 		next.classList.add("banner-stage__image--fading");
 		previous.classList.add("banner-stage__image--fading");
@@ -667,8 +766,52 @@ const initialMobileBanner = page === "home";
 		startLayerMotion(nextLayer, next);
 	}
 
+	function deactivateVideo() {
+		if (!videoEl) return;
+		videoEl.pause();
+		videoEl.classList.remove("banner-stage__video--active");
+		videoEl.classList.remove("banner-stage__video--fading");
+	}
+
+	/** 视频项上屏：静音循环播放；reduced-motion 或缺失 <video> 层时回退海报帧 */
+	function showVideo(item: Extract<BannerMediaItem, { kind: "video" }>, immediate: boolean) {
+		if (!videoEl) return;
+		stopLayerMotions();
+		for (const layer of layers) {
+			layer.classList.remove("banner-stage__image--active");
+			layer.classList.remove("banner-stage__image--fading");
+		}
+		const resolved = resolveImageUrl(item.src);
+		if (videoEl.src !== resolved) {
+			videoEl.src = item.src;
+			videoEl.poster = item.poster ?? "";
+			videoEl.style.objectPosition = stage?.dataset.position || "center";
+		}
+		const activate = () => {
+			if (!videoEl || videoEl.src !== resolveImageUrl(item.src)) return;
+			if (immediate) {
+				videoEl.classList.add("banner-stage__video--active");
+				videoEl.classList.remove("banner-stage__video--fading");
+			} else {
+				videoEl.classList.add("banner-stage__video--fading");
+				void videoEl.offsetWidth;
+				videoEl.classList.add("banner-stage__video--active");
+			}
+			void videoEl.play().catch(() => {
+				// 自动播放被拒绝时保持海报帧画面
+			});
+		};
+		if (videoEl.readyState >= 2) {
+			activate();
+			return;
+		}
+		videoEl.addEventListener("canplay", activate, { once: true });
+		videoEl.load();
+	}
+
 	function applyImmediateLayer(nextLayer: 0 | 1) {
 		const next = layers[nextLayer];
+		deactivateVideo();
 		for (let i = 0; i < layers.length; i += 1) {
 			if (i !== nextLayer) {
 				layers[i].classList.remove("banner-stage__image--active");
@@ -699,8 +842,23 @@ const initialMobileBanner = page === "home";
 		});
 	}
 
-	function showImage(src: string, immediate: boolean) {
-		if (!layers.length) return;
+	/** 按媒体项类型分发上屏：图片走双 img 交叉淡入，视频走 <video> 层 */
+	function showMedia(item: BannerMediaItem | undefined, immediate: boolean) {
+		if (!item || !layers.length) return;
+		if (item.kind === "video") {
+			if (videoEl && !prefersReducedMotion()) {
+				showVideo(item, immediate);
+				return;
+			}
+			// reduced-motion / 无视频层：回退海报帧（缺失则保持当前画面）
+			if (!item.poster) return;
+			showImageFromSrc(item.poster, immediate);
+			return;
+		}
+		showImageFromSrc(item.src, immediate);
+	}
+
+	function showImageFromSrc(src: string, immediate: boolean) {
 		const nextLayer: 0 | 1 = immediate
 			? runtime.activeLayer
 			: runtime.activeLayer === 0
@@ -719,13 +877,13 @@ const initialMobileBanner = page === "home";
 		});
 	}
 
-	function scheduleRotation(images: string[]) {
+	function scheduleRotation(media: BannerMediaItem[]) {
 		stopRotation();
 		const delay = Number.parseInt(stage?.dataset.carouselInterval || "6000", 10);
 		runtime.timer = window.setTimeout(() => {
-			runtime.activeIndex = (runtime.activeIndex + 1) % images.length;
-			showImage(images[runtime.activeIndex], false);
-			preloadNext(images, runtime.activeIndex);
+			runtime.activeIndex = (runtime.activeIndex + 1) % media.length;
+			showMedia(media[runtime.activeIndex], false);
+			preloadNext(media, runtime.activeIndex);
 			syncBanner();
 		}, delay);
 	}
@@ -879,7 +1037,7 @@ const initialMobileBanner = page === "home";
 	function syncBanner(pageOverride?: SidebarPage, contextOverride?: BannerContext) {
 		if (!stage) return;
 		const viewport = currentViewport();
-		const images = getActiveImages(viewport);
+		const media = getActiveMedia(viewport);
 		const currentTheme = isDarkMode() ? "dark" : "light";
 		const themeChanged = runtime.activeTheme !== currentTheme;
 		runtime.activeTheme = currentTheme;
@@ -889,7 +1047,7 @@ const initialMobileBanner = page === "home";
 			mode: getStoredWallpaperMode(),
 			page,
 			viewport,
-			imageCount: images.length,
+			imageCount: media.length,
 			carouselEnabled: stage.dataset.carouselEnabled === "true",
 			reducedMotion: prefersReducedMotion(),
 		});
@@ -915,20 +1073,21 @@ const initialMobileBanner = page === "home";
 		if (!state.visible || !state.assetGroup) {
 			stopRotation();
 			stopLayerMotions();
+			deactivateVideo();
 			return;
 		}
 
-		prepareCarouselMedia(images);
+		prepareCarouselMedia(media);
 
 		if (runtime.activeGroup !== state.assetGroup || themeChanged) {
 			runtime.activeGroup = state.assetGroup;
 			runtime.activeIndex = 0;
-			showImage(images[0], true);
+			showMedia(media[0], true);
 			layers[runtime.activeLayer]?.setAttribute("fetchpriority", "high");
-			preloadNext(images, 0);
+			preloadNext(media, 0);
 		}
 
-		if (state.rotate && !document.hidden) scheduleRotation(images);
+		if (state.rotate && !document.hidden) scheduleRotation(media);
 		else stopRotation();
 	}
 
@@ -965,8 +1124,12 @@ const initialMobileBanner = page === "home";
 			document.addEventListener("visibilitychange", () => {
 					if (document.hidden) {
 						pauseLayerMotions();
+						videoEl?.pause();
 					} else {
 						resumeLayerMotions();
+						if (videoEl?.classList.contains("banner-stage__video--active")) {
+							void videoEl.play().catch(() => {});
+						}
 					}
 					syncBanner();
 				});
@@ -980,6 +1143,34 @@ const initialMobileBanner = page === "home";
 				scheduleNavigationSync(true);
 			});
 			document.fonts?.ready.then(scheduleContextTitleFit);
+		}
+
+		// 滚动渐模糊：hero 壁纸随页面下滚轻微增强模糊与微缩放（rAF 合帧、
+		// reduced-motion 直接不绑定），滚动出横幅后不再更新
+		if (stage?.dataset.scrollBlurEnabled === "true") {
+			const maxBlur = Number.parseFloat(stage.dataset.scrollBlurMax || "12") || 12;
+			const range = Math.max(window.innerHeight * 0.4, 1);
+			let blurFrame: number | null = null;
+			const updateBlur = () => {
+				blurFrame = null;
+				if (stage.hidden) {
+					stage.style.setProperty("--banner-blur", "0px");
+					stage.style.setProperty("--banner-blur-scale", "1");
+					return;
+				}
+				const progress = Math.min(Math.max(window.scrollY / range, 0), 1);
+				const eased = 1 - Math.pow(1 - progress, 2);
+				stage.style.setProperty("--banner-blur", `${(eased * maxBlur).toFixed(2)}px`);
+				stage.style.setProperty("--banner-blur-scale", (1 + eased * 0.024).toFixed(4));
+			};
+			window.addEventListener(
+				"scroll",
+				() => {
+					if (prefersReducedMotion()) return;
+					if (blurFrame === null) blurFrame = window.requestAnimationFrame(updateBlur);
+				},
+				{ passive: true },
+			);
 		}
 	}
 </script>
@@ -1001,7 +1192,15 @@ const initialMobileBanner = page === "home";
 			position: absolute
 			inset: 0
 
-		.banner-stage__image
+		/* 滚动渐模糊：滤镜与微缩放施加在媒体容器上（不干扰子层运镜动画），
+		   放大后的溢出部分由 .banner-stage 的 overflow:hidden 裁掉，
+		   恰好消除 blur 边缘的透明毛边 */
+		.banner-stage__media
+			filter: blur(var(--banner-blur, 0px))
+			transform: scale(var(--banner-blur-scale, 1))
+
+		.banner-stage__image,
+		.banner-stage__video
 			position: absolute
 			inset: 0
 			width: 100%
@@ -1011,10 +1210,12 @@ const initialMobileBanner = page === "home";
 			will-change: opacity, transform
 			transform-origin: center center
 
-		.banner-stage__image--fading
+		.banner-stage__image--fading,
+		.banner-stage__video--fading
 			transition: opacity var(--banner-fade-duration, 1200ms) var(--m3e-easing-standard)
 
-		.banner-stage__image--active
+		.banner-stage__image--active,
+		.banner-stage__video--active
 			opacity: 1
 
 		.banner-stage__scrim

@@ -80,6 +80,12 @@ export const CONFIG_DOMAINS = Object.freeze([
 		module: "@/types/commentConfig",
 	},
 	{
+		key: "cover",
+		file: "cover",
+		type: "CoverConfig",
+		module: "@/types/coverConfig",
+	},
+	{
 		key: "contextMenu",
 		file: "context-menu",
 		type: "ContextMenuConfig",

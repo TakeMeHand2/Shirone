@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { resolvePostCoverImage } from "@utils/cover-utils";
 import { getPostUrl } from "@utils/url-utils";
 import { POST_CARD_MIN_WIDTH, postListConfig } from "@/config/postListConfig";
 import PostCard from "./PostCard.astro";
@@ -36,7 +37,7 @@ const { mode, cover, cardWidth } = postListConfig.layout;
                 updated={entry.data.updated}
                 pinned={entry.data.pinned}
                 url={getPostUrl(entry)}
-                image={entry.data.image}
+                image={resolvePostCoverImage(entry)}
                 description={entry.data.description}
                 draft={entry.data.draft}
                 class:list="onload-animation"

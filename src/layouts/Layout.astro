@@ -26,7 +26,11 @@ import {
 	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT,
 } from "../constants/constants";
 import { defaultFavicons } from "../constants/icon";
-import type { BannerSourceValue, Favicon } from "../types/config";
+import type {
+	BannerSourceItem,
+	BannerSourceValue,
+	Favicon,
+} from "../types/config";
 import { createFontRoleStyle } from "../utils/font-options";
 import { resolvePageWidth } from "../utils/responsive-utils";
 import "../styles/main.css";
@@ -57,9 +61,12 @@ const canonicalUrl = Astro.site
 	? new URL(Astro.url.pathname + Astro.url.search, Astro.site)
 	: Astro.url;
 function getFirstBannerImage(source: BannerSourceValue | undefined): string {
+	// og:image 只取图片项；视频项回退其海报帧
+	const pick = (item: BannerSourceItem): string =>
+		typeof item === "string" ? item : (item.poster ?? "");
 	if (!source) return "";
-	if (Array.isArray(source)) return source[0] || "";
-	return source.light[0] || source.dark[0] || "";
+	if (Array.isArray(source)) return pick(source[0] ?? "");
+	return pick(source.light[0] ?? "") || pick(source.dark[0] ?? "");
 }
 
 function hasBannerImages(source: BannerSourceValue | undefined): boolean {

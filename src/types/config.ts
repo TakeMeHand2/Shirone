@@ -23,11 +23,23 @@ export type DisplaySettingsConfig = {
 };
 
 export type BannerThemeSource = {
-	light: string[];
-	dark: string[];
+	light: BannerSourceItem[];
+	dark: BannerSourceItem[];
 };
 
-export type BannerSourceValue = string[] | BannerThemeSource;
+/** 轮播序列中的单个媒体项：图片路径或视频项 */
+export type BannerSourceItem =
+	/** 图片：src/assets 相对路径、/public 绝对路径或远程 URL */
+	| string
+	/** 视频项：与图片混排进轮播序列（静音循环播放） */
+	| {
+			/** 视频资源地址（mp4/webm，/public 绝对路径或远程 URL） */
+			video: string;
+			/** 海报帧图片（视频缓冲期 / reduced-motion 回退画面，走图片优化管线） */
+			poster?: string;
+	  };
+
+export type BannerSourceValue = BannerSourceItem[] | BannerThemeSource;
 
 export type BannerConfig = {
 	src: {
@@ -69,6 +81,12 @@ export type BannerConfig = {
 			| "pan-left"
 			| "pan-right"
 			| "none";
+	};
+	/** 滚动渐模糊：页面下滚时对 hero 壁纸施加轻微递增模糊，增强滚动层次（reduced-motion 自动禁用） */
+	scrollBlur?: {
+		enable: boolean;
+		/** 模糊上限（px，默认 12） */
+		maxBlur?: number;
 	};
 	waves: {
 		enable: boolean;
