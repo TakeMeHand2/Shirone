@@ -787,6 +787,8 @@ const initialMobileBanner = page === "home";
 			videoEl.poster = item.poster ?? "";
 			videoEl.style.objectPosition = stage?.dataset.position || "center";
 		}
+		// 混排轮播下不循环（播完即由计时器切下一项）；单视频壁纸保持循环
+		videoEl.loop = getActiveMedia(currentViewport()).length <= 1;
 		const activate = () => {
 			if (!videoEl || videoEl.src !== resolveImageUrl(item.src)) return;
 			if (immediate) {
@@ -800,6 +802,16 @@ const initialMobileBanner = page === "home";
 			void videoEl.play().catch(() => {
 				// 自动播放被拒绝时保持海报帧画面
 			});
+			// 轮播计时按视频真实时长对齐（长视频不被固定 interval 截断）
+			if (Number.isFinite(videoEl.duration) && videoEl.duration > 0) {
+				alignTimerToVideoDuration();
+			} else {
+				videoEl.addEventListener(
+					"loadedmetadata",
+					() => alignTimerToVideoDuration(),
+					{ once: true },
+				);
+			}
 		};
 		if (videoEl.readyState >= 2) {
 			activate();
@@ -879,13 +891,51 @@ const initialMobileBanner = page === "home";
 
 	function scheduleRotation(media: BannerMediaItem[]) {
 		stopRotation();
-		const delay = Number.parseInt(stage?.dataset.carouselInterval || "6000", 10);
-		runtime.timer = window.setTimeout(() => {
-			runtime.activeIndex = (runtime.activeIndex + 1) % media.length;
-			showMedia(media[runtime.activeIndex], false);
-			preloadNext(media, runtime.activeIndex);
-			syncBanner();
-		}, delay);
+		const delay = resolveRotationDelay(media);
+		runtime.timer = window.setTimeout(advanceCarousel, delay);
+	}
+
+	/** 当前项为视频且时长已知时，按视频时长计时；否则使用配置的固定 interval */
+	function resolveRotationDelay(media: BannerMediaItem[]): number {
+		const interval = Number.parseInt(stage?.dataset.carouselInterval || "6000", 10);
+		const current = media[runtime.activeIndex];
+		if (
+			current?.kind === "video" &&
+			videoEl &&
+			videoEl.src === resolveImageUrl(current.src) &&
+			Number.isFinite(videoEl.duration) &&
+			videoEl.duration > 0
+		) {
+			return Math.max(
+				videoEl.duration * 1000 - getFadeDuration(),
+				interval,
+			);
+		}
+		return interval;
+	}
+
+	/** 轮播推进：切到序列下一项并重新计时 */
+	function advanceCarousel() {
+		const media = getActiveMedia(currentViewport());
+		if (media.length === 0) return;
+		runtime.activeIndex = (runtime.activeIndex + 1) % media.length;
+		showMedia(media[runtime.activeIndex], false);
+		preloadNext(media, runtime.activeIndex);
+		syncBanner();
+	}
+
+	/**
+	 * 视频项的时长感知轮换：以视频自身时长替换固定 interval 计时，
+	 * 避免 MAD 类长视频被轮播间隔截断；时长不可得时回退 interval。
+	 */
+	function alignTimerToVideoDuration() {
+		if (!videoEl || runtime.timer === null) return;
+		const duration = videoEl.duration;
+		if (!Number.isFinite(duration) || duration <= 0) return;
+		const fadeDuration = getFadeDuration();
+		const delay = Math.max(duration * 1000 - fadeDuration, getCarouselInterval());
+		window.clearTimeout(runtime.timer);
+		runtime.timer = window.setTimeout(advanceCarousel, delay);
 	}
 
 	function canAnimateBannerContext(): boolean {

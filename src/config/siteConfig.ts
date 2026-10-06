@@ -60,7 +60,17 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		// 静音循环自动播放（建议 mp4/webm 放 public/videos/），poster 为
 		// 缓冲期与 reduced-motion 回退画面（走图片优化管线）。
 		src: {
-			desktop: ["assets/images/banner/desktop/12.webp"],
+			desktop: [
+				{
+					video: "/videos/mad-2k60fps.webm",
+					poster: "assets/images/banner/desktop/12.webp",
+				},
+				"assets/images/banner/desktop/12.webp",
+				"assets/images/banner/desktop/6.webp",
+				"assets/images/banner/desktop/7.webp",
+				"assets/images/banner/desktop/8.webp",
+				"assets/images/banner/desktop/10.webp",
+			],
 			mobile: ["assets/images/banner/mobile/6.webp"],
 		},
 		// 图片裁切焦点："top"、"center" 或 "bottom"。
