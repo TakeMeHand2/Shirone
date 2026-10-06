@@ -2,13 +2,16 @@
 import { Font } from "astro:assets";
 import Snackbar from "@components/atoms/overlay/Snackbar.svelte";
 import ConfigCarrier from "@components/system/ConfigCarrier.astro";
+import Live2dWidget from "@components/system/Live2dWidget.astro";
 import UmamiRuntime from "@components/system/UmamiRuntime.astro";
 import { resolveAsset } from "@utils/asset-utils";
 import { pathsEqual, toAbsoluteUrl, url } from "@utils/url-utils";
 import {
 	expressiveCodeConfig,
+	live2dConfig,
 	profileConfig,
 	resolvedFontOptions,
+	resolveLive2dOptions,
 	resolveTextureOptions,
 	resolveUmamiOptions,
 	siteConfig,
@@ -94,6 +97,7 @@ const defaultTexturePreset = textureOptions.defaultPreset;
 const defaultTextureOpacity = textureOptions.defaultOpacity;
 const textureEnabled = textureOptions.enable;
 const umamiOptions = resolveUmamiOptions(umamiConfig);
+const live2dOptions = resolveLive2dOptions(live2dConfig);
 
 const hasDesktopBanner = hasBannerImages(siteConfig.banner.src.desktop);
 const hasMobileBanner = hasBannerImages(siteConfig.banner.src.mobile);
@@ -238,6 +242,7 @@ const hasMonoFont =
 	>
 		<ConfigCarrier></ConfigCarrier>
 		{umamiOptions && <UmamiRuntime />}
+		{live2dOptions && <Live2dWidget options={live2dOptions} />}
 		{textureEnabled && (
 			<div
 				id="m3e-texture-canvas"

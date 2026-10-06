@@ -1,0 +1,67 @@
+---
+// Optional Live2D mascot runtime (oh-my-live2d); mounted once in the persistent layout shell.
+// The SDK never enters the bundle: the bootstrap script only injects scriptUrl
+// (self-hosted under public/live2d/ by default) when live2dConfig resolves,
+// and the stage container attaches to <body>, so it persists across Swup page swaps.
+import type { ResolvedLive2dOptions } from "@/types/live2dConfig";
+
+interface Props {
+	options: ResolvedLive2dOptions;
+}
+
+const { options } = Astro.props;
+
+// oml2d 自己的定位逻辑会覆盖 stageStyle 的水平偏移，这里把配置里的
+// 偏移值转成 !important 规则强制生效（如为 FAB 通道让位时必需）。
+const stageStyle = options.options.stageStyle as
+	| Record<string, string>
+	| undefined;
+const stageFixRules = [
+	["right", stageStyle?.right],
+	["left", stageStyle?.left],
+	["bottom", stageStyle?.bottom],
+]
+	.filter(([, value]) => typeof value === "string" && value)
+	.map(([prop, value]) => `#oml2d-stage{${prop}:${value}!important}`)
+	.join("");
+---
+
+{stageFixRules && <style is:inline set:html={stageFixRules} />}
+
+<script is:inline define:vars={{ live2dScriptUrl: options.scriptUrl, live2dOptions: options.options }}>
+	(() => {
+		if (window.__shironeLive2dBooted) return;
+		window.__shironeLive2dBooted = true;
+
+		const boot = () => {
+			// 防御：SDK 脚本已存在（外部注入/重复挂载）则不重复注入
+			if (document.querySelector("script[data-shirone-live2d]")) return;
+			const script = document.createElement("script");
+			script.src = live2dScriptUrl;
+			script.async = true;
+			script.dataset.shironeLive2d = "";
+			script.onerror = () => {
+				console.warn("[shirone] Live2D SDK 加载失败：", live2dScriptUrl);
+			};
+			script.onload = () => {
+				try {
+					const stage = window.OML2D?.loadOml2d?.(live2dOptions);
+					if (stage && typeof stage.catch === "function") {
+						stage.catch((error) => {
+							console.warn("[shirone] Live2D 初始化失败：", error);
+						});
+					}
+				} catch (error) {
+					console.warn("[shirone] Live2D 初始化失败：", error);
+				}
+			};
+			document.head.appendChild(script);
+		};
+
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", boot, { once: true });
+		} else {
+			boot();
+		}
+	})();
+</script>
