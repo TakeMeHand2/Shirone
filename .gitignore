@@ -74,3 +74,6 @@ artifacts/lighthouse/*
 
 # generated AI skills plugin packages
 artifacts/shirone-ai-*
+
+# video2code plugin workspace artifact
+.v2c/
