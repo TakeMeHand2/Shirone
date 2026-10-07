@@ -61,15 +61,15 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		// 缓冲期与 reduced-motion 回退画面（走图片优化管线）。
 		src: {
 			// 纯视频壁纸：静音循环自动播放；poster 为缓冲期 / reduced-motion 回退画面
-			// （走图片优化管线），与视频同源抽帧，衔接无跳变。
-			// 移动端（<1024px 首页）不用视频：同帧竖幅裁切作静帧壁纸，省流量保首屏。
+			// （走图片优化管线），与视频同源抽帧（9.5s 明亮特写）。
+			// 移动端（<1024px 首页）不用视频：沿用独立上传的竖幅壁纸静帧，省流量保首屏。
 			desktop: [
 				{
 					video: "/videos/mad-1440p.webm",
 					poster: "assets/images/banner/desktop/mad-poster.webp",
 				},
 			],
-			mobile: ["assets/images/banner/mobile/mad-poster.webp"],
+			mobile: ["assets/images/banner/mobile/6.webp"],
 		},
 		// 图片裁切焦点："top"、"center" 或 "bottom"。
 		position: "center",
