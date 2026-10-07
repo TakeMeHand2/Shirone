@@ -31,6 +31,15 @@ export const live2dConfig: Live2dConfig = withUserConfig("live2d", {
 			right: "104px",
 			bottom: "0px",
 		},
+		// 关闭 oml2d 自带的悬浮菜单（休息/换装/切换模型/关于）：
+		// 单模型站点下均无实用价值，「关于」还会跳转外站
+		menus: { disable: true },
+		// SDK 把模型画布硬编码为舞台内 z-index:9998，而对话框气泡（tips）没有 z-index，
+		// 会被人物挡住；经 tips.style 透传为气泡内联样式，须取更高值才能盖过画布
+		tips: {
+			style: { zIndex: "9999" },
+			mobileStyle: { zIndex: "9999" },
+		},
 		models: [
 			{
 				path: "/live2d/ds-whale/c_0120.model3.json",
