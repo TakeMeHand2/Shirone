@@ -120,5 +120,24 @@ const stageFixRules = [
 		} else {
 			schedule();
 		}
+
+		// 舞台是装饰性内容（无交互控件、无 aria-live，菜单已禁用），从无障碍树隐藏，
+		// 免得读屏器停在空画布上。代价：加载失败时 SDK 状态条里的「重新加载」按钮
+		// 对读屏器不可见——装饰性挂件可接受。SDK 每次 reload 会重建舞台元素，
+		// 故用观察器持续兜底（改属性不触发 childList，不会自激）。
+		const markStageDecorative = (node) => {
+			if (!(node instanceof Element)) return;
+			const stage =
+				node.id === "oml2d-stage"
+					? node
+					: node.querySelector("#oml2d-stage");
+			if (stage) stage.setAttribute("aria-hidden", "true");
+		};
+		markStageDecorative(document.body);
+		new MutationObserver((records) => {
+			for (const record of records) {
+				for (const node of record.addedNodes) markStageDecorative(node);
+			}
+		}).observe(document.body, { childList: true });
 	})();
 </script>
