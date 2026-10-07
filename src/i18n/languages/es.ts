@@ -22,7 +22,6 @@ export const es: Translation = {
 	[Key.moments]: "Momentos",
 	[Key.momentsNoResults]: "No hay momentos que coincidan con los filtros",
 	[Key.momentsBanner]: "Notas cortas — vida, trabajo y pequeñas alegrías.",
-	[Key.momentsCount]: "momento",
 	[Key.momentsCounts]: "momentos",
 	[Key.pinned]: "Fijado",
 	[Key.loadMore]: "Cargar más",
@@ -37,13 +36,6 @@ export const es: Translation = {
 	[Key.animeStatusPlanned]: "Planeado",
 	[Key.animeStatusOnHold]: "En pausa",
 	[Key.animeStatusDropped]: "Abandonado",
-	[Key.animeSourceLocal]: "Colección local",
-	[Key.animeSourceBangumi]: "Bangumi",
-	[Key.animeSourceBilibili]: "Bilibili",
-	[Key.animeProviderUnavailable]: "Fuente de datos no disponible temporalmente",
-	[Key.animeProviderStale]: "Usando instantánea en caché",
-	[Key.animeConfigMissingBangumi]: "ID de usuario de Bangumi no configurado",
-	[Key.animeConfigMissingBilibili]: "UID de Bilibili no configurado",
 	[Key.animeSyncEmpty]: "No se encontraron animes en esta fuente de datos",
 
 	[Key.compass]: "Brújula",
@@ -164,16 +156,10 @@ export const es: Translation = {
 	[Key.seriesPrevInSeries]: "Anterior en la serie",
 	[Key.seriesNextInSeries]: "Siguiente en la serie",
 	[Key.seriesViewAll]: "Ver todas las series",
-	[Key.recentPosts]: "Publicaciones recientes",
 	[Key.tableOfContents]: "Tabla de contenidos",
 	[Key.formulaScrollable]: "Fórmula con desplazamiento horizontal",
-	[Key.fieldRequired]: "Obligatorio",
-	[Key.fieldOptional]: "Opcional",
-	[Key.fieldDeprecated]: "Obsoleto",
 	[Key.codeBlockExpand]: "Expandir bloque de código",
 	[Key.codeBlockCollapse]: "Contraer bloque de código",
-	[Key.codeTreeExpand]: "Expandir árbol de código",
-	[Key.codeTreeCollapse]: "Cerrar vista ampliada",
 	[Key.announcement]: "Anuncio",
 	[Key.announcementClose]: "Cerrar anuncio",
 
@@ -183,7 +169,6 @@ export const es: Translation = {
 	[Key.commentsRequiresJavaScript]:
 		"Los comentarios requieren JavaScript para mostrarse",
 
-	[Key.untitled]: "Sin título",
 	[Key.uncategorized]: "Sin categoría",
 	[Key.noTags]: "Sin etiquetas",
 
@@ -323,15 +308,9 @@ export const es: Translation = {
 	[Key.texturePresetTopography]: "Topografía",
 	[Key.texturePresetGeometric]: "Geométrico",
 	[Key.texturePresetSakura]: "Pétalos de sakura",
-	[Key.textureOpacity]: "Intensidad de textura",
 	[Key.layoutMode]: "Diseño",
 	[Key.layoutList]: "Lista",
 	[Key.layoutGrid]: "Cuadrícula",
-	[Key.resetConfirmTitle]: "¿Restablecer tema?",
-	[Key.resetConfirmMessage]:
-		"Se restaurarán el tono, estilo de color y especificación predeterminados.",
-	[Key.cancel]: "Cancelar",
-	[Key.reset]: "Restablecer",
 
 	[Key.rss]: "Canal RSS",
 	[Key.rssSubtitle]: "Suscríbete a los últimos artículos con un lector RSS",

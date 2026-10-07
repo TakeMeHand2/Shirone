@@ -23,7 +23,6 @@ export const ja: Translation = {
 	[Key.momentsNoResults]: "条件に一致するモーメンツはありません",
 	[Key.momentsBanner]:
 		"ふとした瞬間を気軽に記録 —— 日々、制作、そして小さな幸せ。",
-	[Key.momentsCount]: "件",
 	[Key.momentsCounts]: "件",
 	[Key.pinned]: "ピン留め",
 	[Key.loadMore]: "もっと見る",
@@ -38,13 +37,6 @@ export const ja: Translation = {
 	[Key.animeStatusPlanned]: "未視聴",
 	[Key.animeStatusOnHold]: "保留中",
 	[Key.animeStatusDropped]: "中止",
-	[Key.animeSourceLocal]: "ローカルコレクション",
-	[Key.animeSourceBangumi]: "Bangumi 番組計画",
-	[Key.animeSourceBilibili]: "ビリビリ (Bilibili)",
-	[Key.animeProviderUnavailable]: "データソースは現在利用できません",
-	[Key.animeProviderStale]: "キャッシュスナップショットを使用中",
-	[Key.animeConfigMissingBangumi]: "Bangumi ユーザーIDが未設定です",
-	[Key.animeConfigMissingBilibili]: "Bilibili UIDが未設定です",
 	[Key.animeSyncEmpty]: "このデータソースにはアニメがありません",
 
 	[Key.compass]: "サイト羅針盤",
@@ -161,16 +153,10 @@ export const ja: Translation = {
 	[Key.seriesPrevInSeries]: "シリーズ内の前の記事",
 	[Key.seriesNextInSeries]: "シリーズ内の次の記事",
 	[Key.seriesViewAll]: "すべてのシリーズを見る",
-	[Key.recentPosts]: "最近の投稿",
 	[Key.tableOfContents]: "目次",
 	[Key.formulaScrollable]: "横スクロール可能な数式",
-	[Key.fieldRequired]: "必須",
-	[Key.fieldOptional]: "任意",
-	[Key.fieldDeprecated]: "非推奨",
 	[Key.codeBlockExpand]: "コードブロックを展開",
 	[Key.codeBlockCollapse]: "コードブロックを折りたたむ",
-	[Key.codeTreeExpand]: "コードツリーを拡大",
-	[Key.codeTreeCollapse]: "拡大表示を閉じる",
 	[Key.announcement]: "お知らせ",
 	[Key.announcementClose]: "告知を閉じる",
 
@@ -180,7 +166,6 @@ export const ja: Translation = {
 	[Key.commentsRequiresJavaScript]:
 		"コメントを表示するには JavaScript を有効にしてください",
 
-	[Key.untitled]: "タイトルなし",
 	[Key.uncategorized]: "カテゴリなし",
 	[Key.noTags]: "タグなし",
 
@@ -321,14 +306,9 @@ export const ja: Translation = {
 	[Key.texturePresetTopography]: "等高線ウェーブ",
 	[Key.texturePresetGeometric]: "ジオメトリック",
 	[Key.texturePresetSakura]: "桜・花びら",
-	[Key.textureOpacity]: "テクスチャ濃度",
 	[Key.layoutMode]: "レイアウト",
 	[Key.layoutList]: "リスト",
 	[Key.layoutGrid]: "グリッド",
-	[Key.resetConfirmTitle]: "テーマをリセットしますか？",
-	[Key.resetConfirmMessage]: "既定の色相・配色スタイル・配色仕様に戻ります。",
-	[Key.cancel]: "キャンセル",
-	[Key.reset]: "リセット",
 
 	[Key.rss]: "RSS フィード",
 	[Key.rssSubtitle]: "RSS リーダーで最新記事を購読",

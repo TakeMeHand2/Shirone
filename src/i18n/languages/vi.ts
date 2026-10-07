@@ -23,7 +23,6 @@ export const vi: Translation = {
 	[Key.momentsNoResults]: "Không có khoảnh khắc nào khớp bộ lọc",
 	[Key.momentsBanner]:
 		"Ghi chú ngắn — cuộc sống, công việc và những niềm vui nhỏ.",
-	[Key.momentsCount]: "khoảnh khắc",
 	[Key.momentsCounts]: "khoảnh khắc",
 	[Key.pinned]: "Ghim",
 	[Key.loadMore]: "Tải thêm",
@@ -38,13 +37,6 @@ export const vi: Translation = {
 	[Key.animeStatusPlanned]: "Dự định xem",
 	[Key.animeStatusOnHold]: "Tạm dừng",
 	[Key.animeStatusDropped]: "Đã bỏ",
-	[Key.animeSourceLocal]: "Bộ sưu tập cục bộ",
-	[Key.animeSourceBangumi]: "Bangumi",
-	[Key.animeSourceBilibili]: "Bilibili",
-	[Key.animeProviderUnavailable]: "Nguồn dữ liệu hiện không khả dụng",
-	[Key.animeProviderStale]: "Đang sử dụng bản lưu tạm (snapshot)",
-	[Key.animeConfigMissingBangumi]: "Chưa cấu hình ID người dùng Bangumi",
-	[Key.animeConfigMissingBilibili]: "Chưa cấu hình UID Bilibili",
 	[Key.animeSyncEmpty]: "Không tìm thấy anime nào trong nguồn dữ liệu này",
 
 	[Key.compass]: "La bàn",
@@ -165,16 +157,10 @@ export const vi: Translation = {
 	[Key.seriesPrevInSeries]: "Bài trước trong loạt bài",
 	[Key.seriesNextInSeries]: "Bài tiếp theo trong loạt bài",
 	[Key.seriesViewAll]: "Xem tất cả loạt bài",
-	[Key.recentPosts]: "Bài viết mới nhất",
 	[Key.tableOfContents]: "Mục lục",
 	[Key.formulaScrollable]: "Công thức có thể cuộn ngang",
-	[Key.fieldRequired]: "Bắt buộc",
-	[Key.fieldOptional]: "Tùy chọn",
-	[Key.fieldDeprecated]: "Đã lỗi thời",
 	[Key.codeBlockExpand]: "Mở rộng khối mã",
 	[Key.codeBlockCollapse]: "Thu gọn khối mã",
-	[Key.codeTreeExpand]: "Mở rộng cây mã",
-	[Key.codeTreeCollapse]: "Đóng chế độ mở rộng",
 	[Key.announcement]: "Thông báo",
 	[Key.announcementClose]: "Đóng thông báo",
 
@@ -183,7 +169,6 @@ export const vi: Translation = {
 	[Key.commentsLoadFailed]: "Không thể tải bình luận",
 	[Key.commentsRequiresJavaScript]: "Bình luận yêu cầu JavaScript để hiển thị",
 
-	[Key.untitled]: "Không tiêu đề",
 	[Key.uncategorized]: "Chưa phân loại",
 	[Key.noTags]: "Chưa có thẻ",
 
@@ -323,15 +308,9 @@ export const vi: Translation = {
 	[Key.texturePresetTopography]: "Đường đồng mức",
 	[Key.texturePresetGeometric]: "Hình học",
 	[Key.texturePresetSakura]: "Cánh hoa anh đào",
-	[Key.textureOpacity]: "Độ đậm họa tiết",
 	[Key.layoutMode]: "Bố cục",
 	[Key.layoutList]: "Danh sách",
 	[Key.layoutGrid]: "Lưới",
-	[Key.resetConfirmTitle]: "Đặt lại chủ đề?",
-	[Key.resetConfirmMessage]:
-		"Sẽ khôi phục hue, phong cách màu và đặc tả màu mặc định.",
-	[Key.cancel]: "Hủy",
-	[Key.reset]: "Đặt lại",
 
 	[Key.rss]: "Nguồn cấp RSS",
 	[Key.rssSubtitle]: "Đăng ký nhận bài viết mới nhất qua trình đọc RSS",

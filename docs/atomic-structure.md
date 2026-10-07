@@ -28,7 +28,7 @@
 
 | 目录 | 职责 | 引用方 |
 |---|---|---|
-| `system/` | 全局基础设施（ConfigCarrier、GlobalStyles） | 仅 templates（layouts） |
+| `system/` | 全局基础设施（ConfigCarrier、Live2dWidget） | 仅 templates（layouts） |
 | `content/` | 内容渲染器（Markdown 正文） | 仅 pages |
 
 ---
@@ -117,7 +117,7 @@
 | atoms/ | 63 个原子组件（Button、Chip、IconButton、FAB、FABMenu、Slider、SegmentedButton、TextField、Switch、Checkbox、RadioButton、Dialog、Menu、Badge、Divider、Snackbar、Tabs、Select、DataTable、SearchView、Autocomplete、SheetSide、Carousel、PullToRefresh、DatePicker、TimePicker、Chips、Banner、Tooltip、Card、AppBar、NavigationBar/Rail/Drawer、ExposedDropdownMenu、ListItem、LoadingIndicator、ProgressIndicator、AlertDialog、BadgedBox、SplitButton、ToggleButton、ButtonGroup、SearchBar、DateInput、FloatingToolbar、BottomSheet 等；完整清单与 tier 见 `atoms/manifest.json`） |
 | molecules/ | PageHeader、SectionTitle、ButtonLink、ButtonTag、Tags、Categories、Series、Announcement、SiteStats、Calendar、CalendarView、AnimeCard、CompassTile、PostMeta、SeriesCard、SearchBar、SidebarTOC、FloatingActionButton、FloatingTOCPanel、WidgetLayout、ImageWrapper、License、Pagination、FriendCard、MomentCard、MomentGallery、AlbumCard、LastUpdatedNotice、ArticleDiscoveryItem、SkillCard、ProjectCard、TimelineCard、GameCard、BannerWaves、MermaidDiagramViewer |
 | organisms/ | TopAppBar、SideBar、Footer、Search、PostCard、PostPage、FloatingControls、ArchivePanel、DisplaySettings、Profile、LightDarkSwitch、SiteNavigationDrawer、RouteProgress、CategoryBar、BackToTop、BannerStage、FriendSection、MomentSection、AnimeSection、CompassSection、AlbumSection、AlbumGallery、PasswordGate、ProtectedAlbum、EncryptedContent、ProtectedPost、ArticleDiscovery、ArticleShare、SkillSection、ProjectSection、TimelineSection、GamesSection、MusicSidebar |
-| system/ | ConfigCarrier、GlobalStyles |
+| system/ | ConfigCarrier、Live2dWidget |
 | content/ | Markdown |
 | layouts/ | Layout、MainGridLayout |
 | pages/ | 首页、archive、friends、moments、about、posts/[...slug]、[…page] 等路由 |

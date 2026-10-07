@@ -22,7 +22,6 @@ export const tr: Translation = {
 	[Key.moments]: "Anlar",
 	[Key.momentsNoResults]: "Filtrelerle eşleşen an yok",
 	[Key.momentsBanner]: "Kısa notlar — hayat, iş ve küçük mutluluklar.",
-	[Key.momentsCount]: "an",
 	[Key.momentsCounts]: "an",
 	[Key.pinned]: "Sabitlenen",
 	[Key.loadMore]: "Daha fazla yükle",
@@ -37,13 +36,6 @@ export const tr: Translation = {
 	[Key.animeStatusPlanned]: "Planlandı",
 	[Key.animeStatusOnHold]: "Beklemede",
 	[Key.animeStatusDropped]: "Bırakıldı",
-	[Key.animeSourceLocal]: "Yerel Koleksiyon",
-	[Key.animeSourceBangumi]: "Bangumi",
-	[Key.animeSourceBilibili]: "Bilibili",
-	[Key.animeProviderUnavailable]: "Veri kaynağı şu anda kullanılamıyor",
-	[Key.animeProviderStale]: "Önbelleğe alınmış anlık görüntü kullanılıyor",
-	[Key.animeConfigMissingBangumi]: "Bangumi kullanıcı kimliği yapılandırılmadı",
-	[Key.animeConfigMissingBilibili]: "Bilibili UID yapılandırılmadı",
 	[Key.animeSyncEmpty]: "Bu veri kaynağında anime öğesi bulunamadı",
 
 	[Key.compass]: "Pusula",
@@ -164,16 +156,10 @@ export const tr: Translation = {
 	[Key.seriesPrevInSeries]: "Seride önceki",
 	[Key.seriesNextInSeries]: "Seride sonraki",
 	[Key.seriesViewAll]: "Tüm serileri görüntüle",
-	[Key.recentPosts]: "Son Paylaşımlar",
 	[Key.tableOfContents]: "İçindekiler",
 	[Key.formulaScrollable]: "Yatay kaydırılabilir formül",
-	[Key.fieldRequired]: "Zorunlu",
-	[Key.fieldOptional]: "İsteğe bağlı",
-	[Key.fieldDeprecated]: "Kullanımdan kaldırıldı",
 	[Key.codeBlockExpand]: "Kod bloğunu genişlet",
 	[Key.codeBlockCollapse]: "Kod bloğunu daralt",
-	[Key.codeTreeExpand]: "Kod ağacını genişlet",
-	[Key.codeTreeCollapse]: "Genişletilmiş görünümü kapat",
 	[Key.announcement]: "Duyuru",
 	[Key.announcementClose]: "Duyuruyu Kapat",
 
@@ -183,7 +169,6 @@ export const tr: Translation = {
 	[Key.commentsRequiresJavaScript]:
 		"Yorumların gösterilmesi için JavaScript etkinleştirilmelidir",
 
-	[Key.untitled]: "Başlıksız",
 	[Key.uncategorized]: "Katagorisiz",
 	[Key.noTags]: "Tag Bulunamadı",
 
@@ -324,15 +309,9 @@ export const tr: Translation = {
 	[Key.texturePresetTopography]: "Topografya",
 	[Key.texturePresetGeometric]: "Geometrik",
 	[Key.texturePresetSakura]: "Sakura Yaprakları",
-	[Key.textureOpacity]: "Doku Yoğunluğu",
 	[Key.layoutMode]: "Düzen",
 	[Key.layoutList]: "Liste",
 	[Key.layoutGrid]: "Izgara",
-	[Key.resetConfirmTitle]: "Tema sıfırlansın mı?",
-	[Key.resetConfirmMessage]:
-		"Varsayılan renk tonu, renk stili ve renk spesifikasyonu geri yüklenecek.",
-	[Key.cancel]: "İptal",
-	[Key.reset]: "Sıfırla",
 
 	[Key.rss]: "RSS Akışı",
 	[Key.rssSubtitle]: "RSS okuyucu ile en son yazılara abone olun",

@@ -23,7 +23,6 @@ export const id: Translation = {
 	[Key.momentsNoResults]: "Tidak ada momen yang cocok dengan filter",
 	[Key.momentsBanner]:
 		"Catatan singkat — kehidupan, karya, dan kebahagiaan kecil.",
-	[Key.momentsCount]: "momen",
 	[Key.momentsCounts]: "momen",
 	[Key.pinned]: "Disematkan",
 	[Key.loadMore]: "Muat lainnya",
@@ -38,13 +37,6 @@ export const id: Translation = {
 	[Key.animeStatusPlanned]: "Direncanakan",
 	[Key.animeStatusOnHold]: "Ditunda",
 	[Key.animeStatusDropped]: "Ditinggalkan",
-	[Key.animeSourceLocal]: "Koleksi Lokal",
-	[Key.animeSourceBangumi]: "Bangumi",
-	[Key.animeSourceBilibili]: "Bilibili",
-	[Key.animeProviderUnavailable]: "Sumber data sedang tidak tersedia",
-	[Key.animeProviderStale]: "Menggunakan snapshot cache",
-	[Key.animeConfigMissingBangumi]: "ID pengguna Bangumi belum dikonfigurasi",
-	[Key.animeConfigMissingBilibili]: "UID Bilibili belum dikonfigurasi",
 	[Key.animeSyncEmpty]: "Tidak ada anime yang ditemukan di sumber data ini",
 
 	[Key.compass]: "Kompas",
@@ -166,16 +158,10 @@ export const id: Translation = {
 	[Key.seriesPrevInSeries]: "Sebelumnya di seri",
 	[Key.seriesNextInSeries]: "Berikutnya di seri",
 	[Key.seriesViewAll]: "Lihat semua seri",
-	[Key.recentPosts]: "Postingan Terbaru",
 	[Key.tableOfContents]: "Daftar Isi",
 	[Key.formulaScrollable]: "Rumus yang dapat digulir secara horizontal",
-	[Key.fieldRequired]: "Wajib",
-	[Key.fieldOptional]: "Opsional",
-	[Key.fieldDeprecated]: "Usang",
 	[Key.codeBlockExpand]: "Perluas blok kode",
 	[Key.codeBlockCollapse]: "Ciutkan blok kode",
-	[Key.codeTreeExpand]: "Perluas pohon kode",
-	[Key.codeTreeCollapse]: "Tutup tampilan diperluas",
 	[Key.announcement]: "Pengumuman",
 	[Key.announcementClose]: "Tutup pengumuman",
 
@@ -185,7 +171,6 @@ export const id: Translation = {
 	[Key.commentsRequiresJavaScript]:
 		"Komentar memerlukan JavaScript untuk ditampilkan",
 
-	[Key.untitled]: "Tanpa Judul",
 	[Key.uncategorized]: "Tanpa Kategori",
 	[Key.noTags]: "Tanpa Tag",
 
@@ -329,12 +314,6 @@ export const id: Translation = {
 	[Key.texturePresetTopography]: "Topografi",
 	[Key.texturePresetGeometric]: "Geometris",
 	[Key.texturePresetSakura]: "Kelopak sakura",
-	[Key.textureOpacity]: "Intensitas tekstur",
-	[Key.resetConfirmTitle]: "Atur ulang tema?",
-	[Key.resetConfirmMessage]:
-		"Hue, gaya warna, dan spesifikasi warna akan dikembalikan ke bawaan.",
-	[Key.cancel]: "Batal",
-	[Key.reset]: "Atur ulang",
 
 	[Key.rss]: "Umpan RSS",
 	[Key.rssSubtitle]: "Berlangganan artikel terbaru melalui pembaca RSS",

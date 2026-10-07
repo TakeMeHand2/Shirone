@@ -22,7 +22,6 @@ enum I18nKey {
 	moments = "moments",
 	momentsNoResults = "momentsNoResults",
 	momentsBanner = "momentsBanner",
-	momentsCount = "momentsCount",
 	momentsCounts = "momentsCounts",
 	pinned = "pinned",
 	loadMore = "loadMore",
@@ -36,13 +35,6 @@ enum I18nKey {
 	animeStatusPlanned = "animeStatusPlanned",
 	animeStatusOnHold = "animeStatusOnHold",
 	animeStatusDropped = "animeStatusDropped",
-	animeSourceLocal = "animeSourceLocal",
-	animeSourceBangumi = "animeSourceBangumi",
-	animeSourceBilibili = "animeSourceBilibili",
-	animeProviderUnavailable = "animeProviderUnavailable",
-	animeProviderStale = "animeProviderStale",
-	animeConfigMissingBangumi = "animeConfigMissingBangumi",
-	animeConfigMissingBilibili = "animeConfigMissingBilibili",
 	animeSyncEmpty = "animeSyncEmpty",
 
 	compass = "compass",
@@ -154,16 +146,10 @@ enum I18nKey {
 	seriesPrevInSeries = "seriesPrevInSeries",
 	seriesNextInSeries = "seriesNextInSeries",
 	seriesViewAll = "seriesViewAll",
-	recentPosts = "recentPosts",
 	tableOfContents = "tableOfContents",
 	formulaScrollable = "formulaScrollable",
-	fieldRequired = "fieldRequired",
-	fieldOptional = "fieldOptional",
-	fieldDeprecated = "fieldDeprecated",
 	codeBlockExpand = "codeBlockExpand",
 	codeBlockCollapse = "codeBlockCollapse",
-	codeTreeExpand = "codeTreeExpand",
-	codeTreeCollapse = "codeTreeCollapse",
 	announcement = "announcement",
 	announcementClose = "announcementClose",
 
@@ -172,7 +158,6 @@ enum I18nKey {
 	commentsLoadFailed = "commentsLoadFailed",
 	commentsRequiresJavaScript = "commentsRequiresJavaScript",
 
-	untitled = "untitled",
 	uncategorized = "uncategorized",
 	noTags = "noTags",
 
@@ -270,16 +255,10 @@ enum I18nKey {
 	texturePresetTopography = "texturePresetTopography",
 	texturePresetGeometric = "texturePresetGeometric",
 	texturePresetSakura = "texturePresetSakura",
-	textureOpacity = "textureOpacity",
 
 	layoutMode = "layoutMode",
 	layoutList = "layoutList",
 	layoutGrid = "layoutGrid",
-
-	resetConfirmTitle = "resetConfirmTitle",
-	resetConfirmMessage = "resetConfirmMessage",
-	cancel = "cancel",
-	reset = "reset",
 
 	more = "more",
 	categoriesViewAll = "categoriesViewAll",

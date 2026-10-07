@@ -22,7 +22,6 @@ export const ko: Translation = {
 	[Key.moments]: "모먼트",
 	[Key.momentsNoResults]: "조건에 맞는 모먼트가 없습니다",
 	[Key.momentsBanner]: "일상과 작업, 그리고 사소한 행복을 짧게 기록합니다.",
-	[Key.momentsCount]: "개",
 	[Key.momentsCounts]: "개",
 	[Key.pinned]: "고정됨",
 	[Key.loadMore]: "더 보기",
@@ -37,13 +36,6 @@ export const ko: Translation = {
 	[Key.animeStatusPlanned]: "시청 예정",
 	[Key.animeStatusOnHold]: "보류",
 	[Key.animeStatusDropped]: "중단",
-	[Key.animeSourceLocal]: "로컬 컬렉션",
-	[Key.animeSourceBangumi]: "Bangumi",
-	[Key.animeSourceBilibili]: "Bilibili",
-	[Key.animeProviderUnavailable]: "데이터 소스를 일시적으로 사용할 수 없습니다",
-	[Key.animeProviderStale]: "캐시된 스냅샷을 사용하는 중입니다",
-	[Key.animeConfigMissingBangumi]: "Bangumi 사용자 ID가 설정되지 않았습니다",
-	[Key.animeConfigMissingBilibili]: "Bilibili UID가 설정되지 않았습니다",
 	[Key.animeSyncEmpty]: "이 데이터 소스에 애니메이션 항목이 없습니다",
 
 	[Key.compass]: "나침반",
@@ -161,16 +153,10 @@ export const ko: Translation = {
 	[Key.seriesPrevInSeries]: "시리즈 내 이전 글",
 	[Key.seriesNextInSeries]: "시리즈 내 다음 글",
 	[Key.seriesViewAll]: "모든 시리즈 보기",
-	[Key.recentPosts]: "최근 게시물",
 	[Key.tableOfContents]: "목차",
 	[Key.formulaScrollable]: "가로로 스크롤 가능한 수식",
-	[Key.fieldRequired]: "필수",
-	[Key.fieldOptional]: "선택 사항",
-	[Key.fieldDeprecated]: "사용 중단",
 	[Key.codeBlockExpand]: "코드 블록 펼치기",
 	[Key.codeBlockCollapse]: "코드 블록 접기",
-	[Key.codeTreeExpand]: "코드 트리 확대",
-	[Key.codeTreeCollapse]: "확대 닫기",
 	[Key.announcement]: "공지사항",
 	[Key.announcementClose]: "공지 닫기",
 
@@ -180,7 +166,6 @@ export const ko: Translation = {
 	[Key.commentsRequiresJavaScript]:
 		"댓글을 표시하려면 JavaScript를 활성화해야 합니다",
 
-	[Key.untitled]: "제목 없음",
 	[Key.uncategorized]: "분류되지 않음",
 	[Key.noTags]: "태그 없음",
 
@@ -320,15 +305,9 @@ export const ko: Translation = {
 	[Key.texturePresetTopography]: "등고선 웨이브",
 	[Key.texturePresetGeometric]: "기하학 크리스탈",
 	[Key.texturePresetSakura]: "벚꽃 꽃잎",
-	[Key.textureOpacity]: "텍스처 농도",
 	[Key.layoutMode]: "레이아웃",
 	[Key.layoutList]: "목록",
 	[Key.layoutGrid]: "그리드",
-	[Key.resetConfirmTitle]: "테마를 재설정할까요?",
-	[Key.resetConfirmMessage]:
-		"기본 색상, 색상 스타일, 색상 규격으로 되돌아갑니다.",
-	[Key.cancel]: "취소",
-	[Key.reset]: "재설정",
 
 	[Key.rss]: "RSS 피드",
 	[Key.rssSubtitle]: "RSS 리더기로 최신 글을 구독하세요",

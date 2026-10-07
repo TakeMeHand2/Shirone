@@ -23,7 +23,6 @@ export const en: Translation = {
 	[Key.momentsNoResults]: "No moments matched your filters",
 	[Key.momentsBanner]:
 		"Short notes — bits of life, work and everything in between.",
-	[Key.momentsCount]: "moment",
 	[Key.momentsCounts]: "moments",
 	[Key.pinned]: "Pinned",
 	[Key.loadMore]: "Load more",
@@ -38,13 +37,6 @@ export const en: Translation = {
 	[Key.animeStatusPlanned]: "Planned",
 	[Key.animeStatusOnHold]: "On Hold",
 	[Key.animeStatusDropped]: "Dropped",
-	[Key.animeSourceLocal]: "Local Collection",
-	[Key.animeSourceBangumi]: "Bangumi",
-	[Key.animeSourceBilibili]: "Bilibili",
-	[Key.animeProviderUnavailable]: "Data source currently unavailable",
-	[Key.animeProviderStale]: "Using cached snapshot",
-	[Key.animeConfigMissingBangumi]: "Bangumi user ID not configured",
-	[Key.animeConfigMissingBilibili]: "Bilibili UID not configured",
 	[Key.animeSyncEmpty]: "No anime items found in this source",
 
 	[Key.compass]: "Compass",
@@ -163,16 +155,10 @@ export const en: Translation = {
 	[Key.seriesPrevInSeries]: "Previous in series",
 	[Key.seriesNextInSeries]: "Next in series",
 	[Key.seriesViewAll]: "View all series",
-	[Key.recentPosts]: "Recent Posts",
 	[Key.tableOfContents]: "Table of Contents",
 	[Key.formulaScrollable]: "Horizontally scrollable formula",
-	[Key.fieldRequired]: "Required",
-	[Key.fieldOptional]: "Optional",
-	[Key.fieldDeprecated]: "Deprecated",
 	[Key.codeBlockExpand]: "Expand code block",
 	[Key.codeBlockCollapse]: "Collapse code block",
-	[Key.codeTreeExpand]: "Expand code tree",
-	[Key.codeTreeCollapse]: "Collapse code tree",
 	[Key.announcement]: "Announcement",
 	[Key.announcementClose]: "Close Announcement",
 
@@ -182,7 +168,6 @@ export const en: Translation = {
 	[Key.commentsRequiresJavaScript]:
 		"Comments require JavaScript to be displayed.",
 
-	[Key.untitled]: "Untitled",
 	[Key.uncategorized]: "Uncategorized",
 	[Key.noTags]: "No Tags",
 
@@ -321,15 +306,9 @@ export const en: Translation = {
 	[Key.texturePresetTopography]: "Topography",
 	[Key.texturePresetGeometric]: "Geometric",
 	[Key.texturePresetSakura]: "Sakura Petals",
-	[Key.textureOpacity]: "Texture Intensity",
 	[Key.layoutMode]: "Layout",
 	[Key.layoutList]: "List",
 	[Key.layoutGrid]: "Grid",
-	[Key.resetConfirmTitle]: "Reset theme settings?",
-	[Key.resetConfirmMessage]:
-		"This will restore the default hue, color style and color spec.",
-	[Key.cancel]: "Cancel",
-	[Key.reset]: "Reset",
 
 	[Key.rss]: "RSS Feed",
 	[Key.rssSubtitle]: "Subscribe to latest articles via RSS reader",
