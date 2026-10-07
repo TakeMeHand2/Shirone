@@ -8,6 +8,10 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  * 关闭时不产生任何外部网络请求、零 DOM 占位与零 bundle 膨胀；
  * 开启时 SDK 与模型均同源自托管（public/live2d/），不进主 bundle，零第三方请求。
  *
+ * 【运行成本】开启后挂件是常驻 WebGL 渲染循环（桌面端），存在持续的 GPU/电量开销；
+ * SDK 注入已延迟到浏览器空闲（不与首屏抢资源），模型与 SDK 均同源可缓存；
+ * 移动端默认不显示（mobileDisplay: false）。
+ *
  * 【开启步骤】
  * 1. 将 `enable` 置为 `true`；
  * 2. 在 `options.models` 填入至少一个模型地址（`models[].path`，缩放 `scale` 默认 0.1）。
