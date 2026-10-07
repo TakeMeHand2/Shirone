@@ -137,69 +137,55 @@ const closeDuration = Number(config.closeDuration ?? 86400);
 </style>
 
 <script>
-	const STORAGE_KEY_CLOSED = "announcementClosed";
-	const STORAGE_KEY_TIME = "announcementClosedTime";
+	// 持久化状态（localStorage 读写与过期判定）在 @utils/announcement-state 的
+	// 显式契约里；本组件只做 DOM 呈现与 Swup 同步。
+	import {
+		clearAnnouncementDismissal,
+		isAnnouncementDismissalExpired,
+		markAnnouncementDismissed,
+		readAnnouncementDismissal,
+	} from "@utils/announcement-state";
 
-	function isAnnouncementExpired(durationSeconds: number): boolean {
-		if (Number.isNaN(durationSeconds) || durationSeconds <= 0) {
-			return false;
+	const WIDGET_SELECTOR = 'widget-layout[data-id="announcement"]';
+
+	function announcementWidgets(): HTMLElement[] {
+		return [
+			...document.querySelectorAll<HTMLElement>(WIDGET_SELECTOR),
+		];
+	}
+
+	function setAnnouncementVisible(visible: boolean) {
+		for (const widget of announcementWidgets()) {
+			const container = widget.closest<HTMLElement>(".sidebar-widget") || widget;
+			container.style.display = visible ? "" : "none";
+			if (visible) widget.style.display = "";
 		}
-		const closedTime = localStorage.getItem(STORAGE_KEY_TIME);
-		if (!closedTime) {
-			return true;
-		}
-		const elapsedSeconds = (Date.now() - Number(closedTime)) / 1000;
-		return elapsedSeconds > durationSeconds;
 	}
 
 	function closeAnnouncement() {
-		const widgetLayouts = document.querySelectorAll<HTMLElement>(
-			'widget-layout[data-id="announcement"]',
-		);
-		if (widgetLayouts.length > 0) {
-			widgetLayouts.forEach((widget) => {
-				const container = widget.closest<HTMLElement>(".sidebar-widget") || widget;
-				container.style.display = "none";
-			});
-			localStorage.setItem(STORAGE_KEY_CLOSED, "true");
-			localStorage.setItem(STORAGE_KEY_TIME, Date.now().toString());
-		}
+		if (announcementWidgets().length === 0) return;
+		setAnnouncementVisible(false);
+		markAnnouncementDismissed();
 	}
 
 	function checkAnnouncementClosed() {
-		const widgetLayouts = document.querySelectorAll<HTMLElement>(
-			'widget-layout[data-id="announcement"]',
-		);
-		if (widgetLayouts.length === 0) return;
+		if (announcementWidgets().length === 0) return;
 
 		const wrapper = document.querySelector<HTMLElement>(".announcement-wrapper");
 		const durationAttr = wrapper?.getAttribute("data-close-duration");
 		const durationSeconds = durationAttr ? Number.parseFloat(durationAttr) : 86400;
 
-		const isClosed = localStorage.getItem(STORAGE_KEY_CLOSED) === "true";
-		if (!isClosed) {
-			widgetLayouts.forEach((widget) => {
-				const container = widget.closest<HTMLElement>(".sidebar-widget") || widget;
-				container.style.display = "";
-				widget.style.display = "";
-			});
+		const dismissal = readAnnouncementDismissal();
+		if (!dismissal.closed) {
+			setAnnouncementVisible(true);
 			return;
 		}
-
-		if (isAnnouncementExpired(durationSeconds)) {
-			localStorage.removeItem(STORAGE_KEY_CLOSED);
-			localStorage.removeItem(STORAGE_KEY_TIME);
-			widgetLayouts.forEach((widget) => {
-				const container = widget.closest<HTMLElement>(".sidebar-widget") || widget;
-				container.style.display = "";
-				widget.style.display = "";
-			});
-		} else {
-			widgetLayouts.forEach((widget) => {
-				const container = widget.closest<HTMLElement>(".sidebar-widget") || widget;
-				container.style.display = "none";
-			});
+		if (isAnnouncementDismissalExpired(dismissal, durationSeconds)) {
+			clearAnnouncementDismissal();
+			setAnnouncementVisible(true);
+			return;
 		}
+		setAnnouncementVisible(false);
 	}
 
 	if (document.readyState === "loading") {
