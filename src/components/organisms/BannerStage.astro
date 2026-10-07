@@ -773,7 +773,7 @@ const initialMobileBanner = page === "home";
 		videoEl.classList.remove("banner-stage__video--fading");
 	}
 
-	/** 视频项上屏：静音循环播放；reduced-motion 或缺失 <video> 层时回退海报帧 */
+	/** 视频项上屏：静音循环播放（刻意无视系统减少动画偏好，见 AGENTS.md）；缺失 <video> 层时回退海报帧 */
 	function showVideo(item: Extract<BannerMediaItem, { kind: "video" }>, immediate: boolean) {
 		if (!videoEl) return;
 		stopLayerMotions();
@@ -858,11 +858,12 @@ const initialMobileBanner = page === "home";
 	function showMedia(item: BannerMediaItem | undefined, immediate: boolean) {
 		if (!item || !layers.length) return;
 		if (item.kind === "video") {
-			if (videoEl && !prefersReducedMotion()) {
+			// 壁纸视频刻意无视系统减少动画偏好（站主决策，例外登记于 AGENTS.md）：
+			// 它是站点身份的核心视觉，缺视频层时才退海报帧
+			if (videoEl) {
 				showVideo(item, immediate);
 				return;
 			}
-			// reduced-motion / 无视频层：回退海报帧（缺失则保持当前画面）
 			if (!item.poster) return;
 			showImageFromSrc(item.poster, immediate);
 			return;

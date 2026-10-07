@@ -60,7 +60,7 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		// 静音循环自动播放（建议 mp4/webm 放 public/videos/），poster 为
 		// 缓冲期与 reduced-motion 回退画面（走图片优化管线）。
 		src: {
-			// 纯视频壁纸：静音循环自动播放；poster 为缓冲期 / reduced-motion 回退画面
+			// 纯视频壁纸：静音循环自动播放；poster 为缓冲期 / 视频层缺失时的回退画面
 			// （走图片优化管线），与视频同源抽帧（9.5s 明亮特写）。
 			// 移动端（<1024px 首页）不用视频：沿用独立上传的竖幅壁纸静帧，省流量保首屏。
 			desktop: [

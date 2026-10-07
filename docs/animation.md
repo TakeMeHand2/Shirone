@@ -27,6 +27,8 @@
 
 统一用 `prefersReducedMotion()`（`src/utils/motion.ts`）检测，降级时动画直接到位、不播过渡。
 
+**唯一例外**：首页壁纸视频（`BannerStage`）站主决策刻意无视该偏好始终播放——它是站点身份的核心视觉，仅缺 `<video>` 层时回退海报帧（例外登记于 `AGENTS.md`）。其余动效（运镜、彩蛋、纹理微动效等）仍必须遵守降级。
+
 ## 3. 动画插件（最小补丁）
 
 `src/utils/motion.ts` 提供可复用 Svelte action，声明式接入，无业务侵入：
