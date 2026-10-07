@@ -12,6 +12,11 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  * SDK 注入已延迟到浏览器空闲（不与首屏抢资源），模型与 SDK 均同源可缓存；
  * 移动端默认不显示（mobileDisplay: false）。
  *
+ * 【CSP】挂件含一处内联引导脚本与一处内联定位样式；站点启用严格 CSP 时二选一：
+ * 1. 哈希白名单——把构建产物里该脚本/样式的 sha256 加进 script-src / style-src，
+ *    适合构建期生成（配置一改哈希即变，需随构建更新）；
+ * 2. nonce——服务端每请求生成 nonce 写入 `cspNonce`，并把同一个值放进 CSP 响应头。
+ *
  * 【开启步骤】
  * 1. 将 `enable` 置为 `true`；
  * 2. 在 `options.models` 填入至少一个模型地址（`models[].path`，缩放 `scale` 默认 0.1）。
@@ -70,6 +75,7 @@ export function resolveLive2dOptions(
 		return null;
 	}
 	const scriptUrl = config.scriptUrl?.trim();
+	const cspNonce = config.cspNonce?.trim();
 	const options =
 		config.options &&
 		typeof config.options === "object" &&
@@ -91,6 +97,7 @@ export function resolveLive2dOptions(
 	}
 	return {
 		...(scriptUrl ? { scriptUrl } : {}),
+		...(cspNonce ? { cspNonce } : {}),
 		// 不修改调用方的 options 对象（配置单例），返回剔除无效项后的新对象
 		options:
 			validModels.length === models.length

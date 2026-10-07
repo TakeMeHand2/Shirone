@@ -124,6 +124,12 @@ export interface Live2dConfig {
 	 * 需要换 oh-my-live2d 版本、走 CDN 或自托管其他副本时，填完整 URL。
 	 */
 	scriptUrl?: string;
+	/**
+	 * 可选 CSP nonce：站点启用严格 Content-Security-Policy 时，把服务端每请求
+	 * 生成的 nonce 传进来，挂件的内联引导脚本与内联样式会带上该属性；
+	 * 静态站也可改用构建期哈希白名单，见配置头注释。
+	 */
+	cspNonce?: string;
 	/** 透传选项：常用键已建类型，拼错的键过不了 astro check */
 	options: Live2dRuntimeOptions;
 }
@@ -132,5 +138,7 @@ export interface Live2dConfig {
 export interface ResolvedLive2dOptions {
 	/** SDK 覆盖地址；省略时由组件解析随包分发的默认 SDK */
 	scriptUrl?: string;
+	/** 内联脚本/样式使用的 CSP nonce（未配置时 undefined） */
+	cspNonce?: string;
 	options: Live2dRuntimeOptions;
 }

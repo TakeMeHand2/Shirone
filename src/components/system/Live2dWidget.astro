@@ -74,9 +74,9 @@ const stageFixRules = [
 	.join("");
 ---
 
-{stageFixRules && <style is:inline set:html={stageFixRules} />}
+{stageFixRules && <style is:inline nonce={options.cspNonce} set:html={stageFixRules} />}
 
-<script is:inline define:vars={{ live2dScriptUrl, live2dOptions: localizedOptions }}>
+<script is:inline nonce={options.cspNonce} define:vars={{ live2dScriptUrl, live2dOptions: localizedOptions }}>
 	(() => {
 		if (window.__shironeLive2dBooted) return;
 		window.__shironeLive2dBooted = true;
