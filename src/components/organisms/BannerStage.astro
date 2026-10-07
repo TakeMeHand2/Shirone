@@ -396,10 +396,10 @@ const initialMobileBanner = page === "home";
 				if (typeof record.src === "string" && record.kind === "image") {
 					return { kind: "image", src: record.src };
 				}
-				if (typeof record.video === "string" && record.kind === "video") {
+				if (typeof record.src === "string" && record.kind === "video") {
 					return {
 						kind: "video",
-						src: record.video,
+						src: record.src,
 						poster: typeof record.poster === "string" ? record.poster : undefined,
 					};
 				}
