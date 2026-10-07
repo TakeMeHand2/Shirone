@@ -9,7 +9,7 @@
 let {
 	refreshing = $bindable(false),
 	onrefresh,
-	label = "可滚动区域",
+	label,
 	threshold = 80,
 	class: className = "",
 	style = "",
@@ -22,7 +22,8 @@ let {
 	/** 触发阈值 px（默认 80） */
 	threshold?: number;
 	/** 可滚动区域标题（screen reader） */
-	label?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	label: string;
 	class?: string;
 	style?: string;
 	children?: import("svelte").Snippet;

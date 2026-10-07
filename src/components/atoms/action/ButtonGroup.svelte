@@ -34,12 +34,15 @@ let {
 	multiple = false,
 	variant = "standard",
 	disabled = false,
+	moreLabel,
 	class: className = "",
 	onchange,
 }: {
 	items?: ButtonGroupItem[];
 	value?: string;
 	checkedValues?: string[];
+	/** 必填：溢出「更多」按钮的无障碍名称，调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	moreLabel: string;
 	multiple?: boolean;
 	variant?: "standard" | "connected";
 	disabled?: boolean;
@@ -212,7 +215,7 @@ function handleChange(item: ButtonGroupItem) {
             <button
                 type="button"
                 class="m3-button-group__more m3-state-layer"
-                aria-label="更多选项"
+                aria-label={moreLabel}
                 aria-haspopup="menu"
                 aria-expanded={moreOpen}
                 onclick={() => (moreOpen = !moreOpen)}

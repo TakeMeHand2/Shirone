@@ -6,7 +6,8 @@
  * 选中项 check 图标 + secondary-container 背景，hover state layer）。
  * 外部点击 / ESC / 选择后关闭。
  *
- * 用法：<ExposedDropdownMenu options={[{value,label}]} bind:value={v} label="主题" />
+ * 用法：<ExposedDropdownMenu options={[{value,label}]} bind:value={v}
+ *        label="主题" placeholder="请选择" />
  */
 import Icon from "@iconify/svelte";
 import { onMount } from "svelte";
@@ -15,7 +16,7 @@ let {
 	options = [],
 	value = $bindable(""),
 	label = "",
-	placeholder = "请选择",
+	placeholder,
 	variant = "filled",
 	class: className = "",
 }: {
@@ -23,7 +24,8 @@ let {
 	/** 选中值（$bindable） */
 	value?: string;
 	label?: string;
-	placeholder?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	placeholder: string;
 	/** filled（默认）/ outlined */
 	variant?: "filled" | "outlined";
 	class?: string;

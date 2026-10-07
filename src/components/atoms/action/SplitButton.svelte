@@ -7,7 +7,7 @@
  * trailing 激活（menuOpen）时箭头 180° 旋转。
  * 菜单弹层由调用方组合（本原子不 import 组件，符合原子规范）。
  *
- * 用法：
+ * 用法：trailingLabel 为必填文案 prop（溢出菜单按钮的无障碍名称）
  *   <SplitButton bind:menuOpen={open} onclick={mainAction} size="m" variant="filled">
  *     主操作
  *   </SplitButton>
@@ -21,7 +21,7 @@ let {
 	menuOpen = $bindable(false),
 	disabled = false,
 	onclick = () => {},
-	trailingLabel = "更多操作",
+	trailingLabel,
 	class: className = "",
 }: {
 	variant?: "filled" | "tonal" | "outlined" | "elevated";
@@ -29,7 +29,8 @@ let {
 	menuOpen?: boolean;
 	disabled?: boolean;
 	onclick?: () => void;
-	trailingLabel?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	trailingLabel: string;
 	class?: string;
 } = $props();
 </script>

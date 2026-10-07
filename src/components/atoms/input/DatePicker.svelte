@@ -7,18 +7,19 @@
  * 简化：不做输入模式/年视图切换（官方 DatePickerInputMode/YearPicker）。
  *
  * 用法：<DatePicker bind:value={date} />
- *      <DatePicker bind:value={date} locale="en-US" />
+ *      <DatePicker bind:value={date} label="Select date" locale="en-US" />
  */
 let {
 	value = $bindable(""),
-	label = "选择日期",
+	label,
 	locale = "zh-CN",
 	onchange,
 	class: className = "",
 }: {
 	/** 选中日期 ISO "YYYY-MM-DD"（$bindable） */
 	value?: string;
-	label?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	label: string;
 	/** 本地化（周起始/星期名） */
 	locale?: string;
 	/** 选择变化回调 */

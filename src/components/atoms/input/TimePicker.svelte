@@ -12,14 +12,15 @@ import Icon from "@iconify/svelte";
  */
 let {
 	value = $bindable(""),
-	label = "选择时间",
+	label,
 	format = "h24",
 	onchange,
 	class: className = "",
 }: {
 	/** 当前时间 24h "HH:MM"（$bindable） */
 	value?: string;
-	label?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	label: string;
 	/** h24（默认，24 小时制双环）/ h12（12 小时制 + 上午/下午） */
 	format?: "h24" | "h12";
 	onchange?: (time: string) => void;

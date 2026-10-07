@@ -12,7 +12,8 @@
  * - 展开时 ArrowDown → 焦点移入内容区第一个可聚焦项（moveFocus down）
  *
  * 用法：
- *   <SearchBar bind:query={q} onsearch={(q) => search(q)}>
+ *   <SearchBar label={i18n(Key.search)} placeholder={i18n(Key.search)}
+ *     bind:query={q} onsearch={(q) => search(q)}>
  *     {#each results as r}<a class="m3-search-result" href={r.url}>{r.title}</a>{/each}
  *   </SearchBar>
  */
@@ -22,16 +23,18 @@ import { onMount, type Snippet, tick } from "svelte";
 let {
 	expanded = $bindable(false),
 	query = $bindable(""),
-	placeholder = "搜索",
-	label = "搜索",
+	placeholder,
+	label,
 	onsearch,
 	class: className = "",
 	children,
 }: {
 	expanded?: boolean;
 	query?: string;
-	placeholder?: string;
-	label?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	placeholder: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	label: string;
 	onsearch?: (query: string) => void;
 	class?: string;
 	children?: Snippet;

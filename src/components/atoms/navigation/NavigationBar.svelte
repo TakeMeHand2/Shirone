@@ -5,19 +5,20 @@
  * Item：官方标准小指示器 pill（64×32 只包图标，secondary-container 全圆），
  * 选中时 scaleX 0→1 生长动画（官方 animateFloatAsState indicatorWidth）；
  * icon 与 label 间距 8px，pill 与文字不互相接触。
- * 用法：<NavigationBar items={[{value,label,icon}]} bind:value={tab} />
+ * 用法：<NavigationBar label={t.nav} items={[{value,label,icon}]} bind:value={tab} />
  */
 import Icon from "@iconify/svelte";
 
 let {
 	items = [],
 	value = $bindable(""),
-	label = "导航",
+	label,
 	class: className = "",
 }: {
 	items: { value: string; label: string; icon?: string }[];
 	value?: string;
-	label?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	label: string;
 	class?: string;
 } = $props();
 </script>

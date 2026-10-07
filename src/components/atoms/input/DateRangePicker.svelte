@@ -8,7 +8,7 @@
 let {
 	start = $bindable(""),
 	end = $bindable(""),
-	label = "选择日期范围",
+	label,
 	locale = "zh-CN",
 	onchange,
 	class: className = "",
@@ -17,7 +17,8 @@ let {
 	start?: string;
 	/** 范围终点（$bindable） */
 	end?: string;
-	label?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	label: string;
 	locale?: string;
 	onchange?: (range: { start: string; end: string }) => void;
 	class?: string;

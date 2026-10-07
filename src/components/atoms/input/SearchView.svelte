@@ -18,8 +18,8 @@ import { fade } from "svelte/transition";
 let {
 	open = $bindable(false),
 	query = $bindable(""),
-	label = "搜索",
-	placeholder = "搜索",
+	label,
+	placeholder,
 	history = [],
 	suggestions = [],
 	fullScreen = true,
@@ -33,9 +33,11 @@ let {
 	open?: boolean;
 	/** 查询词（$bindable） */
 	query?: string;
-	placeholder?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	placeholder: string;
 	/** 搜索区域标题（screen reader，多个实例需唯一） */
-	label?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	label: string;
 	/** 历史搜索（空查询时展示） */
 	history?: string[];
 	/** 建议项：{ label, icon? } */

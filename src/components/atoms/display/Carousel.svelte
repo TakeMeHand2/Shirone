@@ -13,7 +13,7 @@ let {
 	itemSpacing = "1rem",
 	contentPadding = "1rem",
 	snap = "mandatory",
-	label = "轮播",
+	label,
 	onchange,
 	class: className = "",
 	style = "",
@@ -29,7 +29,8 @@ let {
 	contentPadding?: string;
 	/** 吸附方式：mandatory（默认）/ proximity / none */
 	snap?: "mandatory" | "proximity" | "none";
-	label?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	label: string;
 	/** 焦点项变化回调 */
 	onchange?: (index: number) => void;
 	class?: string;

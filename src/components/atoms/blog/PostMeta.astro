@@ -6,6 +6,8 @@
  * body-medium 文字；链接 hover 变 primary。
  */
 import MetaIcon from "@components/atoms/display/MetaIcon.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
 
 export interface BlogMetaLink {
 	name: string;
@@ -26,9 +28,9 @@ interface Props {
 	hideTags?: boolean;
 	/** 隐藏更新日期 */
 	hideUpdate?: boolean;
-	/** 无分类时的占位文案 */
+	/** 无分类时的占位文案（默认取站点语言的 i18n 词条） */
 	uncategorizedLabel?: string;
-	/** 无标签时的占位文案 */
+	/** 无标签时的占位文案（默认取站点语言的 i18n 词条） */
 	noTagsLabel?: string;
 }
 
@@ -41,8 +43,8 @@ const {
 	wordCount,
 	hideTags = false,
 	hideUpdate = false,
-	uncategorizedLabel = "未分类",
-	noTagsLabel = "无标签",
+	uncategorizedLabel = i18n(I18nKey.uncategorized),
+	noTagsLabel = i18n(I18nKey.noTags),
 } = Astro.props;
 ---
 

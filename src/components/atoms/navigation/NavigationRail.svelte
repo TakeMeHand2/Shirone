@@ -17,14 +17,15 @@ import Icon from "@iconify/svelte";
 let {
 	items = [],
 	value = $bindable(""),
-	label = "导航",
+	label,
 	alwaysShowLabel = true,
 	header,
 	class: className = "",
 }: {
 	items: { value: string; label: string; icon?: string }[];
 	value?: string;
-	label?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	label: string;
 	/** false = 折叠模式（官方 alwaysShowLabel）：仅选中项显示 label，其余只图标 */
 	alwaysShowLabel?: boolean;
 	/** header 插槽（顶部，通常 FAB/头像/Logo） */

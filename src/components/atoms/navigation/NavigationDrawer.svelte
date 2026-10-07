@@ -18,7 +18,7 @@ let {
 	items = [],
 	open = $bindable(false),
 	value = $bindable(""),
-	label = "导航",
+	label,
 	header,
 	footer,
 	class: className = "",
@@ -28,7 +28,8 @@ let {
 	open?: boolean;
 	/** 选中项 value（$bindable） */
 	value?: string;
-	label?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	label: string;
 	/** 面板顶部插槽（标题/Logo 等） */
 	header?: import("svelte").Snippet;
 	/** 面板底部插槽（设置/退出等） */

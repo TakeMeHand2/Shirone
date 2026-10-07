@@ -43,7 +43,7 @@ import { untrack } from "svelte";
 let {
 	variant = "linear",
 	progress,
-	label = "加载中",
+	label,
 	showStop = true,
 	showThumb = false,
 	containerWidth = undefined as number | undefined,
@@ -64,7 +64,8 @@ let {
 	variant?: "linear" | "circular";
 	/** 0-1 定值；undefined = indeterminate */
 	progress?: number;
-	label?: string;
+	/** 必填：调用方传本地化文案（组件不依赖 i18n，避免语言表进客户端 bundle） */
+	label: string;
 	/** determinate linear 填充末端 stop 圆点（官方 StopSize 4dp），默认显示 */
 	showStop?: boolean;
 	/** determinate wavy 线性模式下在当前位置绘制一体化 Thumb 手柄 */
