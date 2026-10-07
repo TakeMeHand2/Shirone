@@ -309,10 +309,10 @@
 			"name": "ProgressIndicator",
 			"file": "feedback/ProgressIndicator.svelte",
 			"category": "feedback",
-			"tier": "B",
+			"tier": "A",
 			"source": "移植",
-			"landed": false,
-			"note": "库存级：全仓暂无引用（其依赖 @utils/wavy-progress 目前也只服务本组件）"
+			"landed": true,
+			"note": "linear：追番观看进度、音乐侧栏；circular：分享海报生成；indeterminate：路由进度条"
 		},
 		{
 			"name": "PullToRefresh",

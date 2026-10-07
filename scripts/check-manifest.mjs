@@ -1,10 +1,11 @@
 // 校验 atoms/manifest.json 与文件系统一致性（Phase 0 清单单一真源）。
 // 用法：node scripts/check-manifest.mjs
-// 通过 = 每个 manifest 条目都有对应文件，且每个原子文件都被 manifest 登记，分类一致。
+// 通过 = 每个 manifest 条目都有对应文件，每个原子文件都被 manifest 登记，分类一致，
+//        且 landed / tier 与真实引用情况不矛盾。
 // 失败 = 打印差异清单并 exit 1。
 
-import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
-import { join, relative, dirname } from "node:path";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -49,8 +50,24 @@ function scanAtoms(dir) {
 	return found;
 }
 
+/** 收集源码文件（用于引用扫描；跳过依赖与生成物） */
+function scanSource(dir, out = []) {
+	for (const entry of readdirSync(dir, { withFileTypes: true })) {
+		if (entry.name === "node_modules" || entry.name === "generated") continue;
+		const full = join(dir, entry.name);
+		if (entry.isDirectory()) scanSource(full, out);
+		else if (
+			/\.(astro|svelte|ts|mjs)$/.test(entry.name) &&
+			!entry.name.endsWith(".d.ts")
+		) {
+			out.push(full);
+		}
+	}
+	return out;
+}
+
 function fail(msg) {
-	console.error("✗ " + msg);
+	console.error(`✗ ${msg}`);
 	process.exitCode = 1;
 }
 
@@ -97,7 +114,43 @@ for (const f of onDisk) {
 	}
 }
 
-// 4. 汇总
+// 4. landed / tier 与真实引用一致
+// 清单注解：landed = 是否被 molecules/organisms/layouts/pages 引用；tier A = 生产级（被页面引用）。
+// 只做单向判定：零引用却标为已落地 / tier A 一定是错的；反向（标未落地但有引用）
+// 不判——schema 按 layer 判定，且同名文件（molecules/SearchBar 与 atoms/input/SearchBar）
+// 会让引用扫描出现假阳性，报出来只会制造噪音。
+const srcTexts = scanSource(join(root, "src")).map((f) => ({
+	file: f,
+	text: readFileSync(f, "utf8"),
+}));
+for (const a of atoms) {
+	if (typeof a.landed !== "boolean") {
+		errors.push(`landed 必须是布尔值：${a.file}`);
+		continue;
+	}
+	const own = join(atomsDir, ...a.file.split("/"));
+	const name = a.file
+		.split("/")
+		.pop()
+		.replace(/\.(svelte|astro)$/, "");
+	const importRe = new RegExp(`[/"']${name}\\.(svelte|astro)["']`);
+	const tagRe = new RegExp(`<${name}[\\s/>]`);
+	const referenced = srcTexts.some(
+		(entry) =>
+			entry.file !== own &&
+			(importRe.test(entry.text) || tagRe.test(entry.text)),
+	);
+	if (!referenced) {
+		if (a.landed) {
+			errors.push(`landed 标为已落地但全仓无引用：${a.file}`);
+		}
+		if (a.tier === "A") {
+			errors.push(`tier A 表示「被页面引用」但全仓无引用：${a.file}`);
+		}
+	}
+}
+
+// 5. 汇总
 const byTier = {};
 const byCat = {};
 let landed = 0;
