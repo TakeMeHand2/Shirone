@@ -19,11 +19,13 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  *
  * 【开启步骤】
  * 1. 将 `enable` 置为 `true`；
- * 2. 在 `options.models` 填入至少一个模型地址（`models[].path`，缩放 `scale` 默认 0.1）。
- *    本仓库已内置两个模型（均为自托管，许可见 public/live2d/README.md）：
- *    - DS鲸鱼娘：`/live2d/ds-whale/c_0120.model3.json`（Cubism 3，CC BY-NC-SA 4.0，
- *      模型：B站@氵六青，形象：@上善无形 / @ZipZipPin，已注册 idle 与点击动作）；
- *    - shizuku：`/live2d/shizuku/shizuku.model.json`（Cubism 2，Live2D 免费素材许可）。
+ * 2. 在 `options.models` 填入至少一个模型地址（`models[].path`，缩放 `scale` 默认 0.1），
+ *    未配置有效模型时挂件会跳过加载并提示一次。仓库内置一个示例模型
+ *    （自托管，来源与许可见 public/live2d/README.md）：
+ *    DS鲸鱼娘：`/live2d/ds-whale/c_0120.model3.json`（Cubism 3，CC BY-NC-SA 4.0，
+ *    模型：B站@氵六青，形象：@上善无形 / @ZipZipPin，已注册 idle 与点击动作）；
+ *    模型目录须留在 `public/`（SDK 运行期按 json 相对路径取同级资源，无法打包），
+ *    npm 包模式请先把模型目录复制进自己项目的 public/live2d/。
  * 3. 其余选项（停靠侧 `dockedPosition`、移动端 `mobileDisplay`、主题色 `primaryColor`、
  *    状态条 `statusBar`、菜单 `menus`、提示 `tips` 等）按 https://oml2d.com 文档填入 `options`；
  * 4. SDK 随主题分发（`src/assets/live2d/oml2d.min.js`，bundler 解析，两种模式都可用）。
