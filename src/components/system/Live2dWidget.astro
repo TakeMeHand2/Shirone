@@ -18,6 +18,13 @@ interface Props {
 
 const { options } = Astro.props;
 
+// SDK 地址：配置给了覆盖就用手写的，否则用随包分发的副本。
+// 动态导入保持「关闭时零请求」——未启用时不会请求该资源，
+// 且 bundler 解析出的 URL 在源码态与 npm 包态都成立（public/ 不随包发布）。
+const live2dScriptUrl =
+	options.scriptUrl ??
+	(await import("../../assets/live2d/oml2d.min.js?url")).default;
+
 // oml2d 自带文案是硬编码中文，绕过了主题 i18n 规则；这里按站点语言逐字段注入
 // 问候语/复制提示/状态条文案，用户覆盖过的字段原样保留。整段只做浅拷贝拼装，
 // 绝不改写 live2dConfig 单例对象（它是 content:export 差分对比的基准）。
@@ -69,7 +76,7 @@ const stageFixRules = [
 
 {stageFixRules && <style is:inline set:html={stageFixRules} />}
 
-<script is:inline define:vars={{ live2dScriptUrl: options.scriptUrl, live2dOptions: localizedOptions }}>
+<script is:inline define:vars={{ live2dScriptUrl, live2dOptions: localizedOptions }}>
 	(() => {
 		if (window.__shironeLive2dBooted) return;
 		window.__shironeLive2dBooted = true;

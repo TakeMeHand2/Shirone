@@ -118,14 +118,19 @@ export interface Live2dRuntimeOptions {
 export interface Live2dConfig {
 	/** 全局开关：false 时完全不注入 SDK 脚本与引导代码 */
 	enable: boolean;
-	/** oh-my-live2d SDK 脚本地址（默认本地自托管 public/live2d/）；换版本或走 CDN 时替换 */
-	scriptUrl: string;
+	/**
+	 * SDK 脚本覆盖地址（可选）。省略时使用随主题分发的 SDK
+	 * （`src/assets/live2d/oml2d.min.js`，由 bundler 解析，源码态与 npm 包态都可用）；
+	 * 需要换 oh-my-live2d 版本、走 CDN 或自托管其他副本时，填完整 URL。
+	 */
+	scriptUrl?: string;
 	/** 透传选项：常用键已建类型，拼错的键过不了 astro check */
 	options: Live2dRuntimeOptions;
 }
 
 /** 解析后的 Live2D 运行时选项（关闭或参数缺失时为 null） */
 export interface ResolvedLive2dOptions {
-	scriptUrl: string;
+	/** SDK 覆盖地址；省略时由组件解析随包分发的默认 SDK */
+	scriptUrl?: string;
 	options: Live2dRuntimeOptions;
 }

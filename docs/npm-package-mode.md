@@ -111,6 +111,22 @@ Source mode writes subsets to `src/assets/fonts/.subset/`. That path is inside
 `<project>/.shirones/fonts/` instead and hands Astro absolute paths. Subsets are
 cached against a hash of the collected charset, so repeat builds skip the work.
 
+## Runtime assets that cannot be bundled
+
+Most theme-owned assets reach the browser through the bundler. The exception is
+assets a third-party runtime fetches itself by relative path:
+
+- The Live2D SDK lives in `src/assets/live2d/oml2d.min.js` and is resolved by the
+  bundler (dynamic `?url` import inside `Live2dWidget.astro`), so it works in both
+  modes with no user action — it used to live in `public/`, which the package
+  pipeline never copies, leaving package-mode users with a silent 404.
+- Its **model directories** stay under `public/live2d/<model>/`. The SDK loads
+  `*.model3.json` at runtime and resolves siblings (moc3, textures, motions)
+  relative to it, so bundling would break those references. Package-mode users
+  must copy the model directory they want into their own `public/live2d/`; the
+  theme's default `options.models[].path` is an example that only exists in this
+  repository.
+
 ## Things to keep in sync
 
 - `routes.ts` and the pipeline's `generate-manifest.mjs` both derive route

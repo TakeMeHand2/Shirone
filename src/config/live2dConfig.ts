@@ -21,12 +21,13 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  *    - shizuku：`/live2d/shizuku/shizuku.model.json`（Cubism 2，Live2D 免费素材许可）。
  * 3. 其余选项（停靠侧 `dockedPosition`、移动端 `mobileDisplay`、主题色 `primaryColor`、
  *    状态条 `statusBar`、菜单 `menus`、提示 `tips` 等）按 https://oml2d.com 文档填入 `options`；
- * 4. `scriptUrl` 默认指向本地 SDK；如需换用其他 oh-my-live2d 版本，
- *    可替换 public/live2d/oml2d.min.js 或改为 CDN 地址。
+ * 4. SDK 随主题分发（`src/assets/live2d/oml2d.min.js`，bundler 解析，两种模式都可用）。
+ *    换 oh-my-live2d 版本时替换该文件，或设置 `scriptUrl` 指向 CDN / 自托管副本。
  */
 export const live2dConfig: Live2dConfig = withUserConfig("live2d", {
 	enable: true,
-	scriptUrl: "/live2d/oml2d.min.js",
+	// scriptUrl 省略即用随主题分发的 SDK（src/assets/live2d/oml2d.min.js，
+	// bundler 解析出 URL，源码态与 npm 包态都可用）；换版本 / 走 CDN 时再填完整 URL。
 	options: {
 		// 右下角停靠：right 偏移须给 FAB 返回顶部按钮让出通道（FAB 右偏移 24 + 按钮宽 56 + 间隙），
 		// 否则滚动后 FAB 会被舞台画布挡住无法点击
@@ -54,7 +55,8 @@ export const live2dConfig: Live2dConfig = withUserConfig("live2d", {
 });
 
 /**
- * 解析并校验 Live2D 配置。未启用或关键参数缺失时返回 null。
+ * 解析并校验 Live2D 配置。未启用时返回 null（零额外负担的短路点）。
+ * `scriptUrl` 是可选的覆盖项：省略时由组件用随包分发的 SDK 兜底。
  */
 export function resolveLive2dOptions(
 	config: Live2dConfig,
@@ -63,9 +65,6 @@ export function resolveLive2dOptions(
 		return null;
 	}
 	const scriptUrl = config.scriptUrl?.trim();
-	if (!scriptUrl) {
-		return null;
-	}
 	const options =
 		config.options &&
 		typeof config.options === "object" &&
@@ -73,7 +72,7 @@ export function resolveLive2dOptions(
 			? config.options
 			: {};
 	return {
-		scriptUrl,
+		...(scriptUrl ? { scriptUrl } : {}),
 		options,
 	};
 }
