@@ -1268,13 +1268,16 @@ const initialMobileBanner = page === "home";
 		.banner-stage__video--active
 			opacity: 1
 
+		/* 渐变 scrim（图片可读性类的固定黑色值例外）：底部沉淀衔接波浪与页面背景、
+		   顶部细渐变保顶栏可读，中部只留轻薄底色 + 文字投影保居中标题对比度，
+		   画面主体不再整片压灰。暗色模式整体加重。 */
 		.banner-stage__scrim
 			z-index: 1
-			background: unquote("rgb(0 0 0 / calc(var(--banner-dim-opacity) * 0.55))")
 			pointer-events: none
+			background: unquote("linear-gradient(180deg, rgb(0 0 0 / calc(var(--banner-dim-opacity) * 0.5)) 0%, rgb(0 0 0 / 0) 24%), linear-gradient(0deg, rgb(0 0 0 / calc(var(--banner-dim-opacity) * 0.9)) 0%, rgb(0 0 0 / calc(var(--banner-dim-opacity) * 0.28)) 20%, rgb(0 0 0 / 0) 52%), rgb(0 0 0 / calc(var(--banner-dim-opacity) * 0.2))")
 
 		:global(html.dark) .banner-stage__scrim
-			background: unquote("rgb(0 0 0 / var(--banner-dim-opacity))")
+			background: unquote("linear-gradient(180deg, rgb(0 0 0 / calc(var(--banner-dim-opacity) * 0.55)) 0%, rgb(0 0 0 / 0) 24%), linear-gradient(0deg, rgb(0 0 0 / var(--banner-dim-opacity)) 0%, rgb(0 0 0 / calc(var(--banner-dim-opacity) * 0.4)) 20%, rgb(0 0 0 / 0) 55%), rgb(0 0 0 / calc(var(--banner-dim-opacity) * 0.3))")
 
 		.banner-stage__copy
 			z-index: 2

@@ -60,23 +60,23 @@ export const siteConfig: SiteConfig = withUserConfig("site", {
 		// 静音循环自动播放（建议 mp4/webm 放 public/videos/），poster 为
 		// 缓冲期与 reduced-motion 回退画面（走图片优化管线）。
 		src: {
+			// 纯视频壁纸：静音循环自动播放；poster 为缓冲期 / reduced-motion 回退画面
+			// （走图片优化管线），与视频同源抽帧，衔接无跳变。
+			// 移动端（<1024px 首页）不用视频：同帧竖幅裁切作静帧壁纸，省流量保首屏。
 			desktop: [
 				{
-					video: "/videos/mad-2k60fps.webm",
-					poster: "assets/images/banner/desktop/12.webp",
+					video: "/videos/mad-1440p.webm",
+					poster: "assets/images/banner/desktop/mad-poster.webp",
 				},
-				"assets/images/banner/desktop/12.webp",
-				"assets/images/banner/desktop/6.webp",
-				"assets/images/banner/desktop/7.webp",
-				"assets/images/banner/desktop/8.webp",
-				"assets/images/banner/desktop/10.webp",
 			],
-			mobile: ["assets/images/banner/mobile/6.webp"],
+			mobile: ["assets/images/banner/mobile/mad-poster.webp"],
 		},
 		// 图片裁切焦点："top"、"center" 或 "bottom"。
 		position: "center",
 		dim: {
-			// 在图片上覆盖黑色遮罩以提高标题和顶部栏的对比度；opacity 范围为 0-1。
+			// 壁纸上的渐变 scrim（图片可读性遮罩）：底部沉淀衔接波浪、顶部细渐变保
+			// 顶栏可读、中部轻薄底色保标题对比度；opacity 为整体强度（0-1），
+			// 暗色模式自动加重。enable: false 时零 DOM。
 			enable: true,
 			opacity: 0.24,
 		},
