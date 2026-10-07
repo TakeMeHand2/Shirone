@@ -5,7 +5,7 @@ description: Writing blog posts and moments for a Shirone blog - frontmatter sch
 
 # Shirone 内容写作(文章与动态)
 
-内容放在 `src/content/posts/`(文章,支持 `.md`/`.mdx`)与 `src/content/moments/`(动态,仅 `.md`)。Schema 定义在 `src/content.config.ts`。相册不属于 Content Collection，改用 `shirone-data`。
+内容放在 `src/content/posts/`(文章,支持 `.md`/`.mdx`)与 moments 集合(动态,仅 `.md`;目录由内容仓提供,缺失时集合为空)。Schema 定义在 `src/content.config.ts`。相册不属于 Content Collection，改用 `shirone-data`。
 
 ## 文章 frontmatter
 
@@ -78,7 +78,7 @@ hideHomeContent: true   # 加密内容在首页隐藏(默认 true)
 - `src/content.config.ts` — posts/moments 的 zod schema 权威定义
 - `scripts/new-post.js` — `pnpm new-post` 脚手架行为
 - `src/content/posts/` — 示例文章(语法活文档)
-- `src/content/moments/` — 动态示例
+- moments 集合内容目录 — 动态示例(由内容仓提供,缺失时集合为空)
 
 ## npm 包模式内容路径
 
