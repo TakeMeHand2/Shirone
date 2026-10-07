@@ -290,9 +290,10 @@
 			"name": "Skeleton",
 			"file": "display/Skeleton.svelte",
 			"category": "display",
-			"tier": "A",
+			"tier": "B",
 			"source": "原创",
-			"landed": true
+			"landed": false,
+			"note": "库存级：全仓暂无引用"
 		},
 
 		{
@@ -308,9 +309,10 @@
 			"name": "ProgressIndicator",
 			"file": "feedback/ProgressIndicator.svelte",
 			"category": "feedback",
-			"tier": "A",
+			"tier": "B",
 			"source": "移植",
-			"landed": true
+			"landed": false,
+			"note": "库存级：全仓暂无引用（其依赖 @utils/wavy-progress 目前也只服务本组件）"
 		},
 		{
 			"name": "PullToRefresh",
