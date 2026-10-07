@@ -13,6 +13,7 @@
 			"!**/src/public/**/*",
 			"!**/src/generated/**/*",
 			"!**/src/user/user-config.ts",
+			"!**/src/assets/live2d/**/*",
 			"!**/dist/**/*",
 			"!**/node_modules/**/*",
 			"!**/.content-src/**/*",
