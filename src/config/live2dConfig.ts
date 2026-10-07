@@ -54,8 +54,13 @@ export const live2dConfig: Live2dConfig = withUserConfig("live2d", {
 	},
 });
 
+/** 同一进程内只提示一次，避免逐页渲染刷屏 */
+let warnedMissingModels = false;
+
 /**
- * 解析并校验 Live2D 配置。未启用时返回 null（零额外负担的短路点）。
+ * 解析并校验 Live2D 配置。以下情况返回 null（零额外负担的短路点）：
+ * 未启用、或启用但 `options.models` 里没有带有效 `path` 的模型
+ * （此时只在首次调用时提示一次，SDK 不注入）。
  * `scriptUrl` 是可选的覆盖项：省略时由组件用随包分发的 SDK 兜底。
  */
 export function resolveLive2dOptions(
@@ -71,9 +76,26 @@ export function resolveLive2dOptions(
 		!Array.isArray(config.options)
 			? config.options
 			: {};
+	const models = Array.isArray(options.models) ? options.models : [];
+	const validModels = models.filter(
+		(model) => typeof model?.path === "string" && model.path.trim() !== "",
+	);
+	if (validModels.length === 0) {
+		if (!warnedMissingModels) {
+			warnedMissingModels = true;
+			console.warn(
+				"[shirone] Live2D 已开启但 options.models 里没有有效模型（models[].path 为空），已跳过加载。请在 src/config/live2dConfig.ts 配置模型地址。",
+			);
+		}
+		return null;
+	}
 	return {
 		...(scriptUrl ? { scriptUrl } : {}),
-		options,
+		// 不修改调用方的 options 对象（配置单例），返回剔除无效项后的新对象
+		options:
+			validModels.length === models.length
+				? options
+				: { ...options, models: validModels },
 	};
 }
 
