@@ -345,4 +345,21 @@ export const th: Translation = {
 	// Quote widget & easter eggs
 	[Key.quoteTitle]: "คำคมวันนี้",
 	[Key.easterEggKonami]: "ปลดล็อกอีสเตอร์เอกก์: สายฝนกลีบซากุระ ✨",
+
+	// Live2D mascot
+	[Key.live2dWelcomeDaybreak]: "อรุณสวัสดิ์! ตื่นเช้ามาเริ่มต้นวันที่ดีกันเถอะ",
+	[Key.live2dWelcomeMorning]: "สวัสดียามเช้า! งานราบรื่นไหม? อย่านั่งนาน ลุกขยับกันบ้างนะ!",
+	[Key.live2dWelcomeNoon]: "เที่ยงแล้ว! ทำงานมาทั้งเช้า ถึงเวลากินข้าวแล้ว!",
+	[Key.live2dWelcomeAfternoon]: "บ่ายแล้วง่วงสุด ๆ ชงกาแฟสักแก้วไหม~",
+	[Key.live2dWelcomeDusk]: "เย็นแล้วนะ! วันนี้ทำงานหนัก เหนื่อยมากเลย~",
+	[Key.live2dWelcomeNight]: "สวัสดียามค่ำ! วันนี้เป็นอย่างไรบ้าง?",
+	[Key.live2dWelcomeLateNight]: "ดึกขนาดนี้แล้ว เข้านอนเถอะนะ ราตรีสวัสดิ์~",
+	[Key.live2dWelcomeWeeHours]: "ยังไม่นอนอีกเหรอ? ระวังผมร่วงนะ!",
+	[Key.live2dCopyTip]: "คัดลอกอะไรไปเหรอ? อย่าลืมระบุที่มาด้วยนะ~",
+	[Key.live2dStatusSwitching]: "กำลังสลับ",
+	[Key.live2dStatusLoading]: "กำลังโหลด",
+	[Key.live2dStatusLoadSuccess]: "โหลดสำเร็จ",
+	[Key.live2dStatusLoadFail]: "โหลดไม่สำเร็จ",
+	[Key.live2dStatusReload]: "โหลดใหม่",
+	[Key.live2dStatusRest]: "มาสคอตกำลังพักผ่อน",
 };

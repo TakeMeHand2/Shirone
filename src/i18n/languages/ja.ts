@@ -357,4 +357,21 @@ export const ja: Translation = {
 	// Quote widget & easter eggs
 	[Key.quoteTitle]: "今日の一言",
 	[Key.easterEggKonami]: "隠しコマンド発動：桜吹雪 ✨",
+
+	// Live2D mascot
+	[Key.live2dWelcomeDaybreak]: "おはよう！一日の計は朝にあり。良い一日の始まりだね。",
+	[Key.live2dWelcomeMorning]: "おはよう！お仕事順調？じっとせず、ときどき伸びしよう！",
+	[Key.live2dWelcomeNoon]: "お昼だね。午前中お疲れさま、ランチの時間だよ！",
+	[Key.live2dWelcomeAfternoon]: "午後は眠くなるね。コーヒーでもどうぞ～",
+	[Key.live2dWelcomeDusk]: "もう夕方！今日も一日お疲れさま～",
+	[Key.live2dWelcomeNight]: "こんばんは。今日はどんな一日だった？",
+	[Key.live2dWelcomeLateNight]: "もうこんな時間。早く休もう、おやすみ～",
+	[Key.live2dWelcomeWeeHours]: "こんな夜更かしして大丈夫？抜け毛が心配だよ！",
+	[Key.live2dCopyTip]: "何をコピーしたの？出典をちゃんと書いてね～",
+	[Key.live2dStatusSwitching]: "切り替え中",
+	[Key.live2dStatusLoading]: "読み込み中",
+	[Key.live2dStatusLoadSuccess]: "読み込み成功",
+	[Key.live2dStatusLoadFail]: "読み込み失敗",
+	[Key.live2dStatusReload]: "再読み込み",
+	[Key.live2dStatusRest]: "マスコットはお休み中",
 };

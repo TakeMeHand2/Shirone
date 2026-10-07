@@ -361,4 +361,21 @@ export const es: Translation = {
 	// Quote widget & easter eggs
 	[Key.quoteTitle]: "Frase del día",
 	[Key.easterEggKonami]: "Huevo de pascua desbloqueado: lluvia de pétalos ✨",
+
+	// Live2D mascot
+	[Key.live2dWelcomeDaybreak]: "¡Buenos días! Un buen comienzo hace un buen día.",
+	[Key.live2dWelcomeMorning]: "¡Buenos días! ¿Todo va bien? No estés tanto tiempo sentado, ¡estírate un poco!",
+	[Key.live2dWelcomeNoon]: "¡Mediodía! Después de toda la mañana, es hora de almorzar.",
+	[Key.live2dWelcomeAfternoon]: "El sueño de la tarde… ¿un café?",
+	[Key.live2dWelcomeDusk]: "¡Ya es tarde! ¡Mucho trabajo hoy, descansa~",
+	[Key.live2dWelcomeNight]: "¡Buenas noches! ¿Qué tal tu día?",
+	[Key.live2dWelcomeLateNight]: "Es muy tarde, vete a dormir. ¡Buenas noches~",
+	[Key.live2dWelcomeWeeHours]: "¿Aún despierto a estas horas? ¡Trasnochar pasa factura!",
+	[Key.live2dCopyTip]: "¿Qué has copiado? Recuerda citar la fuente~",
+	[Key.live2dStatusSwitching]: "Cambiando",
+	[Key.live2dStatusLoading]: "Cargando",
+	[Key.live2dStatusLoadSuccess]: "Cargado",
+	[Key.live2dStatusLoadFail]: "Error al cargar",
+	[Key.live2dStatusReload]: "Recargar",
+	[Key.live2dStatusRest]: "La mascota está descansando",
 };

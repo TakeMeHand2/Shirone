@@ -360,4 +360,21 @@ export const vi: Translation = {
 	// Quote widget & easter eggs
 	[Key.quoteTitle]: "Lời nói hôm nay",
 	[Key.easterEggKonami]: "Mở mã bí mật: mưa hoa anh đào ✨",
+
+	// Live2D mascot
+	[Key.live2dWelcomeDaybreak]: "Chào buổi sáng! Một ngày đẹp trời bắt đầu rồi.",
+	[Key.live2dWelcomeMorning]: "Chào buổi sáng! Công việc thuận lợi chứ? Đừng ngồi mãi, dậy đi lại chút nhé!",
+	[Key.live2dWelcomeNoon]: "Trưa rồi! Làm việc cả buổi sáng, đến giờ ăn trưa rồi đó!",
+	[Key.live2dWelcomeAfternoon]: "Chiều rồi buồn ngủ quá. Uống ly cà phê nhé~",
+	[Key.live2dWelcomeDusk]: "Chiều tà rồi! Cả ngày vất vả rồi~",
+	[Key.live2dWelcomeNight]: "Chào buổi tối! Hôm nay của bạn thế nào?",
+	[Key.live2dWelcomeLateNight]: "Khuya rồi đó, đi ngủ sớm nào. Chúc ngủ ngon~",
+	[Key.live2dWelcomeWeeHours]: "Đêm khuya còn thức hả? Cẩn thận mất tóc đó!",
+	[Key.live2dCopyTip]: "Bạn vừa copy gì vậy? Nhớ ghi rõ nguồn nhé~",
+	[Key.live2dStatusSwitching]: "Đang chuyển",
+	[Key.live2dStatusLoading]: "Đang tải",
+	[Key.live2dStatusLoadSuccess]: "Tải thành công",
+	[Key.live2dStatusLoadFail]: "Tải thất bại",
+	[Key.live2dStatusReload]: "Tải lại",
+	[Key.live2dStatusRest]: "Linh vật đang nghỉ ngơi",
 };

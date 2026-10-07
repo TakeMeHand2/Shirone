@@ -357,4 +357,21 @@ export const ko: Translation = {
 	// Quote widget & easter eggs
 	[Key.quoteTitle]: "오늘의 한마디",
 	[Key.easterEggKonami]: "숨겨진 이스터에그: 벚꽃 소나기 ✨",
+
+	// Live2D mascot
+	[Key.live2dWelcomeDaybreak]: "좋은 아침! 아침이 하루를 결정해요, 멋진 하루가 시작됩니다.",
+	[Key.live2dWelcomeMorning]: "좋은 아침! 일 잘 되고 있나요? 오래 앉아 있지 말고 몸을 움직여 주세요!",
+	[Key.live2dWelcomeNoon]: "벌써 점심! 오전 동안 고생했어요, 점심 먹을 시간이에요!",
+	[Key.live2dWelcomeAfternoon]: "오후라 졸리네요. 커피 한 잔 어때요?",
+	[Key.live2dWelcomeDusk]: "벌써 저녁이네요! 오늘 하루도 고생 많았어요~",
+	[Key.live2dWelcomeNight]: "좋은 저녁이에요! 오늘 하루 어땠나요?",
+	[Key.live2dWelcomeLateNight]: "이렇게 늦었는데 얼른 주무세요, 안녕히 자요~",
+	[Key.live2dWelcomeWeeHours]: "이 밤까지 안 자면 건강이 걱정돼요!",
+	[Key.live2dCopyTip]: "무엇을 복사했나요? 출처를 꼭 밝혀 주세요~",
+	[Key.live2dStatusSwitching]: "전환 중",
+	[Key.live2dStatusLoading]: "불러오는 중",
+	[Key.live2dStatusLoadSuccess]: "불러오기 성공",
+	[Key.live2dStatusLoadFail]: "불러오기 실패",
+	[Key.live2dStatusReload]: "다시 불러오기",
+	[Key.live2dStatusRest]: "마스코트가 쉬고 있어요",
 };

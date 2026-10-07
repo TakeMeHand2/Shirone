@@ -363,4 +363,21 @@ export const id: Translation = {
 	// Quote widget & easter eggs
 	[Key.quoteTitle]: "Kutipan Hari Ini",
 	[Key.easterEggKonami]: "Easter egg terbuka: hujan sakura ✨",
+
+	// Live2D mascot
+	[Key.live2dWelcomeDaybreak]: "Selamat pagi! Pagi menentukan hari — hari yang indah dimulai.",
+	[Key.live2dWelcomeMorning]: "Selamat pagi! Kerjaan lancar? Jangan duduk terus, bangun dan peregangan dulu!",
+	[Key.live2dWelcomeNoon]: "Sudah siang! Sibuk sepanjang pagi, sekarang waktunya makan siang!",
+	[Key.live2dWelcomeAfternoon]: "Mengantuk di sore hari? Minum kopi yuk~",
+	[Key.live2dWelcomeDusk]: "Sore sudah! Kerja keras hari ini, terima kasih~",
+	[Key.live2dWelcomeNight]: "Selamat malam! Bagaimana harimu?",
+	[Key.live2dWelcomeLateNight]: "Sudah larut malam, istirahatlah. Selamat tidur~",
+	[Key.live2dWelcomeWeeHours]: "Masih begadang? Hati-hati, begadang itu tidak baik untuk tubuh!",
+	[Key.live2dCopyTip]: "Apa yang kamu salin? Ingat cantumkan sumbernya ya~",
+	[Key.live2dStatusSwitching]: "Mengganti",
+	[Key.live2dStatusLoading]: "Memuat",
+	[Key.live2dStatusLoadSuccess]: "Berhasil dimuat",
+	[Key.live2dStatusLoadFail]: "Gagal dimuat",
+	[Key.live2dStatusReload]: "Muat ulang",
+	[Key.live2dStatusRest]: "Maskot sedang istirahat",
 };

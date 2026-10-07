@@ -3,7 +3,14 @@
 // The SDK never enters the bundle: the bootstrap script only injects scriptUrl
 // (self-hosted under public/live2d/ by default) when live2dConfig resolves,
 // and the stage container attaches to <body>, so it persists across Swup page swaps.
-import type { ResolvedLive2dOptions } from "@/types/live2dConfig";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import type {
+	Live2dRuntimeOptions,
+	Live2dStatusBarOptions,
+	Live2dTipsOptions,
+	ResolvedLive2dOptions,
+} from "@/types/live2dConfig";
 
 interface Props {
 	options: ResolvedLive2dOptions;
@@ -11,11 +18,45 @@ interface Props {
 
 const { options } = Astro.props;
 
+// oml2d 自带文案是硬编码中文，绕过了主题 i18n 规则；这里按站点语言逐字段注入
+// 问候语/复制提示/状态条文案，用户覆盖过的字段原样保留。整段只做浅拷贝拼装，
+// 绝不改写 live2dConfig 单例对象（它是 content:export 差分对比的基准）。
+const localizedOptions = (() => {
+	const next: Live2dRuntimeOptions = { ...options.options };
+	const tips: Live2dTipsOptions = { ...next.tips };
+	tips.welcomeTips = {
+		...tips.welcomeTips,
+		message: {
+			daybreak: i18n(I18nKey.live2dWelcomeDaybreak),
+			morning: i18n(I18nKey.live2dWelcomeMorning),
+			noon: i18n(I18nKey.live2dWelcomeNoon),
+			afternoon: i18n(I18nKey.live2dWelcomeAfternoon),
+			dusk: i18n(I18nKey.live2dWelcomeDusk),
+			night: i18n(I18nKey.live2dWelcomeNight),
+			lateNight: i18n(I18nKey.live2dWelcomeLateNight),
+			weeHours: i18n(I18nKey.live2dWelcomeWeeHours),
+			...tips.welcomeTips?.message,
+		},
+	};
+	tips.copyTips = {
+		...tips.copyTips,
+		message: tips.copyTips?.message ?? [i18n(I18nKey.live2dCopyTip)],
+	};
+	next.tips = tips;
+	const statusBar: Live2dStatusBarOptions = { ...next.statusBar };
+	statusBar.switchingMessage ??= i18n(I18nKey.live2dStatusSwitching);
+	statusBar.loadingMessage ??= i18n(I18nKey.live2dStatusLoading);
+	statusBar.loadSuccessMessage ??= i18n(I18nKey.live2dStatusLoadSuccess);
+	statusBar.loadFailMessage ??= i18n(I18nKey.live2dStatusLoadFail);
+	statusBar.reloadMessage ??= i18n(I18nKey.live2dStatusReload);
+	statusBar.restMessage ??= i18n(I18nKey.live2dStatusRest);
+	next.statusBar = statusBar;
+	return next;
+})();
+
 // oml2d 自己的定位逻辑会覆盖 stageStyle 的水平偏移，这里把配置里的
 // 偏移值转成 !important 规则强制生效（如为 FAB 通道让位时必需）。
-const stageStyle = options.options.stageStyle as
-	| Record<string, string>
-	| undefined;
+const stageStyle = localizedOptions.stageStyle;
 const stageFixRules = [
 	["right", stageStyle?.right],
 	["left", stageStyle?.left],
@@ -28,7 +69,7 @@ const stageFixRules = [
 
 {stageFixRules && <style is:inline set:html={stageFixRules} />}
 
-<script is:inline define:vars={{ live2dScriptUrl: options.scriptUrl, live2dOptions: options.options }}>
+<script is:inline define:vars={{ live2dScriptUrl: options.scriptUrl, live2dOptions: localizedOptions }}>
 	(() => {
 		if (window.__shironeLive2dBooted) return;
 		window.__shironeLive2dBooted = true;

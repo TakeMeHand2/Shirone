@@ -362,4 +362,21 @@ export const tr: Translation = {
 	// Quote widget & easter eggs
 	[Key.quoteTitle]: "Günün Sözü",
 	[Key.easterEggKonami]: "Sürpriz yumurta açıldı: sakura yağmuru ✨",
+
+	// Live2D mascot
+	[Key.live2dWelcomeDaybreak]: "Günaydın! Sabah, güzel bir günün başlangıcıdır.",
+	[Key.live2dWelcomeMorning]: "Günaydın! İşler yolunda mı? Uzun süre oturma, kalkıp hareketlen!",
+	[Key.live2dWelcomeNoon]: "Öğle oldu! Sabah boyu çalıştın, öğle yemeği zamanı!",
+	[Key.live2dWelcomeAfternoon]: "Öğleden sonra uyku bastı mı? Bir kahve iyi gider~",
+	[Key.live2dWelcomeDusk]: "Akşam oldu! Bugün çok çalıştın, yorulmuşsundur~",
+	[Key.live2dWelcomeNight]: "İyi akşamlar! Bugün nasıldı?",
+	[Key.live2dWelcomeLateNight]: "Çok geç oldu, artık dinlen. İyi geceler~",
+	[Key.live2dWelcomeWeeHours]: "Bu saatte hâlâ ayakta mısın? Gece uykusuzluğa dikkat!",
+	[Key.live2dCopyTip]: "Ne kopyaladın? Kaynağı belirtmeyi unutma~",
+	[Key.live2dStatusSwitching]: "Değiştiriliyor",
+	[Key.live2dStatusLoading]: "Yükleniyor",
+	[Key.live2dStatusLoadSuccess]: "Yüklendi",
+	[Key.live2dStatusLoadFail]: "Yükleme başarısız",
+	[Key.live2dStatusReload]: "Yeniden yükle",
+	[Key.live2dStatusRest]: "Maskot dinleniyor",
 };

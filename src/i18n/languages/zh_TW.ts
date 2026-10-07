@@ -346,4 +346,21 @@ export const zh_TW: Translation = {
 	// Quote widget & easter eggs
 	[Key.quoteTitle]: "今日一言",
 	[Key.easterEggKonami]: "彩蛋解鎖：櫻花紛飛 ✨",
+
+	// Live2D mascot
+	[Key.live2dWelcomeDaybreak]: "早安！一日之計在於晨，美好的一天要開始了。",
+	[Key.live2dWelcomeMorning]: "上午好！工作順利嗎？別久坐，多起來走動走動喔！",
+	[Key.live2dWelcomeNoon]: "中午了，工作了一個上午，現在是午餐時間！",
+	[Key.live2dWelcomeAfternoon]: "午後很容易想睡呢，來杯咖啡吧～",
+	[Key.live2dWelcomeDusk]: "傍晚了！工作一天辛苦啦～",
+	[Key.live2dWelcomeNight]: "晚上好，今天過得怎麼樣呢？",
+	[Key.live2dWelcomeLateNight]: "已經這麼晚了呀，早點休息吧，晚安～",
+	[Key.live2dWelcomeWeeHours]: "這麼晚還不睡嗎？當心熬夜禿頭喔！",
+	[Key.live2dCopyTip]: "你複製了什麼內容呢？記得註明出處喔～",
+	[Key.live2dStatusSwitching]: "正在切換",
+	[Key.live2dStatusLoading]: "載入中",
+	[Key.live2dStatusLoadSuccess]: "載入成功",
+	[Key.live2dStatusLoadFail]: "載入失敗",
+	[Key.live2dStatusReload]: "重新載入",
+	[Key.live2dStatusRest]: "看板娘休息中",
 };

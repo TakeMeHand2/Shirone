@@ -349,6 +349,23 @@ enum I18nKey {
 
 	// Fun easter eggs（趣味彩蛋）
 	easterEggKonami = "easterEggKonami",
+
+	// Live2D mascot（看板娘挂件）
+	live2dWelcomeDaybreak = "live2dWelcomeDaybreak",
+	live2dWelcomeMorning = "live2dWelcomeMorning",
+	live2dWelcomeNoon = "live2dWelcomeNoon",
+	live2dWelcomeAfternoon = "live2dWelcomeAfternoon",
+	live2dWelcomeDusk = "live2dWelcomeDusk",
+	live2dWelcomeNight = "live2dWelcomeNight",
+	live2dWelcomeLateNight = "live2dWelcomeLateNight",
+	live2dWelcomeWeeHours = "live2dWelcomeWeeHours",
+	live2dCopyTip = "live2dCopyTip",
+	live2dStatusSwitching = "live2dStatusSwitching",
+	live2dStatusLoading = "live2dStatusLoading",
+	live2dStatusLoadSuccess = "live2dStatusLoadSuccess",
+	live2dStatusLoadFail = "live2dStatusLoadFail",
+	live2dStatusReload = "live2dStatusReload",
+	live2dStatusRest = "live2dStatusRest",
 }
 
 export default I18nKey;
