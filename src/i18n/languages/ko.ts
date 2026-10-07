@@ -359,9 +359,12 @@ export const ko: Translation = {
 	[Key.easterEggKonami]: "숨겨진 이스터에그: 벚꽃 소나기 ✨",
 
 	// Live2D mascot
-	[Key.live2dWelcomeDaybreak]: "좋은 아침! 아침이 하루를 결정해요, 멋진 하루가 시작됩니다.",
-	[Key.live2dWelcomeMorning]: "좋은 아침! 일 잘 되고 있나요? 오래 앉아 있지 말고 몸을 움직여 주세요!",
-	[Key.live2dWelcomeNoon]: "벌써 점심! 오전 동안 고생했어요, 점심 먹을 시간이에요!",
+	[Key.live2dWelcomeDaybreak]:
+		"좋은 아침! 아침이 하루를 결정해요, 멋진 하루가 시작됩니다.",
+	[Key.live2dWelcomeMorning]:
+		"좋은 아침! 일 잘 되고 있나요? 오래 앉아 있지 말고 몸을 움직여 주세요!",
+	[Key.live2dWelcomeNoon]:
+		"벌써 점심! 오전 동안 고생했어요, 점심 먹을 시간이에요!",
 	[Key.live2dWelcomeAfternoon]: "오후라 졸리네요. 커피 한 잔 어때요?",
 	[Key.live2dWelcomeDusk]: "벌써 저녁이네요! 오늘 하루도 고생 많았어요~",
 	[Key.live2dWelcomeNight]: "좋은 저녁이에요! 오늘 하루 어땠나요?",

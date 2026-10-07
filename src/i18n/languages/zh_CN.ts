@@ -349,7 +349,8 @@ export const zh_CN: Translation = {
 
 	// Live2D mascot
 	[Key.live2dWelcomeDaybreak]: "早上好！一日之计在于晨，美好的一天就要开始了。",
-	[Key.live2dWelcomeMorning]: "上午好！工作顺利嘛，不要久坐，多起来走动走动哦！",
+	[Key.live2dWelcomeMorning]:
+		"上午好！工作顺利嘛，不要久坐，多起来走动走动哦！",
 	[Key.live2dWelcomeNoon]: "中午了，工作了一个上午，现在是午餐时间！",
 	[Key.live2dWelcomeAfternoon]: "午后很容易犯困呢，来杯咖啡吧~",
 	[Key.live2dWelcomeDusk]: "傍晚了！工作一天辛苦啦~",

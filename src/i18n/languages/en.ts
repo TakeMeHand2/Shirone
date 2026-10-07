@@ -361,13 +361,17 @@ export const en: Translation = {
 
 	// Live2D mascot
 	[Key.live2dWelcomeDaybreak]: "Good morning! The best of the day starts now.",
-	[Key.live2dWelcomeMorning]: "Good morning! Work going well? Don't sit too long — stretch your legs!",
+	[Key.live2dWelcomeMorning]:
+		"Good morning! Work going well? Don't sit too long — stretch your legs!",
 	[Key.live2dWelcomeNoon]: "It's noon! You worked all morning — lunch time!",
-	[Key.live2dWelcomeAfternoon]: "Feeling drowsy this afternoon? How about a cup of coffee?",
+	[Key.live2dWelcomeAfternoon]:
+		"Feeling drowsy this afternoon? How about a cup of coffee?",
 	[Key.live2dWelcomeDusk]: "Evening already! You've worked hard today~",
 	[Key.live2dWelcomeNight]: "Good evening! How was your day?",
-	[Key.live2dWelcomeLateNight]: "It's getting late — get some rest. Good night~",
-	[Key.live2dWelcomeWeeHours]: "Still up this late? Careful — all-nighters are tough on you!",
+	[Key.live2dWelcomeLateNight]:
+		"It's getting late — get some rest. Good night~",
+	[Key.live2dWelcomeWeeHours]:
+		"Still up this late? Careful — all-nighters are tough on you!",
 	[Key.live2dCopyTip]: "What did you copy? Remember to credit the source~",
 	[Key.live2dStatusSwitching]: "Switching",
 	[Key.live2dStatusLoading]: "Loading",

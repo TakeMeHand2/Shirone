@@ -359,8 +359,10 @@ export const ja: Translation = {
 	[Key.easterEggKonami]: "隠しコマンド発動：桜吹雪 ✨",
 
 	// Live2D mascot
-	[Key.live2dWelcomeDaybreak]: "おはよう！一日の計は朝にあり。良い一日の始まりだね。",
-	[Key.live2dWelcomeMorning]: "おはよう！お仕事順調？じっとせず、ときどき伸びしよう！",
+	[Key.live2dWelcomeDaybreak]:
+		"おはよう！一日の計は朝にあり。良い一日の始まりだね。",
+	[Key.live2dWelcomeMorning]:
+		"おはよう！お仕事順調？じっとせず、ときどき伸びしよう！",
 	[Key.live2dWelcomeNoon]: "お昼だね。午前中お疲れさま、ランチの時間だよ！",
 	[Key.live2dWelcomeAfternoon]: "午後は眠くなるね。コーヒーでもどうぞ～",
 	[Key.live2dWelcomeDusk]: "もう夕方！今日も一日お疲れさま～",
