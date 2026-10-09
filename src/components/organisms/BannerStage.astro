@@ -1122,6 +1122,11 @@ const initialMobileBanner = page === "home";
 		else stopSubtitleTyping();
 
 		if (!state.visible || !state.assetGroup) {
+			// 隐藏时清空 activeGroup：deactivateVideo() 会摘掉视频层的 --active，
+			// 若保留旧 group，切回横幅时 `activeGroup === assetGroup` 会跳过 showMedia，
+			// 视频层就再也不会被重新上屏（图片靠残留的 --active 类“看起来正常”）。
+			// 归零后重新显示即被当作首次进入，走 showMedia(media[0], true) 重建。
+			runtime.activeGroup = null;
 			stopRotation();
 			stopLayerMotions();
 			deactivateVideo();
