@@ -276,12 +276,10 @@ export const es: Translation = {
 	[Key.copyLink]: "Copiar enlace",
 	[Key.copySelection]: "Copiar",
 	[Key.copyFailed]: "Error al copiar el enlace. Cópialo manualmente.",
-	[Key.sharePageLink]: "Compartir enlace de la página",
 
 	[Key.shareArticle]: "Compartir artículo",
 	[Key.shareArticleDescription]:
 		"Genera una tarjeta para compartir o copia el enlace.",
-	[Key.generateSharePoster]: "Generar tarjeta de compartir",
 	[Key.generatingSharePoster]: "Generando tarjeta de compartir...",
 	[Key.sharePosterPreviewAlt]: "Vista previa de la tarjeta para {title}",
 	[Key.downloadSharePoster]: "Descargar imagen",
@@ -361,4 +359,5 @@ export const es: Translation = {
 	[Key.live2dStatusLoadFail]: "Error al cargar",
 	[Key.live2dStatusReload]: "Recargar",
 	[Key.live2dStatusRest]: "La mascota está descansando",
+	[Key.live2dMenuExpression]: "Cambiar expresión",
 };

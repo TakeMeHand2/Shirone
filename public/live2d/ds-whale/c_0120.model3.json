@@ -82,5 +82,15 @@
 			"Name": "LipSync",
 			"Ids": []
 		}
+	],
+	"HitAreas": [
+		{ "Name": "tap_hair", "Id": "YM_hair_B_2" },
+		{ "Name": "tap_face", "Id": "face_m2" },
+		{ "Name": "tap_face_line", "Id": "Face_line" },
+		{ "Name": "tap_head", "Id": "hei" },
+		{ "Name": "tap_body", "Id": "ArtMesh75" },
+		{ "Name": "tap_lower", "Id": "ArtMesh0" },
+		{ "Name": "tap_lower_2", "Id": "ArtMesh544" },
+		{ "Name": "tap_neck", "Id": "neck_m3" }
 	]
 }

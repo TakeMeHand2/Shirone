@@ -284,11 +284,9 @@ enum I18nKey {
 	copyLink = "copyLink",
 	copySelection = "copySelection",
 	copyFailed = "copyFailed",
-	sharePageLink = "sharePageLink",
 
 	shareArticle = "shareArticle",
 	shareArticleDescription = "shareArticleDescription",
-	generateSharePoster = "generateSharePoster",
 	generatingSharePoster = "generatingSharePoster",
 	sharePosterPreviewAlt = "sharePosterPreviewAlt",
 	downloadSharePoster = "downloadSharePoster",
@@ -345,6 +343,7 @@ enum I18nKey {
 	live2dStatusLoadFail = "live2dStatusLoadFail",
 	live2dStatusReload = "live2dStatusReload",
 	live2dStatusRest = "live2dStatusRest",
+	live2dMenuExpression = "live2dMenuExpression",
 }
 
 export default I18nKey;

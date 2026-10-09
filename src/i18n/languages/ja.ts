@@ -273,12 +273,10 @@ export const ja: Translation = {
 	[Key.copyLink]: "リンクをコピー",
 	[Key.copySelection]: "コピー",
 	[Key.copyFailed]: "リンクのコピーに失敗しました。手動でコピーしてください。",
-	[Key.sharePageLink]: "ページリンクを共有",
 
 	[Key.shareArticle]: "記事をシェア",
 	[Key.shareArticleDescription]:
 		"シェアカードを生成するかリンクをコピーして、みんなと共有しましょう。",
-	[Key.generateSharePoster]: "シェアカードを生成",
 	[Key.generatingSharePoster]: "シェアカードを生成中...",
 	[Key.sharePosterPreviewAlt]: "「{title}」のシェアカードプレビュー",
 	[Key.downloadSharePoster]: "画像を保存",
@@ -356,4 +354,5 @@ export const ja: Translation = {
 	[Key.live2dStatusLoadFail]: "読み込み失敗",
 	[Key.live2dStatusReload]: "再読み込み",
 	[Key.live2dStatusRest]: "マスコットはお休み中",
+	[Key.live2dMenuExpression]: "表情を変える",
 };

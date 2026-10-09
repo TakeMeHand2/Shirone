@@ -6,6 +6,7 @@
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import type {
+	Live2dMenusOptions,
 	Live2dRuntimeOptions,
 	Live2dStatusBarOptions,
 	Live2dTipsOptions,
@@ -24,6 +25,12 @@ const { options } = Astro.props;
 const live2dScriptUrl =
 	options.scriptUrl ??
 	(await import("../../assets/live2d/oml2d.min.js?url")).default;
+
+// 表情菜单的组件内部契约：菜单项 id 与图标 symbol id。
+// 客户端脚本按 id 找菜单项并挂上 onClick（见下文 define:vars 附近的说明）。
+const EXPRESSION_MENU_ID = "shirone-expression";
+const EXPRESSION_ICON_ID = "shirone-icon-expression";
+const expressionMenu = options.expressionMenu;
 
 // oml2d 自带文案是硬编码中文，绕过了主题 i18n 规则；这里按站点语言逐字段注入
 // 问候语/复制提示/状态条文案，用户覆盖过的字段原样保留。整段只做浅拷贝拼装，
@@ -58,11 +65,32 @@ const localizedOptions = (() => {
 	statusBar.reloadMessage ??= i18n(I18nKey.live2dStatusReload);
 	statusBar.restMessage ??= i18n(I18nKey.live2dStatusRest);
 	next.statusBar = statusBar;
+
+	// 表情菜单：模型自带的表情既不会被动作触发（motion 曲线只驱动 Parameter，
+	// 没有可见性曲线也没有 Meta.ExpressionIds），oml2d 也没有换表情的入口，
+	// 所以这里用主题自己的项重建 menus.items —— 一旦提供 items，SDK 内置四项
+	// （休息/换装/切换模型/关于）就不会出现，`menus.disable` 的意图得以保留。
+	//
+	// onClick 不写在这里：config 是纯数据，且整份 options 会经 define:vars 做 JSON
+	// 序列化，函数会被丢掉。改为由客户端脚本在调用 loadOml2d 之前按 id 挂回去。
+	if (expressionMenu) {
+		const menus: Live2dMenusOptions = { ...next.menus, disable: false };
+		menus.items = [
+			...(menus.items ?? []),
+			{
+				id: EXPRESSION_MENU_ID,
+				icon: EXPRESSION_ICON_ID,
+				title: i18n(I18nKey.live2dMenuExpression),
+			},
+		];
+		next.menus = menus;
+	}
 	return next;
 })();
 
 // oml2d 自己的定位逻辑会覆盖 stageStyle 的水平偏移，这里把配置里的
-// 偏移值转成 !important 规则强制生效（如为 FAB 通道让位时必需）。
+// 偏移值转成 !important 规则强制生效（看板娘要锚在「博客主体列」右下角，
+// 偏移值是随视口/断点变化的 calc()，绝不能被 SDK 的兜底值顶掉）。
 const stageStyle = localizedOptions.stageStyle;
 const stageFixRules = [
 	["right", stageStyle?.right],
@@ -72,14 +100,222 @@ const stageFixRules = [
 	.filter(([, value]) => typeof value === "string" && value)
 	.map(([prop, value]) => `#oml2d-stage{${prop}:${value}!important}`)
 	.join("");
+
+// 气泡皮肤。oml2d 把气泡外观写成内联样式（底色 #38B0DE、2px 白描边、
+// drop-shadow、18px 字号），既跟主题完全脱钩也不提供皮肤 API，只有内联样式透传一条路；
+// 普通级联无法覆盖内联声明，故这里用 !important 建立明确的所有权边界。
+// 只覆盖皮肤属性，几何与文案仍归 src/config/live2dConfig.ts。
+const bubbleSkinRules = `
+/* !important boundary: oml2d SDK writes the tip bubble's skin as inline styles
+   (bg #38B0DE, 2px #fff border, drop-shadow, 18px font). Shirone owns the final
+   bubble appearance here; inline declarations cannot be beaten by a plain cascade
+   and the SDK exposes no skin API beyond inline-style passthrough. */
+#oml2d-stage #oml2d-tips{
+background: var(--surface-container-high)!important;
+color: var(--on-surface)!important;
+font: var(--m3e-type-body-medium)!important;
+border: 0!important;
+border-radius: var(--shape-corner-l)!important;
+box-shadow: var(--m3e-elevation-2)!important;
+filter: none!important;
+padding: var(--m3e-space-2) var(--m3e-space-3)!important;
+word-break: normal!important;
+overflow: clip!important;
+overflow-clip-margin: 14px!important;
+}
+/* 尾巴：朝右下指向人物头顶，把「舞台顶边 + space-2」的留白缝在视觉上接上。
+   bottom 取负值让菱形大半露在气泡外（-5px 时几乎全埋在气泡里，看不见）；
+   人物头顶在舞台内 17px 处，尾巴再长也碰不到。
+   background: inherit 让尾巴自动跟随亮暗主题。 */
+#oml2d-stage #oml2d-tips::after{
+content: "";
+position: absolute;
+bottom: -7px;
+left: 58%;
+width: var(--m3e-space-3);
+height: var(--m3e-space-3);
+background: inherit;
+border-radius: 0 0 var(--shape-corner-xs) 0;
+transform: translateX(-50%) rotate(45deg);
+}
+`;
+
+// 状态条皮肤。oml2d 用内联 background-color 上色：常规态取 `options.primaryColor`
+// （默认 #38B0DE），失败态取 `statusBar.errorColor`（默认 #F08080），文字固定纯白。
+// 白字配这两块底色的对比度只有 2.49:1 / 约 2.0:1，远低于 WCAG AA 的 4.5:1，
+// 而且亮暗主题下完全相同 —— 在主题里就是一块突兀的亮蓝（暗色主题里尤其扎眼）。
+// 与气泡同理，用 !important 接管配色；主题的 primary/on-primary 对实测 6.0:1（亮暗均过）。
+// 状态本身由文案承载（加载中/加载成功/加载失败/看板娘休息中），SDK 没有按状态区分的钩子
+// （只改 background-color，不加 class），所以失败态的珊瑚色一并归入主色。
+const statusBarSkinRules = `
+/* !important boundary: oml2d writes the status bar's background-color as an inline
+   style (primaryColor #38B0DE, errorColor #F08080) with fixed white text — 2.49:1,
+   far below WCAG AA, and identical in light and dark. Shirone owns the status bar's
+   colours here; inline declarations cannot be beaten by a plain cascade and the SDK
+   exposes no per-state hook (it only rewrites background-color, never a class). */
+#oml2d-statusBar{
+background: var(--mc-primary)!important;
+color: var(--on-primary)!important;
+}
+`;
+
+// 菜单皮肤。oml2d 把菜单项外观写在**注入的全局样式里**（36px 纯白圆 + SDK 主题色，
+// hover 加一层黑色投影），亮暗主题下都是同一块白，且它在我们的内联样式之后注入，
+// 普通级联压不住 —— 与气泡同理，用 !important 划定主题的所有权边界。
+// 几何（36px 圆形）沿用 SDK，只改配色，保证尺寸/命中区不受影响。
+const menuSkinRules = `
+/* !important boundary: oml2d injects the menu item skin as global rules
+   (white 36px circle + SDK theme color, black shadow on hover) *after* this
+   inline sheet, so a plain cascade cannot win. Shirone owns the colors only;
+   geometry stays with the SDK. */
+#oml2d-menus .oml2d-menus-item{
+background: var(--surface-container-high)!important;
+color: var(--on-surface-variant)!important;
+box-shadow: var(--m3e-elevation-2)!important;
+}
+#oml2d-menus .oml2d-menus-item:hover,
+#oml2d-menus .oml2d-menus-item:focus-visible{
+background: var(--mc-primary)!important;
+color: var(--on-primary)!important;
+box-shadow: var(--m3e-elevation-3)!important;
+}
+#oml2d-menus .oml2d-menus-item:focus-visible{
+outline: 2px solid var(--mc-primary)!important;
+outline-offset: 2px;
+}
+/* 可达性：oml2d 用 visibility:hidden 收起菜单，而这会让菜单项在任何输入方式下
+   都不可聚焦（hover-only 的死角）。改成只用 opacity 收起 —— Tab 能聚焦到菜单项，
+   聚焦时把菜单显出来，鼠标悬停 stage 的展开行为不变。
+   pointer-events:none 保证收起状态那块区域不可点，避免出现「看不见但能点到」的按钮。 */
+#oml2d-menus{
+visibility: visible!important;
+opacity: 0!important;
+pointer-events: none!important;
+}
+#oml2d-stage:hover #oml2d-menus,
+#oml2d-menus:focus-within{
+opacity: 1!important;
+pointer-events: auto!important;
+}
+`;
+
+const runtimeRules = [
+	stageFixRules,
+	bubbleSkinRules,
+	statusBarSkinRules,
+	expressionMenu ? menuSkinRules : "",
+]
+	.filter(Boolean)
+	.join("\n");
+
+// 表情菜单的图标：SDK 的菜单项是 <svg><use xlink:href="#<icon>"/></svg>，
+// 图标必须是文档里的 <symbol id>。SDK 自带 sprite 只有
+// rest/about/like/skin/setting/switch/loading，没有「表情」语义的，所以自带一个。
+// 只在开启时渲染，关闭时零 DOM。
+const expressionIconSymbol = `
+<symbol id="${EXPRESSION_ICON_ID}" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2a8 8 0 0 1 8 8 8 8 0 0 1-8 8 8 8 0 0 1-8-8 8 8 0 0 1 8-8Zm-3.2 5.2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Zm6.4 0a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4ZM7.4 14a1 1 0 0 1 1.4.2 4 4 0 0 0 6.4 0 1 1 0 1 1 1.6 1.2 6 6 0 0 1-9.6 0 1 1 0 0 1 .2-1.4Z"/></symbol>
+`;
 ---
 
-{stageFixRules && <style is:inline nonce={options.cspNonce} set:html={stageFixRules} />}
+{expressionMenu && (
+	<svg
+		class="absolute h-0 w-0 overflow-hidden"
+		aria-hidden="true"
+		focusable="false"
+		set:html={expressionIconSymbol}
+	/>
+)}
 
-<script is:inline nonce={options.cspNonce} define:vars={{ live2dScriptUrl, live2dOptions: localizedOptions }}>
+{runtimeRules && <style is:inline nonce={options.cspNonce} set:html={runtimeRules} />}
+
+<script
+	is:inline
+	nonce={options.cspNonce}
+	define:vars={{
+		live2dScriptUrl,
+		live2dOptions: localizedOptions,
+		expressionMenu: expressionMenu ?? null,
+		expressionMenuItemId: EXPRESSION_MENU_ID,
+	}}
+>
 	(() => {
 		if (window.__shironeLive2dBooted) return;
 		window.__shironeLive2dBooted = true;
+
+		// 从 oml2d 实例上取 Live2DModel。实例没有公开的 model 访问器，
+		// 已知两条路径：部分版本挂在实例自身，这个版本挂在实例的 models 上。
+		const resolveModel = (oml2d) => {
+			const candidates = [oml2d?.model, oml2d?.models?.model];
+			for (const candidate of candidates) {
+				if (candidate?.internalModel) return candidate;
+			}
+			return null;
+		};
+
+		// 换表情。为什么 setExpression 之后要再补一次 doUpdateMotion：
+		// 在这个 oml2d 内置的 pixi 版本里，Cubism4 表情管理器把参数更新交给
+		// queueManager.doUpdateMotion(model, now)，而 _setExpression 写入的起始时间
+		// 与每帧传进来的 now 基准/单位对不上，导致自动路径从不真正写参数 ——
+		// model.expression() 会返回 true、_weight 也涨到 1，但模型毫无变化。
+		// 实测在 setExpression 之后补一次 doUpdateMotion(coreModel, performance.now())
+		// 即可生效，且能连续切换、并持续保持（不会被 Idle 动作擦掉）。
+		const createExpressionSwitcher = (menu) => {
+			let lastIndex = -1;
+			let lastAt = 0;
+			return async (oml2d) => {
+				if (performance.now() - lastAt < menu.cooldown) return;
+				const model = resolveModel(oml2d);
+				const internal = model?.internalModel;
+				const expressions = internal?.motionManager?.expressionManager;
+				const definitions = expressions?.definitions;
+				if (!definitions?.length) return;
+
+				const pool = [];
+				definitions.forEach((definition, index) => {
+					const name = definition?.Name ?? definition?.name;
+					if (typeof name !== "string" || !name) return;
+					if (menu.names && menu.names.indexOf(name) === -1) return;
+					pool.push({ index, name });
+				});
+				if (!pool.length) return;
+
+				let next;
+				if (menu.order === "random") {
+					const others = pool.filter((entry) => entry.index !== lastIndex);
+					const from = others.length ? others : pool;
+					next = from[Math.floor(Math.random() * from.length)];
+				} else {
+					const position = pool.findIndex((entry) => entry.index === lastIndex);
+					next = pool[(position + 1) % pool.length];
+				}
+				lastIndex = next.index;
+				lastAt = performance.now();
+
+				try {
+					await model.expression(next.name);
+					expressions.queueManager?.doUpdateMotion?.(
+						internal.coreModel,
+						performance.now(),
+					);
+				} catch (error) {
+					console.warn("[shirone] Live2D 表情切换失败：", error);
+					return;
+				}
+				// 不少表情差异细微，用气泡回显当前表情名作为反馈（皮肤归本组件的气泡规则）
+				if (typeof oml2d?.tipsMessage === "function") {
+					oml2d.tipsMessage(next.name, 1600, 3);
+				}
+			};
+		};
+
+		// options 经 JSON 序列化到达，onClick 这类函数会被丢掉，
+		// 所以在交给 loadOml2d 之前按 id 把行为挂回去。
+		if (expressionMenu && Array.isArray(live2dOptions.menus?.items)) {
+			const item = live2dOptions.menus.items.find(
+				(entry) => entry.id === expressionMenuItemId,
+			);
+			if (item) item.onClick = createExpressionSwitcher(expressionMenu);
+		}
 
 		const boot = () => {
 			// 防御：SDK 脚本已存在（外部注入/重复挂载）则不重复注入
@@ -121,23 +357,62 @@ const stageFixRules = [
 			schedule();
 		}
 
-		// 舞台是装饰性内容（无交互控件、无 aria-live，菜单已禁用），从无障碍树隐藏，
-		// 免得读屏器停在空画布上。代价：加载失败时 SDK 状态条里的「重新加载」按钮
-		// 对读屏器不可见——装饰性挂件可接受。SDK 每次 reload 会重建舞台元素，
-		// 故用观察器持续兜底（改属性不触发 childList，不会自激）。
-		const markStageDecorative = (node) => {
-			if (!(node instanceof Element)) return;
-			const stage =
-				node.id === "oml2d-stage"
-					? node
-					: node.querySelector("#oml2d-stage");
-			if (stage) stage.setAttribute("aria-hidden", "true");
-		};
-		markStageDecorative(document.body);
-		new MutationObserver((records) => {
-			for (const record of records) {
-				for (const node of record.addedNodes) markStageDecorative(node);
+		// 无障碍。oml2d 把画布、气泡、状态条、菜单都塞在 #oml2d-stage 里。
+		// 没有可交互控件时（未启用表情菜单）沿用原策略：整个舞台都是装饰，整块 aria-hidden，
+		// 免得读屏器停在空画布上。
+		// 启用表情菜单后菜单是可点击控件，就不能再整块隐藏（会把菜单一起藏掉，
+		// 且「aria-hidden 容器里放可聚焦元素」本身违规），改为只隐藏纯装饰的三块 ——
+		// 代价是加载失败时状态条里的「重新加载」按钮仍不可见（可接受）。
+		const DECORATIVE_IDS = ["oml2d-canvas", "oml2d-tips", "oml2d-statusBar"];
+
+		const hideDecorative = () => {
+			if (!expressionMenu) {
+				document.getElementById("oml2d-stage")?.setAttribute("aria-hidden", "true");
+				return;
 			}
-		}).observe(document.body, { childList: true });
+			for (const id of DECORATIVE_IDS) {
+				document.getElementById(id)?.setAttribute("aria-hidden", "true");
+			}
+		};
+
+		// 表情项补充语义：SDK 生成的是无 role、不可聚焦的 div（只有 title 提示），
+		// 键盘用户无法触达，这里补上按钮语义与 Enter/Space 激活。
+		const enhanceExpressionItem = () => {
+			const item = document.getElementById(expressionMenuItemId);
+			if (!item || item.dataset.shironeEnhanced) return;
+			item.dataset.shironeEnhanced = "true";
+			item.setAttribute("role", "button");
+			item.setAttribute("tabindex", "0");
+			item.setAttribute("aria-label", item.getAttribute("title") ?? "");
+			item.addEventListener("keydown", (event) => {
+				if (event.key !== "Enter" && event.key !== " ") return;
+				event.preventDefault();
+				item.click();
+			});
+		};
+
+		const enhance = () => {
+			hideDecorative();
+			enhanceExpressionItem();
+		};
+
+		// SDK 先把 stage 挂到 body，之后才把气泡/菜单/状态条追加进 stage 内部，
+		// 所以必须观察整棵子树；同时每次 reload 会重建这些元素，也要靠它兜底。
+		// 只改属性、不进 DOM，不会自激；用微任务把一次批量变更收敛成一遍，避免逐节点刷屏。
+		let enhanceScheduled = false;
+		const scheduleEnhance = () => {
+			if (enhanceScheduled) return;
+			enhanceScheduled = true;
+			queueMicrotask(() => {
+				enhanceScheduled = false;
+				enhance();
+			});
+		};
+
+		enhance();
+		new MutationObserver(scheduleEnhance).observe(document.body, {
+			childList: true,
+			subtree: true,
+		});
 	})();
 </script>

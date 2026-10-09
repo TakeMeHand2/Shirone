@@ -94,7 +94,19 @@ define({
 
   /* 侧栏列宽（responsive-utils 布局类的唯一来源；改这里即全站生效） */
   --sidebar-width: 17.5rem
+
+  /* 主内容列右边缘 → 页框（max-w: --page-width）右边缘的距离。
+     默认只有栅格内边距；dual 编排在 xl 起多出「列间距 + 次级侧栏」，
+     由紧随其后的媒体查询配合 :has(#sidebar-secondary) 补上——
+     单栏编排或副栏无 widget 时不渲染该元素，自然不匹配，恒为内边距。 */
+  --main-content-column-inset: var(--m3e-space-4)
 })
+
+/* 与上方 --main-content-column-inset 配对：xl 断点下 dual 编排才会出现次级侧栏列。
+   用 :has() 而不是固定值，避免把 dual 假设写死到全局布局变量里。 */
+@media (min-width: 1280px)
+  :root:has(#sidebar-secondary)
+    --main-content-column-inset: calc(var(--sidebar-width) + var(--m3e-space-8))
 
 /* ============================================================
    Material 3 设计令牌层（Shirone）

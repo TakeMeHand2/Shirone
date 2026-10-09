@@ -99,6 +99,40 @@ export interface Live2dMenusOptions {
 	mobileItemStyle?: Live2dStyleOverrides;
 }
 
+/**
+ * 表情菜单（**主题自有扩展**，不是 oml2d 的选项）。
+ *
+ * 为什么需要它：模型自带的 44 个表情既不会被动作触发（所有 motion 的曲线 Target 都是
+ * Parameter，没有可见性曲线、也没有 Meta.ExpressionIds），oml2d 也没有换表情的入口，
+ * 所以不额外提供入口的话，表情清单等于只是躺在 model3.json 里。
+ *
+ * 开启后会接管 `options.menus`：用主题自己的自定义项取代 SDK 内置四项。
+ */
+export interface Live2dExpressionMenuOptions {
+	/** 是否提供「换表情」菜单项；默认 false（遵守「零额外负担」） */
+	enable?: boolean;
+	/**
+	 * 切换顺序：
+	 * - `sequential`（默认）：按 model3.json 的注册顺序依次循环
+	 * - `random`：随机挑选，且不与当前表情重复
+	 */
+	order?: "sequential" | "random";
+	/**
+	 * 限定可选表情名（须与 model3.json 的 `Expressions[].Name` 一致）。
+	 * 省略即使用模型注册的全部表情。
+	 */
+	names?: string[];
+	/** 连点保护：两次切换之间的最小间隔（毫秒），默认 400 */
+	cooldown?: number;
+}
+
+/** 归一化后的表情菜单配置（未开启时为 undefined） */
+export interface ResolvedExpressionMenuOptions {
+	order: "sequential" | "random";
+	names?: string[];
+	cooldown: number;
+}
+
 /** 透传给 loadOml2d() 的运行时选项（键名与官方文档一一对应，见 https://oml2d.com） */
 export interface Live2dRuntimeOptions {
 	dockedPosition?: "left" | "right";
@@ -130,6 +164,12 @@ export interface Live2dConfig {
 	 * 静态站也可改用构建期哈希白名单，见配置头注释。
 	 */
 	cspNonce?: string;
+	/**
+	 * 表情菜单（主题自有扩展，与 `options.menus` 联动）。
+	 * 开启后组件会接管菜单：用「换表情」自定义项取代 SDK 内置四项，
+	 * 否则模型自带的表情清单没有任何触发入口。
+	 */
+	expressionMenu?: Live2dExpressionMenuOptions;
 	/** 透传选项：常用键已建类型，拼错的键过不了 astro check */
 	options: Live2dRuntimeOptions;
 }
@@ -140,5 +180,7 @@ export interface ResolvedLive2dOptions {
 	scriptUrl?: string;
 	/** 内联脚本/样式使用的 CSP nonce（未配置时 undefined） */
 	cspNonce?: string;
+	/** 归一化后的表情菜单配置；未开启时为 undefined */
+	expressionMenu?: ResolvedExpressionMenuOptions;
 	options: Live2dRuntimeOptions;
 }

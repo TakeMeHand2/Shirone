@@ -264,11 +264,9 @@ export const th: Translation = {
 	[Key.copyLink]: "คัดลอกลิงก์",
 	[Key.copySelection]: "คัดลอก",
 	[Key.copyFailed]: "คัดลอกลิงก์ไม่สำเร็จ โปรดคัดลอกด้วยตนเอง",
-	[Key.sharePageLink]: "แชร์ลิงก์หน้า",
 
 	[Key.shareArticle]: "แชร์บทความ",
 	[Key.shareArticleDescription]: "สร้างรูปภาพแชร์หรือคัดลอกลิงก์เพื่อส่งต่อบทความนี้",
-	[Key.generateSharePoster]: "สร้างรูปภาพแชร์",
 	[Key.generatingSharePoster]: "กำลังสร้างรูปภาพแชร์...",
 	[Key.sharePosterPreviewAlt]: "ตัวอย่างรูปภาพแชร์สำหรับ {title}",
 	[Key.downloadSharePoster]: "ดาวน์โหลดรูปภาพ",
@@ -342,4 +340,5 @@ export const th: Translation = {
 	[Key.live2dStatusLoadFail]: "โหลดไม่สำเร็จ",
 	[Key.live2dStatusReload]: "โหลดใหม่",
 	[Key.live2dStatusRest]: "มาสคอตกำลังพักผ่อน",
+	[Key.live2dMenuExpression]: "เปลี่ยนสีหน้า",
 };

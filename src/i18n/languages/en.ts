@@ -274,12 +274,10 @@ export const en: Translation = {
 	[Key.copyLink]: "Copy link",
 	[Key.copySelection]: "Copy",
 	[Key.copyFailed]: "Failed to copy link. Please copy manually.",
-	[Key.sharePageLink]: "Share page link",
 
 	[Key.shareArticle]: "Share Article",
 	[Key.shareArticleDescription]:
 		"Generate a share poster or copy the link to share this article.",
-	[Key.generateSharePoster]: "Generate Share Poster",
 	[Key.generatingSharePoster]: "Generating share poster...",
 	[Key.sharePosterPreviewAlt]: "Share poster preview for {title}",
 	[Key.downloadSharePoster]: "Download Image",
@@ -358,4 +356,5 @@ export const en: Translation = {
 	[Key.live2dStatusLoadFail]: "Load failed",
 	[Key.live2dStatusReload]: "Reload",
 	[Key.live2dStatusRest]: "The mascot is resting",
+	[Key.live2dMenuExpression]: "Switch expression",
 };

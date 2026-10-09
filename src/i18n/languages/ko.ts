@@ -273,12 +273,10 @@ export const ko: Translation = {
 	[Key.copyLink]: "링크 복사",
 	[Key.copySelection]: "복사",
 	[Key.copyFailed]: "링크 복사에 실패했습니다. 직접 복사해 주세요.",
-	[Key.sharePageLink]: "페이지 링크 공유",
 
 	[Key.shareArticle]: "게시글 공유",
 	[Key.shareArticleDescription]:
 		"공유 카드를 생성하거나 링크를 복사하여 공유하세요.",
-	[Key.generateSharePoster]: "공유 카드 생성",
 	[Key.generatingSharePoster]: "공유 카드를 생성하는 중...",
 	[Key.sharePosterPreviewAlt]: "「{title}」 공유 카드 미리보기",
 	[Key.downloadSharePoster]: "이미지 다운로드",
@@ -356,4 +354,5 @@ export const ko: Translation = {
 	[Key.live2dStatusLoadFail]: "불러오기 실패",
 	[Key.live2dStatusReload]: "다시 불러오기",
 	[Key.live2dStatusRest]: "마스코트가 쉬고 있어요",
+	[Key.live2dMenuExpression]: "표정 바꾸기",
 };

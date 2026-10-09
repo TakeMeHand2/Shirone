@@ -276,12 +276,10 @@ export const tr: Translation = {
 	[Key.copyLink]: "Bağlantıyı kopyala",
 	[Key.copySelection]: "Kopyala",
 	[Key.copyFailed]: "Bağlantı kopyalanamadı. Lütfen manuel kopyalayın.",
-	[Key.sharePageLink]: "Sayfa bağlantısını paylaş",
 
 	[Key.shareArticle]: "Makaleyi Paylaş",
 	[Key.shareArticleDescription]:
 		"Paylaşım görseli oluşturun veya bağlantıyı kopyalayın.",
-	[Key.generateSharePoster]: "Paylaşım Görseli Oluştur",
 	[Key.generatingSharePoster]: "Paylaşım görseli oluşturuluyor...",
 	[Key.sharePosterPreviewAlt]: "{title} için paylaşım görseli önizlemesi",
 	[Key.downloadSharePoster]: "Görseli İndir",
@@ -363,4 +361,5 @@ export const tr: Translation = {
 	[Key.live2dStatusLoadFail]: "Yükleme başarısız",
 	[Key.live2dStatusReload]: "Yeniden yükle",
 	[Key.live2dStatusRest]: "Maskot dinleniyor",
+	[Key.live2dMenuExpression]: "İfadeyi değiştir",
 };

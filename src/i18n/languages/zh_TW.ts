@@ -265,11 +265,9 @@ export const zh_TW: Translation = {
 	[Key.copyLink]: "複製連結",
 	[Key.copySelection]: "複製",
 	[Key.copyFailed]: "複製失敗，請手動複製",
-	[Key.sharePageLink]: "分享頁面連結",
 
 	[Key.shareArticle]: "分享文章",
 	[Key.shareArticleDescription]: "生成精美分享圖或複製連結，與更多人分享本文。",
-	[Key.generateSharePoster]: "生成分享海報",
 	[Key.generatingSharePoster]: "正在生成分享圖...",
 	[Key.sharePosterPreviewAlt]: "文章《{title}》的分享海報預覽",
 	[Key.downloadSharePoster]: "下載分享圖",
@@ -343,4 +341,5 @@ export const zh_TW: Translation = {
 	[Key.live2dStatusLoadFail]: "載入失敗",
 	[Key.live2dStatusReload]: "重新載入",
 	[Key.live2dStatusRest]: "看板娘休息中",
+	[Key.live2dMenuExpression]: "換表情",
 };

@@ -276,12 +276,10 @@ export const vi: Translation = {
 	[Key.copyLink]: "Sao chép liên kết",
 	[Key.copySelection]: "Sao chép",
 	[Key.copyFailed]: "Sao chép liên kết thất bại. Vui lòng sao chép thủ công.",
-	[Key.sharePageLink]: "Chia sẻ liên kết trang",
 
 	[Key.shareArticle]: "Chia sẻ bài viết",
 	[Key.shareArticleDescription]:
 		"Tạo ảnh chia sẻ hoặc sao chép liên kết bài viết.",
-	[Key.generateSharePoster]: "Tạo ảnh chia sẻ",
 	[Key.generatingSharePoster]: "Đang tạo ảnh chia sẻ...",
 	[Key.sharePosterPreviewAlt]: "Xem trước ảnh chia sẻ cho {title}",
 	[Key.downloadSharePoster]: "Tải ảnh về",
@@ -358,4 +356,5 @@ export const vi: Translation = {
 	[Key.live2dStatusLoadFail]: "Tải thất bại",
 	[Key.live2dStatusReload]: "Tải lại",
 	[Key.live2dStatusRest]: "Linh vật đang nghỉ ngơi",
+	[Key.live2dMenuExpression]: "Đổi biểu cảm",
 };

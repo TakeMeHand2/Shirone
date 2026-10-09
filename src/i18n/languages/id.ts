@@ -279,12 +279,10 @@ export const id: Translation = {
 	[Key.copyLink]: "Salin tautan",
 	[Key.copySelection]: "Salin",
 	[Key.copyFailed]: "Gagal menyalin tautan. Silakan salin manual.",
-	[Key.sharePageLink]: "Bagikan tautan halaman",
 
 	[Key.shareArticle]: "Bagikan Artikel",
 	[Key.shareArticleDescription]:
 		"Buat poster berbagi atau salin tautan artikel ini.",
-	[Key.generateSharePoster]: "Buat Poster Berbagi",
 	[Key.generatingSharePoster]: "Membuat poster berbagi...",
 	[Key.sharePosterPreviewAlt]: "Pratinjau poster berbagi untuk {title}",
 	[Key.downloadSharePoster]: "Unduh Gambar",
@@ -364,4 +362,5 @@ export const id: Translation = {
 	[Key.live2dStatusLoadFail]: "Gagal dimuat",
 	[Key.live2dStatusReload]: "Muat ulang",
 	[Key.live2dStatusRest]: "Maskot sedang istirahat",
+	[Key.live2dMenuExpression]: "Ganti ekspresi",
 };
