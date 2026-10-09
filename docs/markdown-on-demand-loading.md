@@ -71,8 +71,7 @@
 基础层当前由以下入口共同拥有：
 
 - `src/styles/markdown.css` 中的通用正文规则；
-- `src/styles/markdown-typography.css` 中的 Typography 桥接；
-- `src/styles/markdown-extend.styl` 中尚未迁出的遗留通用规则。
+- `src/styles/markdown-typography.css` 中的 Typography 桥接。
 
 迁移过程中必须先把“普通 Markdown 必需规则”和“自定义语法规则”分离，再从全局入口移除后者。不能先删除全局导入，再依赖客户端脚本补样式。
 
@@ -250,7 +249,7 @@ pnpm.cmd build
 4. 为普通文章、树语法文章和相互 Swup 导航增加请求与 computed-style 测试。
 5. 迁移纯 SSR 语法样式，确认没有引入客户端加载器。
 6. 迁移交互语法样式与运行时，继续复用 `markdown-runtime.ts`。
-7. 处理 `markdown-extend.styl` 中的遗留语法，最后再收紧基础包边界。
+7. ✅ `markdown-extend.styl` 中的遗留语法（GitHub 卡片）已迁入 `markdown/github-card.css` 按需样式包并删除该文件；下一步收紧基础包边界。
 8. 所有消费者迁移后删除已废弃的特征映射和兼容字段。
 
 每一步必须可独立提交、可独立回滚，并保持当前文章无需修改 frontmatter。

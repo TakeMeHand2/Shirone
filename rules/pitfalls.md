@@ -240,11 +240,12 @@ pnpm.cmd astro dev --port 4321
 
 **现象**：Skills 等普通内容正常，但 About 页的 GitHub 卡片只剩无样式链接；检查 HTML 时 `.card-github` 节点仍然存在。
 
-**根因**：rehype 插件负责生成 DOM，`src/styles/markdown-extend.styl` 负责扩展卡片样式，两者是独立链路。若 `src/components/content/Markdown.astro` 遗漏全局样式导入，插件仍会生成正确 HTML，但卡片视觉完全丢失。这种情况清浏览器缓存不会解决。
+**根因**：rehype 插件负责生成 DOM，语法样式由 `src/styles/markdown/*.css` 的按需样式包提供，两者是独立链路。若该语法未登记进 `src/plugins/markdown/manifest.json` 的 `stylesheetPacks`，或文章模板没有按注册表输出对应的 `data-swup-optional` 样式，插件仍会生成正确 HTML，但卡片视觉完全丢失。这种情况清浏览器缓存不会解决。
 
 **解法**：
-- `Markdown.astro` 必须保留 `<style lang="stylus" is:global>` 对 `markdown-extend.styl` 的导入；
-- 先区分“DOM 未生成”和“CSS 未命中”：前者查插件与 Astro 内容缓存，后者查样式入口、全局作用域和 computed style；
+- 新增或迁移 Markdown 语法样式时，必须同时登记 `manifest.json` 的 `syntaxes` 与 `stylesheetPacks`，并确认样式位于 `src/styles/**/*.css`（`.styl` 会让构建抛错）；
+- 根节点几何等全局生效的通用规则留在 `src/components/content/Markdown.astro` 全局导入的 `markdown/generic.styl`，语法专属样式不得回灌该文件；
+- 先区分“DOM 未生成”和“CSS 未命中”：前者查插件与 Astro 内容缓存，后者查 manifest 登记、按需样式输出与 computed style；
 - 回归测试不能只断言 `.card-github` 存在，还要断言关键计算样式，例如 `display: block` 和无下划线链接。
 
 ---

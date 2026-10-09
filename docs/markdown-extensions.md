@@ -54,7 +54,7 @@
 
 - `src/styles/main.css` 全局导入 `src/styles/markdown.css`；后者再导入 `src/styles/markdown/*.css`。
 - `src/styles/markdown-typography.css` 是受限的 Typography 级联桥接入口：仅允许包含 `.markdown-content` 范围内、需要与 `@tailwindcss/typography` 同处 `utilities` 层的正文排版覆盖。不得把普通 Markdown 组件样式迁入该文件或借此建立新的通用优先级层。
-- `src/components/content/Markdown.astro` 以全局 Stylus 样式导入 `src/styles/markdown-extend.styl`，供历史 Markdown 扩展使用。
+- `src/components/content/Markdown.astro` 以全局 Stylus 样式导入 `src/styles/markdown/generic.styl`，承载全局生效的 Markdown 小组件几何；语法专属样式一律走 `src/styles/markdown/*.css` 的按需样式包。
 - 新的独立小组件优先放入 `src/styles/markdown/`，由 `markdown.css` 显式导入；不要在文章、页面或插件生成的 HTML 中内联重复样式。
 - 颜色、圆角、字体、间距和动效使用项目 token。生成式组件 class 必须稳定，不能依赖随机 ID 作为样式契约。
 
@@ -81,7 +81,7 @@ Admonition 支持现有方括号标题、GitHub Alert 与常用的空格标题�
 
 类型集合为 `note | info | tip | important | warning | caution | details`。`remark-admonitions.mjs` 只负责在代码围栏之外归一化作者输入；方括号标题和 GitHub Alert 继续由既有 directive 管线解析，最终都进入 `rehype-component-admonition.mjs`。`details` 在内部使用独立指令名，避免 `rehype-components` 把渲染后的原生 `<details>` 再次当作待处理组件。
 
-组件根节点使用 `not-prose`，内部段落、列表、引用、代码与折叠标题的几何由 `markdown/admonitions.css` 完整拥有。不要把提示容器重新改成 `blockquote`，也不要把样式追加回 `markdown-extend.styl`：前者会泄漏通用引用样式，后者会让新旧样式入口重复竞争。独立演示页位于 `src/content/posts/admonitions.md`。
+组件根节点使用 `not-prose`，内部段落、列表、引用、代码与折叠标题的几何由 `markdown/admonitions.css` 完整拥有。不要把提示容器重新改成 `blockquote`，也不要把语法专属样式回灌全局入口（`markdown/generic.styl`）：前者会泄漏通用引用样式，后者会绕过按需加载、让样式入口重复竞争。独立演示页位于 `src/content/posts/admonitions.md`。
 
 ### 3.2 马克笔高亮
 
