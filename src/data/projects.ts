@@ -42,8 +42,3 @@ export const projectsData: ProjectItem[] = [
 		repository: "https://github.com/lyravoid/KernelPatch",
 	},
 ];
-
-/** 获取所有项目数据列表 */
-export function getProjectsList(): ProjectItem[] {
-	return projectsData;
-}

@@ -98,26 +98,3 @@ export function writeProtectedSession(
 	}
 	return session;
 }
-
-export function clearProtectedSession(scope: string): void {
-	memory.delete(scope);
-	try {
-		storage()?.removeItem(keyFor(scope));
-	} catch {
-		// Ignore storage failures during cleanup.
-	}
-}
-
-export function clearAllProtectedSessions(): void {
-	memory.clear();
-	const store = storage();
-	if (!store) return;
-	try {
-		for (let index = store.length - 1; index >= 0; index -= 1) {
-			const key = store.key(index);
-			if (key?.startsWith(SESSION_PREFIX)) store.removeItem(key);
-		}
-	} catch {
-		// Ignore storage failures during cleanup.
-	}
-}

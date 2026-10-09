@@ -84,8 +84,3 @@ export const timelineData: TimelineItem[] = [
 		icon: "material-symbols:edit-note-rounded",
 	},
 ];
-
-/** 获取所有时间线数据列表 */
-export function getTimelineList(): TimelineItem[] {
-	return timelineData;
-}

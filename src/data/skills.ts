@@ -154,8 +154,3 @@ export const skillsData: SkillItem[] = [
 		level: "advanced",
 	},
 ];
-
-/** 获取所有技能数据列表 */
-export function getSkillsList(): SkillItem[] {
-	return skillsData;
-}

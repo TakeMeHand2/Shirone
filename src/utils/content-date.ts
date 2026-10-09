@@ -94,10 +94,6 @@ export function formatInstantDateTimeInTimeZone(
 	return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}`;
 }
 
-export function formatInstantDateInSiteTimeZone(date: Date): string {
-	return formatInstantDateInTimeZone(date, siteConfig.timeZone);
-}
-
 export function formatInstantDateTimeInSiteTimeZone(date: Date): string {
 	return formatInstantDateTimeInTimeZone(date, siteConfig.timeZone);
 }

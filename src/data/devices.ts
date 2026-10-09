@@ -30,8 +30,3 @@ export const devicesData: DeviceItem[] = [
 		featured: true,
 	},
 ];
-
-/** 获取所有设备数据列表 */
-export function getDevicesList(): DeviceItem[] {
-	return devicesData;
-}
