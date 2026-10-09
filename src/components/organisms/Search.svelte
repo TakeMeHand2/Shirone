@@ -115,7 +115,9 @@ onMount(() => {
 			typeof window !== "undefined" &&
 			!!window.pagefind &&
 			typeof window.pagefind.search === "function";
-		console.log("Pagefind status on init:", pagefindLoaded);
+		if (import.meta.env.DEV) {
+			console.log("Pagefind status on init:", pagefindLoaded);
+		}
 		if (keywordDesktop) search(keywordDesktop, true);
 		if (keywordMobile) search(keywordMobile, false);
 	};
@@ -127,7 +129,9 @@ onMount(() => {
 		initializeSearch();
 	} else {
 		document.addEventListener("pagefindready", () => {
-			console.log("Pagefind ready event received.");
+			if (import.meta.env.DEV) {
+				console.log("Pagefind ready event received.");
+			}
 			initializeSearch();
 		});
 		document.addEventListener("pagefindloaderror", () => {

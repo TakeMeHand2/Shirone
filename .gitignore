@@ -60,6 +60,7 @@ public/assets/moments/thumbnails/*
 research/
 .pnpm-store/
 .mimosa/
+.workbuddy/
 
 # playwright
 .playwright-cli/
