@@ -308,7 +308,7 @@ const hasMonoFont =
 <script>
 import { initLastUpdatedNotices } from "../utils/last-updated-notice";
 import {getHue, getStoredTheme, setHue, setTheme} from "../utils/setting-utils";
-import { WALLPAPER_MODE_CHANGE_EVENT, BANNER_HEIGHT, BANNER_HEIGHT_EXTEND } from "../constants/constants";
+import { WALLPAPER_MODE_CHANGE_EVENT, BANNER_HEIGHT_EXTEND } from "../constants/constants";
 import { copyPageLink } from "../utils/copy-page-link";
 
 function setClickOutsideToClose(panel: string, ignores: string[]) {
@@ -374,11 +374,8 @@ const setup = () => {
 if (window.swup?.hooks) setup();
 else document.addEventListener('swup:enable', setup, { once: true });
 
-const backToTopBtn = document.getElementById('back-to-top-btn');
 function scrollFunction() {
 	const scrollTop = Math.max(document.body.scrollTop, document.documentElement.scrollTop);
-	const backToTopThreshold = window.innerHeight * (BANNER_HEIGHT / 100);
-	backToTopBtn?.classList.toggle('hide', scrollTop <= backToTopThreshold);
 	const bannerVisible = document.body.dataset.bannerVisible === 'true';
 	const navbar = document.getElementById('navbar');
 	const bannerStage = document.getElementById('banner-wrapper');

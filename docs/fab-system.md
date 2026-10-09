@@ -40,8 +40,7 @@ src/
 │   │   ├── FloatingTOCPanel.astro         # 移动端/平板 M3 浮动大纲面板卡片分子
 │   │   └── SidebarTOC.astro               # 桌面端侧边栏粘性大纲分子（含 custom element）
 │   └── organisms/
-│       ├── FloatingControls.astro         # 右下角悬浮控制流总编排有机体（挂载于持久外壳）
-│       └── BackToTop.astro                # 向下兼容历史引用 shim
+│       └── FloatingControls.astro         # 右下角悬浮控制流总编排有机体（挂载于持久外壳）
 ├── utils/
 │   ├── fab-responsive.ts                  # SSR 响应式设备类名纯函数编译器
 │   └── fab-controller.ts                  # 客户端滚动监听、Swup 钩子与 FAB 状态机
