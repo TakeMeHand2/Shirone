@@ -20,18 +20,6 @@ export function prefersReducedMotion(): boolean {
 	);
 }
 
-/** Wait for layout-affecting CSS transitions on an element to settle. */
-export async function waitForLayoutTransitions(
-	el: HTMLElement | null,
-): Promise<void> {
-	if (!el || prefersReducedMotion()) return;
-	const transitions = el
-		.getAnimations()
-		.filter((animation) => animation instanceof CSSTransition);
-	if (transitions.length === 0) return;
-	await Promise.allSettled(transitions.map((animation) => animation.finished));
-}
-
 export interface CollapseParams {
 	/** 目标状态：true 展开 / false 收起 */
 	open: boolean;
@@ -94,7 +82,7 @@ export function collapse(node: HTMLElement, params: CollapseParams) {
 	}
 
 	return {
-		update(next: CollapseParams) {
+		update(next: CollapseParams): void {
 			currentParams = next;
 			if (next.resetKey !== resetKey) {
 				resetKey = next.resetKey;
@@ -107,7 +95,7 @@ export function collapse(node: HTMLElement, params: CollapseParams) {
 			current = next.open;
 			play(current, next.animate !== false);
 		},
-		destroy() {
+		destroy(): void {
 			anim?.cancel();
 			node.style.height = "";
 			node.style.overflow = "";
@@ -158,11 +146,11 @@ export function reveal(node: HTMLElement, params: RevealParams = {}) {
 	play();
 
 	return {
-		update(next: RevealParams) {
+		update(next: RevealParams): void {
 			currentParams = next;
 			play();
 		},
-		destroy() {
+		destroy(): void {
 			anim?.cancel();
 		},
 	};

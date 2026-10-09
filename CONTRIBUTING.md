@@ -117,12 +117,14 @@ Choose the additional checks that match your change:
 | **Code Formatting** | `pnpm format` | **Mandatory before committing** |
 | **Format Verification** | `pnpm exec biome ci ./src` | Read-only check for CI |
 | **Astro Diagnostics** | `npx astro check` | **Must report 0 errors** |
-| **TypeScript Checks** | `pnpm type-check` | For TypeScript or shared APIs |
+| **TypeScript Checks** | `pnpm type-check` | For TypeScript or shared APIs (`tsc --noEmit` over `src/`) |
 | **Atom Manifest** | `pnpm check:manifest` | When atoms are added, moved, or deleted |
 | **Playwright Tests** | `npx playwright test tests/site/<spec>.spec.ts` | For page or component behavior |
 | **Accessibility Lock** | `npx playwright test tests/site/a11y.spec.ts` | For UI and component updates |
 | **Production Build** | `pnpm build` | For content processing, fonts, and schemas |
 | **Performance Audit** | `pnpm run perf:measure` | For performance-sensitive work |
+
+`pnpm type-check` runs `tsc --noEmit` over `src/` and must stay green. The stricter declaration-emit mode (`tsc --noEmit --isolatedDeclarations`) is deliberately **not** wired into the gate: the Zod-builder content schemas (`src/integration/collections.ts`) and the `collections` object in `src/content.config.ts` cannot be declared under that flag without either duplicating the schema source of truth or widening `CollectionEntry<...>` to `any`, and TypeScript provides no per-file opt-out. Everything outside that schema layer is kept annotation-explicit regardless, so running the flag manually reports exactly those sites and nothing else.
 
 UI changes should be checked at relevant desktop and mobile sizes in both light and dark themes. Include `tests/site/a11y.spec.ts`, and add screenshots to the pull request when the visual difference is intentional.
 

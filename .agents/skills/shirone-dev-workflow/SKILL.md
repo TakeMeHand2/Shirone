@@ -28,7 +28,7 @@ Shirone 是 Astro 7 + Svelte 5 + Tailwind 4 + Stylus + pnpm 的 M3E 博客主题
 | `pnpm.cmd format` | Biome 格式化(`--write`,提交代码前必须跑) |
 | `npx.cmd astro check` | 必须报 **0 errors / 0 warnings** |
 | `pnpm.cmd check:manifest` | 原子清单 + Markdown 语法清单 + AI skills 校验 |
-| `pnpm.cmd type-check` | `tsc --noEmit --isolatedDeclarations` |
+| `pnpm.cmd type-check` | `tsc --noEmit` 全量 `src/` 类型门禁（`--isolatedDeclarations` 对内容 schema 层不可行，见 `CONTRIBUTING.md`） |
 | `pnpm.cmd exec biome ci ./src` | 只读 lint 校验(`lint`/`format` 带 `--write`,**不能**当只读检查用) |
 | `npx.cmd playwright test tests/site/<spec>.spec.ts` | 只跑最小相关分片;UI 变更必加 `tests/site/a11y.spec.ts` |
 
