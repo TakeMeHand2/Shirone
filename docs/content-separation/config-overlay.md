@@ -53,6 +53,7 @@ themeColor:
 | `friends.yaml` | `friendsConfig` 友情链接 | `moments.yaml` | `momentsConfig` 说说动态 |
 | `albums.yaml` | `albumsConfig` 摄影相册 | `compass.yaml` | `compassConfig` 站点罗盘 |
 | `about.yaml` | `aboutConfig` 关于页 | `games.yaml` | `gamesConfig` 游戏展示 |
+| `guestbook.yaml` | `guestbookConfig` 留言板 | `cover.yaml` | `coverConfig` 随机封面 |
 | `permalink.yaml` | `permalinkConfig` 文章固定链接 | `context-menu.yaml` | `contextMenuConfig` 桌面右键增强 |
 | `i18n.yaml` | `i18nConfig` 多语言与本地化 | `series.yaml` | `seriesConfig` 系列连载 |
 

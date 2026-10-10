@@ -25,7 +25,8 @@ interface Props {
 
 const { album } = Astro.props as Props;
 const resolvedAlbum = album ?? findAlbum(Astro.params.id ?? "");
-if (!resolvedAlbum) return Astro.redirect(url("/404/"));
+if (!resolvedAlbum)
+	return (await import("@utils/soft-404")).softNotFoundResponse();
 
 const scope = `album:${resolvedAlbum.id}`;
 let payload: ProtectedPayload | null = null;

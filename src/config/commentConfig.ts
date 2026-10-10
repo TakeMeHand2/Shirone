@@ -24,9 +24,11 @@ import { withUserConfig } from "../utils/config-overlay.ts";
  *    取生成的 `data-repo-id` 与 `data-category-id`；
  * 4. 将 `enable` 置为 `true`，并将 `provider` 设置为 `"giscus"`，
  *    填入 `giscus.repo` / `giscus.repoId` / `giscus.categoryId` 三个必填字段；
- * 5. （可选）调整 `mapping`、`reactionsEnabled`、`inputPosition`、
- *    `theme.light` / `theme.dark`（giscus 主题键或自定义主题 CSS URL）、
- *    `lang` 与 `scriptUrl`（自托管 giscus 时替换）。
+ * 5. （可选）调整 `mapping`、`reactionsEnabled`、`inputPosition`、`lang`、
+ *    与 `scriptUrl`（自托管 giscus 时替换）。`theme.light` / `theme.dark` 默认
+ *    已指向仓库自带的换皮（`/giscus/shirone-*.css`）—— 它需要站点返回一条
+ *    CORS 头才能被 giscus 的 iframe 加载，规则已在根目录 `vercel.json` 里；
+ *    换回 giscus 内置主题键（如 "light" / "dark"）即可整体停用换皮。
  */
 export const commentConfig: CommentConfig = withUserConfig("comment", {
 	/** 全局评论总开关：false 时完全不加载评论脚本与 DOM */
@@ -62,12 +64,29 @@ export const commentConfig: CommentConfig = withUserConfig("comment", {
 		strict: false,
 		/** 是否显示主贴表情反应 */
 		reactionsEnabled: true,
-		/** 是否向父页面周期性发送 Discussion 元数据（供脚本消费） */
-		emitMetadata: false,
+		/**
+		 * 是否向父页面发送 Discussion 元数据（含 totalCommentCount）。
+		 * 评论区外壳用它决定角色贴纸的初始状态（0 条评论时用「安静」那枚），
+		 * 因此这里保持开启；关掉只会让贴纸停在默认状态，不影响评论功能。
+		 */
+		emitMetadata: true,
 		/** 评论输入框位置：bottom（默认，评论框在列表下方）| top（评论框在列表上方） */
 		inputPosition: "bottom",
-		/** 明暗两套 giscus 主题（giscus 主题键或自定义主题 CSS URL），跟随站点明暗切换 */
-		theme: { light: "light", dark: "dark" },
+		/**
+		 * 明暗两套 giscus 主题，跟随站点明暗切换。支持两种写法：
+		 * - giscus 内置主题键，如 "light" / "dark" / "transparent_dark"；
+		 * - 自定义主题 CSS。**以 "/" 开头时视为站点内路径**，组件会在运行时补成
+		 *   绝对 URL（因为 giscus 的 iframe 会把相对路径解析到 giscus.app，而不是本站）。
+		 *
+		 * 默认指向仓库自带的「分格漫画」换皮：public/giscus/shirone-{light,dark}.css。
+		 * 该文件由 giscus 以 `<link crossorigin="anonymous">` 注入它自己的 iframe，
+		 * 因此站点必须对 /giscus/* 返回 Access-Control-Allow-Origin（见根 vercel.json）；
+		 * 换皮文件里的色值是烘焙常量，站点换种子色后需要同步更新。
+		 */
+		theme: {
+			light: "/giscus/shirone-light.css",
+			dark: "/giscus/shirone-dark.css",
+		},
 		/** 评论语言："auto"（跟随站点）| giscus 语言码（如 "zh-CN"、"en"） */
 		lang: "auto",
 		/** giscus client.js 地址；自托管 giscus 时替换为自有地址 */

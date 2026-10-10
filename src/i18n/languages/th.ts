@@ -4,6 +4,7 @@ import type { Translation } from "../translation.ts";
 export const th: Translation = {
 	[Key.home]: "หน้าแรก",
 	[Key.about]: "เกี่ยวกับ",
+	[Key.guestbook]: "สมุดเยี่ยมชม",
 	[Key.archive]: "คลัง",
 	[Key.archiveGroup]: "จัดกลุ่มคลัง",
 	[Key.archiveGroupYear]: "ตามปี",
@@ -157,6 +158,7 @@ export const th: Translation = {
 	[Key.commentsLoadFailed]: "โหลดความคิดเห็นไม่สำเร็จ",
 	[Key.commentsRequiresJavaScript]:
 		"ความคิดเห็นจำเป็นต้องเปิดใช้งาน JavaScript เพื่อแสดงผล",
+	[Key.commentGreeting]: "ฝากข้อความไว้ให้เราหน่อยนะ～",
 
 	[Key.uncategorized]: "ไม่ได้จัดหมวดหมู่",
 	[Key.noTags]: "ไม่มีป้ายกำกับ",
@@ -341,4 +343,7 @@ export const th: Translation = {
 	[Key.live2dStatusReload]: "โหลดใหม่",
 	[Key.live2dStatusRest]: "มาสคอตกำลังพักผ่อน",
 	[Key.live2dMenuExpression]: "เปลี่ยนสีหน้า",
+	[Key.live2dExpressionSwitched]: "เปลี่ยนเป็นสีหน้า {name} แล้ว",
+	[Key.a11yNavigatedTo]: "ไปที่: {title}",
+	[Key.a11yNewPageAt]: "หน้าใหม่ที่ {url}",
 };

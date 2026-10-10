@@ -36,6 +36,9 @@ html.is-animating .transition-swup-fade {
 #sidebar-secondary {
     animation-delay: 100ms
 }
+/* 这里是 Swup 路由切换时的程序化焦点落点（见 Layout.astro 的 a11y 脚本与
+   rules/a11y.md §3）。焦点由脚本移动、不进入 Tab 序，因此不画焦点环；
+   若将来把某个可交互元素放进该容器并期望可见焦点环，请另行加回。 */
 #swup-container {
     outline: none;
 }

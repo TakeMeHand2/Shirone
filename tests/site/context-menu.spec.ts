@@ -43,7 +43,7 @@ async function selectFirstParagraph(page: import("@playwright/test").Page) {
 test("registers context-menu copy in every locale", () => {
 	for (const translation of translations) {
 		expect(translation[I18nKey.copySelection].trim()).not.toBe("");
-		expect(translation[I18nKey.sharePageLink].trim()).not.toBe("");
+		expect(translation[I18nKey.copyLink].trim()).not.toBe("");
 	}
 });
 

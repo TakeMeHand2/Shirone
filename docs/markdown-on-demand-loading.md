@@ -177,7 +177,7 @@ Mermaid 样式由 `stylesheetPacks.mermaid` 输出为 Swup 管理的可选 style
 6. `page:view` 用于依赖最终可见页面的行为，不得重复承担内容替换初始化。
 7. 浏览器前进/后退和 Swup cache 恢复必须与普通客户端导航等价。
 
-`astro.config.mjs` 的 `persistTags` 规则必须持续从 `link` 与 `style` 两类节点排除 `[data-swup-optional]`。新增样式包时不得把可选资源改成 `data-swup-persist`。
+`src/config/integrationsConfig.ts` 的 `persistTags` 规则必须持续从 `link` 与 `style` 两类节点排除 `[data-swup-optional]`。新增样式包时不得把可选资源改成 `data-swup-persist`。
 
 ## 8. 加密文章
 

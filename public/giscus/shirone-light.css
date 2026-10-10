@@ -1,0 +1,184 @@
+/*! Shirone comment skin — light
+ * ---------------------------------------------------------------------------
+ * 让 giscus（GitHub Primer 主题）落在站点 M3E 令牌上，与评论区外壳共用同一套
+ * 「分格漫画」语言：2px 墨线、8/12px 圆角、primary 主色、跟随站点明暗。
+ *
+ * 三条硬约束（改这个文件前务必先读）：
+ *  1. 本文件由 giscus 以 `<link crossorigin="anonymous">` 注入**它自己 iframe 的
+ *     <head>**，所以站点必须对 /giscus/* 返回 `Access-Control-Allow-Origin`
+ *     （见仓库根 vercel.json）。缺这条头，浏览器会直接拦掉样式表加载。
+ *  2. iframe 是独立文档，取不到父页面的 CSS 变量（--surface 等一律不可用），
+ *     因此这里的所有色值都是**烘焙好的常量**。站点换种子色后需要同步本文件。
+ *  3. giscus 官方把自定义主题标为 experimental。加载失败只会回退到内置主题，
+ *     不会导致评论区白屏 —— 但外观会退回 GitHub 原味。
+ *
+ * 色值来源：站点实时计算样式（亮色主题），对应关系写在各变量后的注释里。
+ * ---------------------------------------------------------------------------
+ */
+
+main {
+	/* ---- 画布与层级：对齐 surface 阶梯 ---- */
+	--color-canvas-default: #ffffff; /* card-bg */
+	--color-canvas-overlay: #ffffff;
+	--color-canvas-inset: #faf1f9; /* surface-container-low */
+	--color-canvas-subtle: #f5ebf4; /* surface-container */
+
+	/* ---- 文字：on-surface 三档 ---- */
+	--color-fg-default: #363039; /* on-surface */
+	--color-fg-muted: #645d66; /* on-surface-variant */
+	--color-fg-subtle: #807882; /* outline */
+
+	/* ---- 边框与分隔 ---- */
+	--color-border-default: #b9afba; /* outline-variant */
+	--color-border-muted: #eadfeb;
+	--color-neutral-muted: #eadfeb80;
+
+	/* ---- 强调：链接 / 选中 / 反应 ---- */
+	--color-accent-fg: #715483; /* primary */
+	--color-accent-emphasis: #715483;
+	--color-accent-muted: #ebc8ff; /* primary-container */
+	--color-accent-subtle: #f4e8fb;
+
+	/* ---- 次级按钮 ---- */
+	--color-btn-text: #363039;
+	--color-btn-bg: #faf1f9;
+	--color-btn-border: #b9afba;
+	--color-btn-hover-bg: #f5ebf4;
+	--color-btn-hover-border: #715483;
+	--color-btn-active-bg: #efe5ef;
+	--color-btn-active-border: #b9afba;
+	--color-btn-selected-bg: #f5ebf4;
+
+	/* ---- 主按钮：把 GitHub 绿换成 primary 紫 ---- */
+	--color-btn-primary-text: #fff6fd; /* on-primary */
+	--color-btn-primary-bg: #715483;
+	--color-btn-primary-border: #715483;
+	--color-btn-primary-hover-bg: #63487a;
+	--color-btn-primary-hover-border: #63487a;
+	--color-btn-primary-selected-bg: #563e69;
+	--color-btn-primary-disabled-text: #fff6fdb3;
+	--color-btn-primary-disabled-bg: #cbb6d8;
+	--color-btn-primary-disabled-border: transparent;
+
+	/* ---- 语义色：resolved / pinned / 错误 ---- */
+	--color-success-fg: #2e7d5b;
+	--color-attention-fg: #8a6320;
+	--color-attention-muted: #8a632066;
+	--color-attention-subtle: #fdf3dd;
+	--color-danger-fg: #a8364b; /* error */
+	--color-danger-muted: #a8364b66;
+	--color-danger-subtle: #fdeaee;
+
+	/* ---- 组件细节 ---- */
+	--color-action-list-item-default-hover-bg: #eadfeb80;
+	--color-segmented-control-bg: #efe5ef;
+	--color-segmented-control-button-bg: #ffffff;
+	--color-segmented-control-button-selected-border: #715483;
+	--color-primer-shadow-inset: inset 0 1px 0 #b9afba33;
+	--color-scale-gray-1: #eadfeb;
+	--color-scale-blue-1: #ebc8ff;
+	--color-social-reaction-bg-hover: #f5ebf4;
+	--color-social-reaction-bg-reacted-hover: #ebc8ff;
+
+	/* ---- 代码语法高亮：只把注释拉回站点中性色，其余保持 Primer 默认
+	       （代码块的可读性优先于配色统一，VS Code 等也是这个取舍）---- */
+	--color-prettylights-syntax-comment: #807882;
+
+	/* iframe 是独立文档，字体栈无法从父页面继承；giscus 在 body 上声明了
+	   -apple-system 系统栈，因此这里必须同样落到 body 并压过它 */
+	font-family:
+		"Outfit", "Yozai Medium", ui-sans-serif, system-ui, -apple-system,
+		"Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+body {
+	font-family:
+		"Outfit", "Yozai Medium", ui-sans-serif, system-ui, -apple-system,
+		"Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
+		sans-serif !important;
+}
+
+/* ===========================================================================
+   结构覆盖 —— 墨线 + 圆角，与外壳的「分格」同一套语言
+   =========================================================================== */
+
+/* 评论条目与回复：2px 墨线 + 8px 圆角（= 外壳的「格」） */
+.gsc-comment,
+.gsc-reply {
+	border: 2px solid var(--color-fg-default) !important;
+	border-radius: 8px !important;
+	background: var(--color-canvas-default) !important;
+	padding: 12px 14px !important;
+}
+
+/* 输入区：整块作为一个「对话框」—— 外框承担墨线，内部书写区不再另起一层框 */
+.gsc-comment-box {
+	border: 2px solid var(--color-fg-default) !important;
+	border-radius: 10px !important;
+	overflow: hidden !important;
+}
+
+.gsc-comment-box-textarea,
+.gsc-comment-box-preview {
+	border: none !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+}
+
+/* 聚焦时用内描边代替外框变色，避免和容器墨线叠成双线 */
+.gsc-comment-box-textarea:focus,
+.gsc-comment-box-write:focus-within {
+	border: none !important;
+	box-shadow: inset 0 0 0 2px var(--color-accent-fg) !important;
+	outline: none !important;
+}
+
+/* 头像：墨线圆环 */
+.gsc-comment-author-avatar .avatar,
+.gsc-reply-author-avatar .avatar {
+	border: 2px solid var(--color-fg-default) !important;
+	border-radius: 999px !important;
+	box-sizing: content-box;
+}
+
+/* tab 栏占满宽度、直接贴容器边，圆角交给外层容器的 overflow 裁切 */
+.gsc-comment-box-tabs {
+	border-radius: 0 !important;
+}
+
+/* 按钮与分页：12px 圆角（交互控件沿用 M3E corner-medium，不跟着漫画件直角化） */
+.btn,
+.gsc-pagination-button,
+.gsc-reactions-button {
+	border-radius: 12px !important;
+}
+
+/* 时间线：细墨线 */
+.gsc-tl-line {
+	border-color: var(--color-border-default) !important;
+}
+
+/* 代码块：圆角与站点一致 */
+.gsc-comment-content pre,
+.gsc-reply-content pre,
+.gsc-comment-box-preview pre {
+	border-radius: 8px !important;
+}
+
+/* 加载指示：Primer 默认指向 githubassets 的 GIF，换成纯 CSS 圆环
+   （既统一观感，也去掉一个第三方图片请求） */
+main .gsc-loading-image {
+	background-image: none !important;
+	width: 28px !important;
+	height: 28px !important;
+	border: 3px solid var(--color-border-default);
+	border-top-color: var(--color-accent-fg);
+	border-radius: 50% !important;
+	animation: shirone-giscus-spin 0.8s linear infinite;
+}
+
+@keyframes shirone-giscus-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}

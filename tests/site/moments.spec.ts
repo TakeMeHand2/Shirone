@@ -141,9 +141,10 @@ test.describe("动态页", () => {
 		const currentImage = viewer.locator(".moment-viewer__stage-btn img");
 		await expect
 			.poll(() =>
-				currentImage.evaluate(
-					(image) => image.complete && image.naturalWidth > 0,
-				),
+				currentImage.evaluate((image) => {
+					const img = image as HTMLImageElement;
+					return img.complete && img.naturalWidth > 0;
+				}),
 			)
 			.toBe(true);
 
@@ -190,9 +191,10 @@ test.describe("动态页", () => {
 		releaseSecondImage();
 		await expect
 			.poll(() =>
-				currentImage.evaluate(
-					(image) => image.complete && image.naturalWidth > 0,
-				),
+				currentImage.evaluate((image) => {
+					const img = image as HTMLImageElement;
+					return img.complete && img.naturalWidth > 0;
+				}),
 			)
 			.toBe(true);
 		await expect(viewer.locator(".moment-viewer__stage-loading")).toHaveCount(

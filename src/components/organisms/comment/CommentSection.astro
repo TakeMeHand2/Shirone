@@ -1,6 +1,4 @@
 ---
-import AccentBar from "@components/atoms/display/AccentBar.svelte";
-import Card from "@components/atoms/display/Card.svelte";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { commentConfig, resolveCommentOptions } from "@/config";
@@ -28,36 +26,286 @@ const Giscus =
 	options.provider === "giscus"
 		? (await import("@components/organisms/comment/Giscus.astro")).default
 		: null;
+
+/**
+ * 角色贴纸（Q 版遐蝶）。三枚静态图各自叠放，由外层 `data-sticker` 与 CSS 切换显隐：
+ * - 默认 wink；鼠标悬停时由 **纯 CSS** 换成 shy（不经过 JS，不会抖动）；
+ * - giscus 回传 `totalCommentCount === 0` 时切成 calm（见下方脚本）。
+ * 纯装饰：容器 aria-hidden，且不接收指针事件，绝不遮挡输入区与按钮。
+ * 素材来源与替换方式见 public/comment/README.md。
+ */
+const stickers = [
+	{ key: "wink", src: "/comment/castorice-wink.webp", w: 452, h: 491 },
+	{ key: "shy", src: "/comment/castorice-shy.webp", w: 452, h: 497 },
+	{ key: "calm", src: "/comment/castorice-calm.webp", w: 432, h: 432 },
+];
 ---
 
 <section
 	id="comments"
 	aria-labelledby="comments-title"
-	class:list={["comment-section w-full mb-4", className]}
+	class:list={["shirone-comment w-full", className]}
 	data-comment-section
+	data-sticker="wink"
 >
-	<Card color="var(--card-bg)" radius="l" class="p-6 md:p-8 w-full relative">
-		<div class="flex items-center gap-3 mb-6 relative">
-			<AccentBar size="small" class="!inline-block" />
-			<h2 id="comments-title" class="text-xl md:text-2xl font-bold text-[var(--on-surface)] m-0">
-				{i18n(I18nKey.comments)}
-			</h2>
+	<div class="shirone-comment__panel">
+		<!-- 集中线：从贴纸位置向外放射，纯 CSS conic-gradient，吃令牌、零图片请求 -->
+		<div class="shirone-comment__burst" aria-hidden="true"></div>
+
+		<header class="shirone-comment__head">
+			<!-- 标题做成漫画旁白框：小字号 + 3px 圆角，避免与 giscus 自带的「N 条评论」抢层级 -->
+			<span class="shirone-comment__chip">
+				<h2 id="comments-title">{i18n(I18nKey.comments)}</h2>
+			</span>
+			<!-- 角色对话框：尾巴朝右指向贴纸，读得出「谁在说话」 -->
+			<span class="shirone-comment__bubble">{i18n(I18nKey.commentGreeting)}</span>
+		</header>
+
+		<div class="shirone-comment__body">
+			{options.provider === "twikoo" && Twikoo && (
+				<Twikoo context={context} config={options.twikoo} lazy={options.lazy} />
+			)}
+
+			{options.provider === "giscus" && Giscus && (
+				<Giscus context={context} config={options.giscus} lazy={options.lazy} />
+			)}
 		</div>
 
-		{options.provider === "twikoo" && Twikoo && (
-			<Twikoo
-				context={context}
-				config={options.twikoo}
-				lazy={options.lazy}
-			/>
-		)}
-
-		{options.provider === "giscus" && Giscus && (
-			<Giscus
-				context={context}
-				config={options.giscus}
-				lazy={options.lazy}
-			/>
-		)}
-	</Card>
+		<!-- 贴纸叠在面板墨线之上「破框」，白色刀模 + 墨线钥匙边已烘焙进素材 -->
+		<span class="shirone-comment__stickers" aria-hidden="true">
+			{
+				stickers.map((sticker) => (
+					<img
+						class:list={[
+							"shirone-comment__sticker",
+							`shirone-comment__sticker--${sticker.key}`,
+						]}
+						src={sticker.src}
+						alt=""
+						width={sticker.w}
+						height={sticker.h}
+						loading="lazy"
+						decoding="async"
+					/>
+				))
+			}
+		</span>
+	</div>
 </section>
+
+<script>
+	/**
+	 * 贴纸状态：只负责「有没有评论」这一条 JS 分支。
+	 * - 拿不到数量（未开启 emitMetadata、非 giscus、加载失败）时保持默认 wink；
+	 * - hover → shy 完全交给 CSS 的 @media (hover: hover) 规则。
+	 */
+	function syncCommentSticker() {
+		const section = document.querySelector<HTMLElement>("[data-comment-section]");
+		if (!section) return;
+
+		const apply = (count: number) => {
+			// 0 条评论时角色安静下来；其余情况保持默认的 wink
+			section.dataset.sticker = count === 0 ? "calm" : "wink";
+		};
+
+		const readCount = (): number | null => {
+			const raw = section.querySelector<HTMLElement>(
+				".shirone-giscus-wrapper",
+			)?.dataset.giscusCommentCount;
+			if (raw === undefined) return null;
+			const value = Number(raw);
+			return Number.isFinite(value) ? value : null;
+		};
+
+		const known = readCount();
+		if (known !== null) apply(known);
+
+		// giscus 是异步挂载的，评论数到达时再切一次
+		section.addEventListener("shirone:giscus-count", (event) => {
+			const detail = (event as CustomEvent<{ count?: number }>).detail;
+			if (typeof detail?.count === "number") apply(detail.count);
+		});
+	}
+
+	syncCommentSticker();
+	document.addEventListener("swup:content:replace", syncCommentSticker);
+	document.addEventListener("swup:page:view", syncCommentSticker);
+</script>
+
+<style>
+	/* =========================================================================
+	   分格漫画底板 —— 墨线三级：面板 3px / 格与控件 2px / 细部 1.5px
+	   全部使用 --on-surface，暗色自动反相，因此不需要第二套素材。
+	   ========================================================================= */
+	.shirone-comment {
+		position: relative;
+		/* 给「破框」的贴纸留出上方的呼吸位 */
+		margin-top: 2.5rem;
+	}
+
+	.shirone-comment__panel {
+		position: relative;
+		border: 3px solid var(--on-surface);
+		border-radius: 12px;
+		background: var(--card-bg);
+		padding: 18px 16px 16px;
+	}
+
+	/* ---- 集中线（贴纸身后的放射线）---- */
+	.shirone-comment__burst {
+		position: absolute;
+		top: -20px;
+		right: -14px;
+		width: 280px;
+		height: 200px;
+		background-image: repeating-conic-gradient(
+			from 205deg at 82% 16%,
+			var(--on-surface) 0deg 0.4deg,
+			transparent 0.4deg 3deg
+		);
+		opacity: 0.13;
+		-webkit-mask-image: radial-gradient(
+			ellipse 92% 92% at 82% 16%,
+			transparent 24%,
+			#000 74%
+		);
+		mask-image: radial-gradient(
+			ellipse 92% 92% at 82% 16%,
+			transparent 24%,
+			#000 74%
+		);
+		pointer-events: none;
+	}
+
+	/* ---- 头区：旁白框 + 对话框 ---- */
+	.shirone-comment__head {
+		position: relative;
+		/* 贴纸是绝对定位的，这里用 min-height 给它让位，避免压到 giscus 的标题行 */
+		min-height: 138px;
+	}
+
+	.shirone-comment__chip {
+		display: inline-block;
+		border: 2px solid var(--on-surface);
+		border-radius: 3px;
+		padding: 3px 10px;
+		/* 手写标注的轻微倾斜，1 度足够，再多就显得脏 */
+		transform: rotate(-1deg);
+	}
+
+	.shirone-comment__chip h2 {
+		margin: 0;
+		font-size: 0.8125rem;
+		font-weight: 500;
+		line-height: 1.5;
+		color: var(--on-surface);
+	}
+
+	.shirone-comment__bubble {
+		position: absolute;
+		top: 36px;
+		/* 贴纸（148px）左侧留 10px 间距，尾巴朝右指向它 */
+		right: 172px;
+		padding: 5px 10px;
+		border: 2px solid var(--on-surface);
+		border-radius: 8px;
+		background: var(--card-bg);
+		color: var(--on-surface);
+		font-size: 0.75rem;
+		font-weight: 500;
+		line-height: 1.5;
+		white-space: nowrap;
+	}
+
+	.shirone-comment__bubble::after {
+		content: "";
+		position: absolute;
+		right: -11px;
+		top: 50%;
+		margin-top: -8px;
+		width: 0;
+		height: 0;
+		border-top: 8px solid transparent;
+		border-bottom: 8px solid transparent;
+		border-left: 11px solid var(--on-surface);
+	}
+
+	.shirone-comment__bubble::before {
+		content: "";
+		position: absolute;
+		right: -7px;
+		top: 50%;
+		margin-top: -6px;
+		z-index: 1;
+		width: 0;
+		height: 0;
+		border-top: 6px solid transparent;
+		border-bottom: 6px solid transparent;
+		border-left: 8px solid var(--card-bg);
+	}
+
+	/* ---- 贴纸 ---- */
+	.shirone-comment__stickers {
+		position: absolute;
+		top: -28px;
+		right: 12px;
+		pointer-events: none;
+	}
+
+	.shirone-comment__sticker {
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 148px;
+		height: auto;
+		/* 必须抵消 Tailwind preflight 的 `img { max-width: 100% }`：贴纸容器是
+		   绝对定位的零尺寸盒子，百分比 max-width 会把图片直接压成 0×0。 */
+		max-width: none;
+		opacity: 0;
+		transition: opacity 240ms var(--m3e-easing-standard, ease);
+	}
+
+	.shirone-comment[data-sticker="wink"] .shirone-comment__sticker--wink,
+	.shirone-comment[data-sticker="calm"] .shirone-comment__sticker--calm {
+		opacity: 1;
+	}
+
+	/* 悬停 = 被注视 → 换害羞那枚；纯 CSS，触屏设备不会误触发 */
+	@media (hover: hover) and (pointer: fine) {
+		.shirone-comment[data-sticker="wink"]:hover
+			.shirone-comment__sticker--wink {
+			opacity: 0;
+		}
+		.shirone-comment[data-sticker="wink"]:hover .shirone-comment__sticker--shy {
+			opacity: 1;
+		}
+	}
+
+	/* ---- 内容区 ---- */
+	.shirone-comment__body {
+		position: relative;
+	}
+
+	@media (max-width: 520px) {
+		.shirone-comment__head {
+			min-height: 108px;
+		}
+		/* 窄屏放不下「气泡 + 贴纸」并排，气泡是装饰性内容，直接让位 */
+		.shirone-comment__bubble {
+			display: none;
+		}
+		.shirone-comment__stickers {
+			top: -20px;
+			right: 6px;
+		}
+		.shirone-comment__sticker {
+			width: 112px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.shirone-comment__sticker {
+			transition: none;
+		}
+	}
+</style>

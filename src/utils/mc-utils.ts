@@ -44,6 +44,22 @@ export type McStyle = (typeof MC_STYLES)[number];
 export const MC_SPECS = ["2021", "2025"] as const;
 export type McSpec = (typeof MC_SPECS)[number];
 
+/**
+ * 类型守卫：把配置层宽松的 `string` 收窄成引擎的合法取值。
+ *
+ * 放在这里而不是 `theme-utils.ts`：这两个枚举本身就定义在本模块，而
+ * `theme-utils` 是浏览器侧（localStorage）模块——构建期代码（如 OG 分享卡端点）
+ * 也需要收窄 `siteConfig.themeColor`，不该为此把 localStorage 相关代码拖进
+ * 预渲染链路。
+ */
+export function isMcStyle(value: string): value is McStyle {
+	return (MC_STYLES as readonly string[]).includes(value);
+}
+
+export function isMcSpec(value: string): value is McSpec {
+	return (MC_SPECS as readonly string[]).includes(value);
+}
+
 /** Hue used by the dynamic engine's seed (mid-tone, medium chroma). */
 const SEED_CHROMA = 60;
 const SEED_TONE = 50;

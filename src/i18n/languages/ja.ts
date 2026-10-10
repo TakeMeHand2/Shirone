@@ -4,6 +4,7 @@ import type { Translation } from "../translation.ts";
 export const ja: Translation = {
 	[Key.home]: "Home",
 	[Key.about]: "About",
+	[Key.guestbook]: "伝言板",
 	[Key.archive]: "Archive",
 	[Key.archiveGroup]: "アーカイブのグループ化",
 	[Key.archiveGroupYear]: "年別",
@@ -165,6 +166,7 @@ export const ja: Translation = {
 	[Key.commentsLoadFailed]: "コメントの読み込みに失敗しました",
 	[Key.commentsRequiresJavaScript]:
 		"コメントを表示するには JavaScript を有効にしてください",
+	[Key.commentGreeting]: "ひとこと残していってね～",
 
 	[Key.uncategorized]: "カテゴリなし",
 	[Key.noTags]: "タグなし",
@@ -355,4 +357,7 @@ export const ja: Translation = {
 	[Key.live2dStatusReload]: "再読み込み",
 	[Key.live2dStatusRest]: "マスコットはお休み中",
 	[Key.live2dMenuExpression]: "表情を変える",
+	[Key.live2dExpressionSwitched]: "表情を「{name}」に切り替えました",
+	[Key.a11yNavigatedTo]: "移動しました：{title}",
+	[Key.a11yNewPageAt]: "新しいページ：{url}",
 };

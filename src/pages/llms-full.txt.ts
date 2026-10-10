@@ -22,7 +22,7 @@ export const GET: APIRoute = async (context: APIContext) => {
 		if (post.data.draft) return false;
 		if (
 			llmsConfig.excludeTags?.length &&
-			post.data.tags?.some((t) => llmsConfig.excludeTags?.includes(t))
+			post.data.tags?.some((t: string) => llmsConfig.excludeTags?.includes(t))
 		) {
 			return false;
 		}

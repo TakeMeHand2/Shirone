@@ -403,7 +403,30 @@
                 {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "video": {
+                            "type": "string",
+                            "description": "视频资源地址（mp4/webm，/public 绝对路径或远程 URL）"
+                          },
+                          "poster": {
+                            "anyOf": [
+                              {},
+                              {
+                                "type": "string"
+                              }
+                            ],
+                            "description": "海报帧图片（视频缓冲期 / reduced-motion 回退画面，走图片优化管线）"
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    ]
                   }
                 },
                 {
@@ -412,13 +435,59 @@
                     "light": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "video": {
+                                "type": "string",
+                                "description": "视频资源地址（mp4/webm，/public 绝对路径或远程 URL）"
+                              },
+                              "poster": {
+                                "anyOf": [
+                                  {},
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "海报帧图片（视频缓冲期 / reduced-motion 回退画面，走图片优化管线）"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        ]
                       }
                     },
                     "dark": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "video": {
+                                "type": "string",
+                                "description": "视频资源地址（mp4/webm，/public 绝对路径或远程 URL）"
+                              },
+                              "poster": {
+                                "anyOf": [
+                                  {},
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "海报帧图片（视频缓冲期 / reduced-motion 回退画面，走图片优化管线）"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        ]
                       }
                     }
                   },
@@ -431,7 +500,30 @@
                 {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "video": {
+                            "type": "string",
+                            "description": "视频资源地址（mp4/webm，/public 绝对路径或远程 URL）"
+                          },
+                          "poster": {
+                            "anyOf": [
+                              {},
+                              {
+                                "type": "string"
+                              }
+                            ],
+                            "description": "海报帧图片（视频缓冲期 / reduced-motion 回退画面，走图片优化管线）"
+                          }
+                        },
+                        "additionalProperties": false
+                      }
+                    ]
                   }
                 },
                 {
@@ -440,13 +532,59 @@
                     "light": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "video": {
+                                "type": "string",
+                                "description": "视频资源地址（mp4/webm，/public 绝对路径或远程 URL）"
+                              },
+                              "poster": {
+                                "anyOf": [
+                                  {},
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "海报帧图片（视频缓冲期 / reduced-motion 回退画面，走图片优化管线）"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        ]
                       }
                     },
                     "dark": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "video": {
+                                "type": "string",
+                                "description": "视频资源地址（mp4/webm，/public 绝对路径或远程 URL）"
+                              },
+                              "poster": {
+                                "anyOf": [
+                                  {},
+                                  {
+                                    "type": "string"
+                                  }
+                                ],
+                                "description": "海报帧图片（视频缓冲期 / reduced-motion 回退画面，走图片优化管线）"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        ]
                       }
                     }
                   },
@@ -615,6 +753,30 @@
             }
           },
           "additionalProperties": false
+        },
+        "scrollBlur": {
+          "anyOf": [
+            {},
+            {
+              "type": "object",
+              "properties": {
+                "enable": {
+                  "type": "boolean"
+                },
+                "maxBlur": {
+                  "anyOf": [
+                    {},
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "description": "模糊上限（px，默认 12）"
+                }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "description": "滚动渐模糊：页面下滚时对 hero 壁纸施加轻微递增模糊，增强滚动层次（reduced-motion 自动禁用）"
         },
         "waves": {
           "type": "object",

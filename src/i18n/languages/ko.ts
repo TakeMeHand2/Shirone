@@ -4,6 +4,7 @@ import type { Translation } from "../translation.ts";
 export const ko: Translation = {
 	[Key.home]: "홈",
 	[Key.about]: "소개",
+	[Key.guestbook]: "방명록",
 	[Key.archive]: "아카이브",
 	[Key.archiveGroup]: "아카이브 그룹 기준",
 	[Key.archiveGroupYear]: "연도별",
@@ -165,6 +166,7 @@ export const ko: Translation = {
 	[Key.commentsLoadFailed]: "댓글을 불러오지 못했습니다",
 	[Key.commentsRequiresJavaScript]:
 		"댓글을 표시하려면 JavaScript를 활성화해야 합니다",
+	[Key.commentGreeting]: "한마디 남겨 줘～",
 
 	[Key.uncategorized]: "분류되지 않음",
 	[Key.noTags]: "태그 없음",
@@ -355,4 +357,7 @@ export const ko: Translation = {
 	[Key.live2dStatusReload]: "다시 불러오기",
 	[Key.live2dStatusRest]: "마스코트가 쉬고 있어요",
 	[Key.live2dMenuExpression]: "표정 바꾸기",
+	[Key.live2dExpressionSwitched]: "표정을 {name}(으)로 바꿨습니다",
+	[Key.a11yNavigatedTo]: "이동했습니다: {title}",
+	[Key.a11yNewPageAt]: "새 페이지: {url}",
 };

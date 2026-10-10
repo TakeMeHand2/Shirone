@@ -49,16 +49,52 @@ groups.find(g => names[0].includes(g.toLowerCase()) || g.toLowerCase().includes(
 点一次换一个（`order: sequential` 按注册顺序循环 / `random` 随机且不重复）。菜单项文案走主题 i18n，图标是组件自带的
 内联 `<symbol>`（SDK 的 sprite 里没有表情语义的图标）。
 
-### 一个必须绕过的 SDK 缺陷
+### 两个必须知道的运行时事实（都已在真实运行时实测）
 
-**直接调 `model.expression(name)` 是无效的**：它会返回 `true`、`currentExpression._weight` 也会涨到 1，
-但表情声明的参数一个都不会写进模型 —— 表现就是「点了没反应」。原因是这个 oml2d 内置的 pixi 版本里，
-Cubism4 表情管理器把参数更新交给 `queueManager.doUpdateMotion(model, now)`，
-而 `_setExpression` 写入条目起始时间用的是 `performance.now()`，与每帧传进来的 `now` 基准/单位对不上，
-自动更新路径于是从不真正写参数（实测：播放后逐个对照表情声明参数，值完全不变；而手工 `setParameterValueByIndex`
-立刻读到新值，说明渲染链路本身是好的）。
+**1）`model.expression(name)` 本身是有效的 —— 不要自己补帧。**
 
-绕过方式（`Live2dWidget.astro` 里已实现）：`await model.expression(name)` 之后补一次
-`expressionManager.queueManager.doUpdateMotion(internalModel.coreModel, performance.now())`。
-实测这样能立即生效、连续切换、并持续保持（不会被 Idle 动作擦掉）。注意**不能**简单地把每帧的 `now` 换成
-`performance.now()` —— 第一次调用会发生在淡入权重≈0 时并消费掉条目的 available 状态，之后就不再写入。
+Cubism4 的时间基准是**秒**：`Cubism4InternalModel.update()` 会把 `now` 除以 1000 再交给
+`motionManager.update()` / `expressionManager.update()`，后者内部调
+`queueManager.doUpdateMotion(coreModel, now[秒])`。而 `performance.now()` 是**毫秒**。
+
+一旦在 `setExpression` 之后用 `performance.now()` 手动补一次 `doUpdateMotion`，这个条目就被
+锚定在毫秒值上（实测 `_fadeInStartTime ≈ 9000`）；此后每帧算出的
+`(now[秒] − 起始[毫秒]) / 淡入时长` 恒为负，`getEasingSine` 一律夹到 0 —— **混合权重永远是 0**。
+表现是「点了没反应」：`model.expression()` 返回 `true`、`currentExpression` 也换了，但模型一个参数都不变
+（实测 `_stateWeight` 恒为 0；把条目的 `_started` 复位、交给帧循环重新锚定后，权重立刻从 0 涨到 1）。
+
+所以正确做法就是 `await model.expression(name)` 之后什么都不做，让 SDK 自己的帧循环（秒基准）
+完成第一次更新。
+
+> 想验证表情是否真的生效，不能直接读 `coreModel.getParameterValueById()`：一帧的顺序是
+> `saveParameters()` → 写表情参数 → `coreModel.update()` → `loadParameters()`，帧外读到的永远是
+> 被还原的基准值。要在 `coreModel.update()` 内部读，或直接看 `queueManager._motions[]._stateWeight`。
+
+**2）切换必须先清空队列，否则会「叠加」。**
+
+`setExpression → startMotion` 只是把新表情**压入**队列，并把旧条目标记为淡出（SDK 给表情的默认
+淡出是 **1 秒**，比菜单 400ms 的连点冷却还长）。而本模型每个表情都声明 `Blend: "Add"` —— 参数是
+**相加**的，所以只要有两条表情条目同时存活，同一组参数就会被加两次，表现为表情状态叠加
+（实测：600ms 内切两个表情，队列里同时存在 `_stateWeight` 0.817 与 0.111 的两条条目）。
+
+`Live2dWidget.astro` 的换表情逻辑因此先调 `expressionManager.stopAllExpressions()` 清队列，
+再把该表情动作自身的 `_fadeInSeconds` / `_fadeOutSeconds` 压成 0 —— 表情是「状态」而不是「过渡」，
+切换在下一帧即时替换、旧条目当帧回收，连点也不会留下任何重叠窗口（即使将来 SDK 去掉
+`stopAllExpressions()`，也只是退化成硬切换，而不是叠加）。
+
+### 切换结果如何被感知（三条通道）
+
+| 通道 | 面向谁 | 实现 |
+| --- | --- | --- |
+| 模型本身 | 所有人 | 表情当帧替换，无需额外反馈 —— 但不少表情差异细微 |
+| 气泡文案 | 视觉用户 | `oml2d.tipsMessage(name, 1600, 3)`；气泡属装饰性内容，被标 `aria-hidden` |
+| 播报区 | 读屏用户 | 可视隐藏的 `#shirone-expression-status`（`role="status"` + `aria-live="polite"`），文案走 i18n `live2dExpressionSwitched` 的 `{name}` 占位符 |
+
+因为气泡对辅助技术不可见，**播报区是读屏用户唯一的反馈**，不要把它删掉或改成 `aria-hidden`。
+
+### 菜单在触屏上的可达性
+
+菜单平时靠 `#oml2d-stage:hover` / `#oml2d-menus:focus-within` 展开。触屏既没有 hover、
+也没有「先聚焦再展开」的路径（`visibility: hidden` 已在主题里改成 `opacity: 0`，但依然要点得到才行），
+所以 `@media (hover: none)` 下让菜单**常驻可见可点**。注意这条规则随 `expressionMenu` 一起注入 ——
+不启用表情菜单时 `menus.disable: true`，本来就没有菜单。

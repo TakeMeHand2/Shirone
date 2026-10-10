@@ -8,7 +8,7 @@ import { devicesConfig } from "@/config/devicesConfig";
 import { resolveDevicesData } from "@/utils/feature-data";
 
 if (!devicesConfig.enable) {
-	return Astro.redirect("/404/");
+	return (await import("@utils/soft-404")).softNotFoundResponse();
 }
 
 const pageTitle = resolveI18nText(devicesConfig.title, I18nKey.devices);

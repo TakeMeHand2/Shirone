@@ -13,7 +13,7 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { seriesConfig } from "@/config";
 
 if (!seriesConfig.enable) {
-	return Astro.redirect("/404/");
+	return (await import("@utils/soft-404")).softNotFoundResponse();
 }
 
 import { getSeriesCatalog, getSortedPostsList } from "@utils/content-utils";

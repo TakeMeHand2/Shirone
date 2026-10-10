@@ -267,6 +267,62 @@ export interface SubsetResult {
 	outputs: Map<string, string>;
 }
 
+export interface OgFontResolution {
+	/** 绝对路径；`null` 表示站点没有任何 satori 可用的本地字体。 */
+	path: string | null;
+	/** 命中的字体族名，仅用于日志。 */
+	family: string | null;
+}
+
+/**
+ * 找出动态 OG 分享卡可以使用的字体文件。
+ *
+ * satori 只吃 TTF/OTF 二进制：woff/woff2 需要先解码才能取到字形轮廓，所以
+ * 候选集只认这两类扩展名。角色优先级为 cjk → body → mono——OG 卡上出现的
+ * 是文章标题与站点名（默认中文站点以汉字为主），cjk 字体的覆盖最广；
+ * body 次之。用户把某个角色的 `file` 指向不存在的文件时跳过该候选，
+ * 而不是直接失败：其余角色可能仍然可用。
+ *
+ * 返回 `path: null` 是**正常状态**（例如 `fontConfig.mode: "system"` 的零字体
+ * 站点），由调用方决定降级方式，不在这里抛错。
+ */
+export async function resolveOgFontSource(
+	paths: ResolvedShironesPaths,
+	registryRef?: { overrides: Map<string, string> },
+): Promise<OgFontResolution> {
+	const configModule = await loadConfigModule(paths, "fontConfig", registryRef);
+	const fontConfig = configModule.fontConfig as FontConfigLike | undefined;
+	if (!fontConfig) return { path: null, family: null };
+
+	const localFamilies = (fontConfig.fontFamilies ?? []).filter(
+		(family) => family.source === "local",
+	);
+
+	const tryFamily = (family: FontFamilyLike): OgFontResolution | null => {
+		for (const variant of family.variants ?? []) {
+			if (!variant.file || !/\.(ttf|otf)$/i.test(variant.file)) continue;
+			const absolute = resolveFontSource(paths, variant.file);
+			if (absolute) return { path: absolute, family: family.family ?? null };
+		}
+		return null;
+	};
+
+	for (const role of ["cjk", "body", "mono"]) {
+		for (const family of localFamilies) {
+			if (family.role !== role) continue;
+			const hit = tryFamily(family);
+			if (hit) return hit;
+		}
+	}
+	// 角色未标注或不在上述三者之列时，仍然给一个可用的本地字体一次机会。
+	for (const family of localFamilies) {
+		if (family.role) continue;
+		const hit = tryFamily(family);
+		if (hit) return hit;
+	}
+	return { path: null, family: null };
+}
+
 /**
  * Run the subsetting pipeline. Returns a map used to rewrite the font
  * declarations handed to Astro.

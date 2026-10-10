@@ -14,7 +14,7 @@ import { timelineConfig } from "../../src/config/timelineConfig";
  * 功能开关 → 对应导航路由（与 `src/config/navBarConfig.ts` 的裁剪表同源）。
  * 关闭的功能页面会重定向 `/404/`，导航入口必须一并消失，因此这里按开关断言。
  */
-const featureRoutes: Array<[string, boolean, string]> = [
+const featureRoutes: Array<[string, boolean | undefined, string]> = [
 	["friends", friendsConfig.enable, "/friends/"],
 	["moments", momentsConfig.enable, "/moments/"],
 	["anime", animeConfig.enable, "/anime/"],

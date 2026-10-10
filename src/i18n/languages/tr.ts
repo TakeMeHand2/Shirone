@@ -4,6 +4,7 @@ import type { Translation } from "../translation.ts";
 export const tr: Translation = {
 	[Key.home]: "Anasayfa",
 	[Key.about]: "Hakkında",
+	[Key.guestbook]: "Konuk defteri",
 	[Key.archive]: "Arşiv",
 	[Key.archiveGroup]: "Arşivi grupla",
 	[Key.archiveGroupYear]: "Yıla göre",
@@ -168,6 +169,7 @@ export const tr: Translation = {
 	[Key.commentsLoadFailed]: "Yorumlar yüklenemedi",
 	[Key.commentsRequiresJavaScript]:
 		"Yorumların gösterilmesi için JavaScript etkinleştirilmelidir",
+	[Key.commentGreeting]: "Bana bir şeyler yaz～",
 
 	[Key.uncategorized]: "Katagorisiz",
 	[Key.noTags]: "Tag Bulunamadı",
@@ -362,4 +364,7 @@ export const tr: Translation = {
 	[Key.live2dStatusReload]: "Yeniden yükle",
 	[Key.live2dStatusRest]: "Maskot dinleniyor",
 	[Key.live2dMenuExpression]: "İfadeyi değiştir",
+	[Key.live2dExpressionSwitched]: "İfade {name} olarak değiştirildi",
+	[Key.a11yNavigatedTo]: "Şuraya gidildi: {title}",
+	[Key.a11yNewPageAt]: "Yeni sayfa: {url}",
 };

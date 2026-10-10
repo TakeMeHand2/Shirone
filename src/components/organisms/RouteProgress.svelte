@@ -24,9 +24,16 @@ function hide() {
 onMount(() => {
 	document.addEventListener("swup:visit:start", show);
 	document.addEventListener("swup:page:view", hide);
+	// 失败与中止也必须收敛：否则请求出错后进度条会永远转下去。
+	document.addEventListener("swup:visit:abort", hide);
+	document.addEventListener("swup:fetch:error", hide);
+	document.addEventListener("swup:fetch:timeout", hide);
 	return () => {
 		document.removeEventListener("swup:visit:start", show);
 		document.removeEventListener("swup:page:view", hide);
+		document.removeEventListener("swup:visit:abort", hide);
+		document.removeEventListener("swup:fetch:error", hide);
+		document.removeEventListener("swup:fetch:timeout", hide);
 	};
 });
 </script>

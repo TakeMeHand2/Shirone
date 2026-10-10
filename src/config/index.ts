@@ -23,6 +23,7 @@ export {
 	resolveArticleDiscoveryOptions,
 	resolveArticleShareOptions,
 	resolveLastUpdatedNoticeOptions,
+	resolveOgImageOptions,
 } from "./articleConfig";
 export {
 	commentConfig,
@@ -44,6 +45,7 @@ export { footerConfig } from "./footerConfig";
 export { friendsConfig } from "./friendsConfig";
 export { funConfig } from "./funConfig";
 export { gamesConfig } from "./gamesConfig";
+export { guestbookConfig } from "./guestbookConfig";
 export { i18nConfig } from "./i18nConfig";
 export {
 	imageBloomConfig,

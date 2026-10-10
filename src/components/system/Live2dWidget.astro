@@ -30,6 +30,8 @@ const live2dScriptUrl =
 // 客户端脚本按 id 找菜单项并挂上 onClick（见下文 define:vars 附近的说明）。
 const EXPRESSION_MENU_ID = "shirone-expression";
 const EXPRESSION_ICON_ID = "shirone-icon-expression";
+// 切表情结果的可视隐藏播报区（读屏用户唯一的反馈通道，见模板里的 role="status"）。
+const EXPRESSION_STATUS_ID = "shirone-expression-status";
 const expressionMenu = options.expressionMenu;
 
 // oml2d 自带文案是硬编码中文，绕过了主题 i18n 规则；这里按站点语言逐字段注入
@@ -197,6 +199,15 @@ pointer-events: none!important;
 opacity: 1!important;
 pointer-events: auto!important;
 }
+/* 触屏没有 hover 也没有「先聚焦再展开」的路径：上面那套展开条件在 (hover:none) 的设备上
+   永远不成立，菜单等于打不开（options.mobileDisplay 打开时尤其明显）。这类设备上让菜单
+   常驻可见可点 —— 它本来就是仅有的一组控件，没有可悬停的收起时机。 */
+@media (hover: none){
+#oml2d-menus{
+opacity: 1!important;
+pointer-events: auto!important;
+}
+}
 `;
 
 const runtimeRules = [
@@ -226,6 +237,21 @@ const expressionIconSymbol = `
 	/>
 )}
 
+{
+	/* 切表情的结果播报。启用表情菜单后，气泡（唯一看得见的反馈）被标成装饰性内容
+	   aria-hidden，读屏用户按完菜单项就彻底失去了结果反馈；这里补一个可视隐藏的
+	   live region，把「换成了哪个表情」播报出去。只在开启时渲染，关闭时零 DOM。 */
+	expressionMenu && (
+		<p
+			id={EXPRESSION_STATUS_ID}
+			class="sr-only"
+			role="status"
+			aria-live="polite"
+			aria-atomic="true"
+		/>
+	)
+}
+
 {runtimeRules && <style is:inline nonce={options.cspNonce} set:html={runtimeRules} />}
 
 <script
@@ -236,6 +262,8 @@ const expressionIconSymbol = `
 		live2dOptions: localizedOptions,
 		expressionMenu: expressionMenu ?? null,
 		expressionMenuItemId: EXPRESSION_MENU_ID,
+		expressionStatusId: EXPRESSION_STATUS_ID,
+		expressionSwitchedTemplate: i18n(I18nKey.live2dExpressionSwitched),
 	}}
 >
 	(() => {
@@ -252,13 +280,28 @@ const expressionIconSymbol = `
 			return null;
 		};
 
-		// 换表情。为什么 setExpression 之后要再补一次 doUpdateMotion：
-		// 在这个 oml2d 内置的 pixi 版本里，Cubism4 表情管理器把参数更新交给
-		// queueManager.doUpdateMotion(model, now)，而 _setExpression 写入的起始时间
-		// 与每帧传进来的 now 基准/单位对不上，导致自动路径从不真正写参数 ——
-		// model.expression() 会返回 true、_weight 也涨到 1，但模型毫无变化。
-		// 实测在 setExpression 之后补一次 doUpdateMotion(coreModel, performance.now())
-		// 即可生效，且能连续切换、并持续保持（不会被 Idle 动作擦掉）。
+		// 换表情 = 「用新表情替换当前表情」，三件事都要做对（均在真实运行时实测过）：
+		//
+		// 1) 先清空表情队列。SDK 的 setExpression → startMotion 只是把新表情「压入」
+		//    队列，并把旧条目标记为淡出（淡出时长 1s，远长于菜单的连点冷却）；
+		//    而本模型的每个表情都用 Blend:"Add" 叠加参数，所以只要有两条表情条目
+		//    同时存活，同一组参数就会被加两次 —— 这就是「表情状态叠加」。
+		//    清空后队列恒为 1，切换即替换，不留残影。
+		//
+		// 2) 绝不能自己补一次 doUpdateMotion。Cubism4InternalModel.update() 会把
+		//    now 除以 1000（Cubism4 的时间基准是秒），而 performance.now() 是毫秒。
+		//    一旦在 setExpression 之后用 performance.now() 手动补帧，该条目就被锚定在
+		//    毫秒值上（实测 _fadeInStartTime ≈ 9000），此后每帧
+		//    (now[秒] - 起始[毫秒]) / 淡入时长 恒为负，getEasingSine 一律夹到 0，
+		//    混合权重永远是 0（实测 _stateWeight 恒为 0、模型参数纹丝不动）——
+		//    model.expression() 返回 true、currentExpression 也换了，但模型毫无变化。
+		//    把这个条目交给 SDK 自己的帧循环（秒基准）做第一次更新即可，无需任何补帧。
+		//
+		// 3) 表情是「状态」而不是「过渡」。SDK 给表情的默认淡入/淡出是 1s，比连点冷却
+		//    还长：连点时每次都会把淡入重新拉回 0，表情永远到不了满权重（看起来忽强忽弱）。
+		//    这里把表情动作自身的淡入/淡出压成 0，切换在下一帧即时生效、且旧条目当帧
+		//    即被回收 —— 即使 stopAllExpressions 将来在某个 SDK 版本里消失，也不会出现
+		//    重叠窗口（退化为硬切换而不是叠加）。
 		const createExpressionSwitcher = (menu) => {
 			let lastIndex = -1;
 			let lastAt = 0;
@@ -288,18 +331,39 @@ const expressionIconSymbol = `
 					const position = pool.findIndex((entry) => entry.index === lastIndex);
 					next = pool[(position + 1) % pool.length];
 				}
-				lastIndex = next.index;
 				lastAt = performance.now();
 
 				try {
+					if (typeof expressions.stopAllExpressions !== "function") {
+						// 兜底：清不掉队列时，靠下面的「淡入淡出压成 0」退化为硬切换，
+						// 并留一条线索，避免「表情悄悄开始叠加」这类问题无从查起。
+						console.warn(
+							"[shirone] 当前 Live2D SDK 未提供 stopAllExpressions()，表情切换退化为硬切换。",
+						);
+					} else {
+						expressions.stopAllExpressions();
+					}
 					await model.expression(next.name);
-					expressions.queueManager?.doUpdateMotion?.(
-						internal.coreModel,
-						performance.now(),
-					);
+					// 表情动作是懒加载并缓存的，切完之后才拿得到实例；淡入/淡出为 0
+					// 时 Ec.updateParameters 直接取权重 1，所以当帧就生效。
+					const motion = expressions.expressions?.[next.index];
+					if (motion) {
+						motion._fadeInSeconds = 0;
+						motion._fadeOutSeconds = 0;
+					}
 				} catch (error) {
 					console.warn("[shirone] Live2D 表情切换失败：", error);
 					return;
+				}
+				// 切换成功后才推进游标：失败时下次点击会重试同一个表情，而不是跳过它
+				lastIndex = next.index;
+				// 无障碍：气泡承载的反馈是装饰性的（aria-hidden），读屏用户只能靠播报区。
+				const status = document.getElementById(expressionStatusId);
+				if (status) {
+					status.textContent = expressionSwitchedTemplate.replace(
+						"{name}",
+						next.name,
+					);
 				}
 				// 不少表情差异细微，用气泡回显当前表情名作为反馈（皮肤归本组件的气泡规则）
 				if (typeof oml2d?.tipsMessage === "function") {

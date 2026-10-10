@@ -193,6 +193,27 @@ const giscusStyles = await new Promise<string>((resolve, reject) => {
 		}
 	}
 
+	/**
+	 * 站点内路径 → 绝对 URL；giscus 内置主题键原样返回。
+	 *
+	 * giscus 把 data-theme 交给它**自己 iframe** 里的 `<link href>` 用，
+	 * 相对路径会被解析到 giscus.app 而不是本站，所以 "/giscus/xxx.css" 这类
+	 * 自定义主题必须在运行时补成绝对地址（同时自动适配预览域名与自定义域名）。
+	 * "//host/x.css" 是协议相对 URL，按原样透传。
+	 */
+	function resolveThemeUrl(value: string): string {
+		if (!value.startsWith("/") || value.startsWith("//")) return value;
+		return new URL(value, window.location.origin).href;
+	}
+
+	/** 当前该用哪一套主题（已解析成可用值） */
+	function activeTheme(wrapper: HTMLElement): string {
+		const value = currentIsDark()
+			? (wrapper.dataset.giscusThemeDark ?? "dark")
+			: (wrapper.dataset.giscusThemeLight ?? "light");
+		return resolveThemeUrl(value);
+	}
+
 	function mountGiscusInstance(wrapper: HTMLElement) {
 		if (wrapper.dataset.giscusMounted === "true") return;
 
@@ -240,7 +261,7 @@ const giscusStyles = await new Promise<string>((resolve, reject) => {
 			script.dataset.reactionsEnabled = attributes.reactions;
 			script.dataset.emitMetadata = attributes.emitMetadata;
 			script.dataset.inputPosition = attributes.inputPosition;
-			script.dataset.theme = currentIsDark() ? attributes.themeDark : attributes.themeLight;
+			script.dataset.theme = activeTheme(wrapper);
 			script.dataset.lang = attributes.lang;
 			wrapper.appendChild(script);
 		};
@@ -276,14 +297,54 @@ const giscusStyles = await new Promise<string>((resolve, reject) => {
 		const iframe = wrapper.querySelector<HTMLIFrameElement>("iframe.giscus-frame");
 		if (!iframe?.contentWindow) return;
 		const origin = scriptOrigin(wrapper.dataset.giscusScriptUrl ?? "");
-		const theme = isDark
-			? (wrapper.dataset.giscusThemeDark ?? "dark")
-			: (wrapper.dataset.giscusThemeLight ?? "light");
+		const theme = resolveThemeUrl(
+			isDark
+				? (wrapper.dataset.giscusThemeDark ?? "dark")
+				: (wrapper.dataset.giscusThemeLight ?? "light"),
+		);
 		iframe.contentWindow.postMessage(
 			{ giscus: { setConfig: { theme } } },
 			origin,
 		);
 	}
+
+	/**
+	 * giscus 回传 Discussion 元数据（需要 data-emit-metadata="1"）。
+	 * 本组件只把 totalCommentCount 落到 wrapper 的 dataset 并派发事件，
+	 * 不持有任何 UI 决策 —— 评论区外壳据此选角色贴纸的初始状态。
+	 */
+	function handleGiscusMessage(event: MessageEvent) {
+		const wrappers = document.querySelectorAll<HTMLElement>(
+			".shirone-giscus-wrapper",
+		);
+		for (const wrapper of wrappers) {
+			const iframe =
+				wrapper.querySelector<HTMLIFrameElement>("iframe.giscus-frame");
+			// 只认本站 iframe 发来的消息：event.source 比对可避免多实例串台
+			if (!iframe?.contentWindow || iframe.contentWindow !== event.source) {
+				continue;
+			}
+			if (event.origin !== scriptOrigin(wrapper.dataset.giscusScriptUrl ?? "")) {
+				return;
+			}
+			const payload = (
+				event.data as { giscus?: { totalCommentCount?: unknown } } | undefined
+			)?.giscus;
+			const count = Number(payload?.totalCommentCount);
+			if (!Number.isFinite(count)) return;
+			wrapper.dataset.giscusCommentCount = String(count);
+			wrapper.dispatchEvent(
+				// bubbles: 评论区外壳挂在 <section> 上监听，靠冒泡拿到事件
+				new CustomEvent("shirone:giscus-count", {
+					detail: { count },
+					bubbles: true,
+				}),
+			);
+			return;
+		}
+	}
+
+	window.addEventListener("message", handleGiscusMessage);
 
 	window.addEventListener("shirone:theme-change", (event) => {
 		const wrappers = document.querySelectorAll<HTMLElement>(

@@ -1,0 +1,25 @@
+# 基线安全响应头。Netlify / Cloudflare Pages 等读取本文件；Vercel 走 vercel.json。
+# 两处内容必须一致，由 tests/security-headers.test.mjs 守住。
+#
+# 格式注意：路径行顶格、其后的响应头行必须缩进，且**路径与它的响应头之间不能有空行**
+# ——空行在 Netlify 的 `_headers` 语法里是「规则块结束」，插一行就会让整块头失效，
+# 而且不会有任何报错（页面照样出，只是少了安全头）。
+#
+# 有意**不**下发 Content-Security-Policy：
+#   1. 静态输出无法为内联脚本生成 nonce（主题有若干 is:inline 脚本）；
+#   2. 主题的可选集成（giscus / twikoo / mermaid / live2d / umami / pagefind /
+#      音乐 API / 外链播放器）由用户配置决定，一份写死的静态 CSP 必然与其中
+#      某些配置冲突；
+#   3. 写错的 CSP 会静默打断内容（脚本被拦、iframe 不挂载），比不设更糟。
+# 需要 CSP 的站点请按自己实际启用的集成单独下发。
+/*
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+
+# 动态 OG 分享卡（`/og/<文章 id>.png`，构建期端点产出）。
+# 图片在同一次构建内不可变，但会随文章标题 / 主题色变化，所以不能用 immutable；
+# 7 天足够让社交平台的抓取缓存吃到更新，又不必每次回源。
+/og/*
+  Cache-Control: public, max-age=604800

@@ -18,7 +18,7 @@ const translations = [en, es, id, ja, ko, th, tr, vi, zh_CN, zh_TW];
 const shareKeys = [
 	I18nKey.shareArticle,
 	I18nKey.shareArticleDescription,
-	I18nKey.generateSharePoster,
+	I18nKey.copyLink,
 	I18nKey.generatingSharePoster,
 	I18nKey.sharePosterPreviewAlt,
 	I18nKey.downloadSharePoster,

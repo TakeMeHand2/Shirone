@@ -80,20 +80,36 @@ async function expectWaveGeometry(
 			? rootStyle.getPropertyValue(overlapVariable[1]).trim()
 			: overlapProperty;
 		const overlap = Number.parseFloat(overlapValue);
+		const rem = Number.parseFloat(rootStyle.fontSize);
+		const wavesRect = waves.getBoundingClientRect();
+		const barRect = document
+			.getElementById("category-bar-region")
+			?.getBoundingClientRect();
+		// 近景层波峰：buildWavePath 用基线 20、振幅 12（viewBox 高 42，见
+		// BannerWaves.astro），故谱峰位于带宽自上而下 (20-12)/42 处。
+		// 峰值判定必须用真实像素，不能用「height > overlap」这种宽泛不等式：
+		// 收口是否成立取决于波峰相对面板顶的位置。
+		const scale = Number.parseFloat(
+			getComputedStyle(layer).getPropertyValue("--banner-wave-scale-y") || "1",
+		);
+		const peakFromTop = ((20 - 12) / 42) * wavesRect.height * scale;
+		const peakViewportY = wavesRect.bottom - peakFromTop;
 		return {
-			height: waves.getBoundingClientRect().height,
-			overlap: overlapValue.endsWith("rem")
-				? overlap * Number.parseFloat(rootStyle.fontSize)
-				: overlap,
+			height: wavesRect.height,
+			overlap: overlapValue.endsWith("rem") ? overlap * rem : overlap,
 			scale: getComputedStyle(layer)
 				.getPropertyValue("--banner-wave-scale-y")
 				.trim(),
+			crestAbovePanel: barRect ? barRect.top - peakViewportY : null,
 		};
 	});
 
 	expect(geometry).not.toBeNull();
 	expect(geometry?.height).toBeGreaterThan(geometry?.overlap ?? 0);
 	expect(Number(geometry?.scale)).toBe(Number(expectedScale));
+	// 收口不变量：波峰必须露在内容面板之上，否则面板会把整条波浪盖掉，
+	// 页面背景与 Banner 之间只剩一条平直色带（收口破相）。
+	expect(geometry?.crestAbovePanel ?? 0).toBeGreaterThan(0);
 }
 
 async function expectWavesAnimated(

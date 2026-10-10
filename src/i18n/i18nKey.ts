@@ -4,6 +4,7 @@ enum I18nKey {
 	notFoundTitle = "notFoundTitle",
 	notFoundDescription = "notFoundDescription",
 	about = "about",
+	guestbook = "guestbook",
 	archive = "archive",
 	/** 归档分组切换（Tabs）：tablist 无障碍名称 */
 	archiveGroup = "archiveGroup",
@@ -157,6 +158,8 @@ enum I18nKey {
 	commentsLoading = "commentsLoading",
 	commentsLoadFailed = "commentsLoadFailed",
 	commentsRequiresJavaScript = "commentsRequiresJavaScript",
+	// 评论区角色对话框招呼语（漫画分格底板），{name} 之类的占位符不使用。
+	commentGreeting = "commentGreeting",
 
 	uncategorized = "uncategorized",
 	noTags = "noTags",
@@ -344,6 +347,11 @@ enum I18nKey {
 	live2dStatusReload = "live2dStatusReload",
 	live2dStatusRest = "live2dStatusRest",
 	live2dMenuExpression = "live2dMenuExpression",
+	live2dExpressionSwitched = "live2dExpressionSwitched",
+	// Swup 路由播报（@swup/a11y-plugin 的 announcements）。占位符由插件注入，
+	// 改写译文时必须保留 {title} / {url}，见 src/i18n/AGENTS.md。
+	a11yNavigatedTo = "a11yNavigatedTo",
+	a11yNewPageAt = "a11yNewPageAt",
 }
 
 export default I18nKey;

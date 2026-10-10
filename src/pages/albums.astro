@@ -7,7 +7,7 @@ import { resolveI18nText } from "@utils/i18n-utils";
 import { albumsConfig } from "@/config/albumsConfig";
 
 if (!albumsConfig.enable) {
-	return Astro.redirect("/404/");
+	return (await import("@utils/soft-404")).softNotFoundResponse();
 }
 
 const pageTitle = resolveI18nText(albumsConfig.title, I18nKey.albums);

@@ -2,14 +2,16 @@ import { expect, test } from "@playwright/test";
 
 /**
  * 真实站点页面视觉回归（黄金截图）。
- * 锁定首页 / 归档 / 关于 / 文章页在 light / dark 双模式下的整体布局、圆角、阴影，
+ * 锁定首页 / 归档 / 动态 / 关于 / 文章页在 light / dark 双模式下的整体布局、圆角、阴影，
  * 以及首页 grid 布局模式（访客偏好注入）。
  * 说明：
  * - 用 prefers-reduced-motion 折叠 onload/主题过渡动画，保证截图确定性
  *   （动画最终态 opacity 1 / transform none，与正常渲染视觉一致）。
  * - GitHub 卡片 API mock 为固定响应，避免限流导致骨架屏截屏抖动。
  * - 首次生成黄金图：npx playwright test tests/site/visual.spec.ts --update-snapshots
- * - 黄金图路径：tests/site/visual.spec.ts-snapshots/（本地生成、.gitignore 忽略、不入库）
+ * - 黄金图路径：tests/site/visual.spec.ts-snapshots/（入库，作为跨机器基线）
+ * - 标记 `@visual`：像素级基线依赖平台字体栅格化，CI 用 `pnpm test:ci` 排除本组，
+ *   由发布前的本地全量 `pnpm test` 承担。详见 rules/visual-regression.md。
  */
 const GITHUB_MOCK = {
 	description: "A static blog template built with Astro.",
@@ -104,11 +106,11 @@ async function captureAndCompare(
 }
 
 for (const mode of modes) {
-	test.describe(`Site visual (${mode.name})`, () => {
-		for (const p of cases) {
-			test(p.name, async ({ page }) => {
-				await captureAndCompare(page, p, mode);
-			});
-		}
-	});
+		test.describe(`Site visual (${mode.name}) @visual`, () => {
+			for (const p of cases) {
+				test(p.name, async ({ page }) => {
+					await captureAndCompare(page, p, mode);
+				});
+			}
+		});
 }

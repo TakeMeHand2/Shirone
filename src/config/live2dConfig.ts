@@ -106,6 +106,10 @@ export const live2dConfig: Live2dConfig = withUserConfig("live2d", {
 	// 表情菜单：模型自带 44 个表情，但既不会被动作触发（motion 曲线只驱动 Parameter，
 	// 没有可见性曲线也没有 Meta.ExpressionIds），oml2d 也没有换表情入口，
 	// 所以不额外提供入口的话，表情清单等于闲置。这里给出「换表情」菜单项：点一次换一个。
+	//
+	// 切换语义是「替换」而不是「过渡」：组件会先清空表情队列、并把表情动作的淡入/淡出压成 0
+	// （表情声明全是 Blend:"Add"，两条条目同时存活就会把同一组参数加两次）。因此 cooldown
+	// 只承担「连点节流」的职责，不需要大于淡出时长。
 	expressionMenu: {
 		enable: true,
 		// sequential：按 model3.json 的注册顺序依次循环，可预期、便于回到某个表情；

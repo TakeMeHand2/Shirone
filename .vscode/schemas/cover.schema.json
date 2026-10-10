@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cover configuration override",
+  "description": "Shirone cover config schema generated from @/types/coverConfig.CoverConfig",
+  "type": "object",
+  "properties": {
+    "fallbackCovers": {
+      "anyOf": [
+        {},
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ],
+      "description": "回退封面池。支持 /public 绝对路径（如 \"/covers/01.webp\"）与远程 URL\n（https://...）。留空数组 = 关闭（默认），不产生任何额外处理。"
+    }
+  },
+  "additionalProperties": false
+}

@@ -3,8 +3,10 @@ import Pagination from "@components/molecules/Pagination.astro";
 import PostPage from "@components/organisms/PostPage.astro";
 import type { GetStaticPaths } from "astro";
 import { postListConfig } from "@/config/postListConfig";
+import { siteConfig } from "@/config/siteConfig";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 import { getSortedPosts } from "../utils/content-utils";
+import { buildWebsiteJsonLd, serializeJsonLd } from "../utils/json-ld";
 
 export const getStaticPaths = (async ({ paginate }) => {
 	const allBlogPosts = await getSortedPosts();
@@ -15,9 +17,21 @@ export const getStaticPaths = (async ({ paginate }) => {
 const { page } = Astro.props;
 
 const len = page.data.length;
+
+// 站点级结构化数据只在首页（第 1 页）输出一次，避免分页页重复声明同一实体。
+const websiteJsonLd =
+	page.currentPage === 1 && Astro.site
+		? buildWebsiteJsonLd({
+				name: siteConfig.title,
+				url: Astro.site.href,
+				description: siteConfig.subtitle,
+				lang: siteConfig.lang.replace("_", "-"),
+			})
+		: null;
 ---
 
 <MainGridLayout page="home">
+    {websiteJsonLd && <script is:inline slot="head" type="application/ld+json" set:html={serializeJsonLd(websiteJsonLd)}></script>}
     <PostPage page={page}></PostPage>
     <Pagination class="mx-auto onload-animation" page={page} style={`animation-delay: calc(var(--content-delay) + ${(len)*50}ms)`}></Pagination>
 </MainGridLayout>

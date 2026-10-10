@@ -28,6 +28,27 @@ test("resolvePageKey handles root deployment", () => {
 		resolvePageKey(new URL("https://example.com/archive/?tag=Accessibility")),
 		"tags",
 	);
+	assert.equal(resolvePageKey(new URL("https://example.com/about/")), "about");
+	assert.equal(
+		resolvePageKey(new URL("https://example.com/guestbook/")),
+		"guestbook",
+	);
+	// 分类/标签/系列的独立索引页与详情页都要能点亮对应导航项
+	assert.equal(
+		resolvePageKey(new URL("https://example.com/categories/")),
+		"categories",
+	);
+	assert.equal(resolvePageKey(new URL("https://example.com/tags/")), "tags");
+	assert.equal(resolvePageKey(new URL("https://example.com/series/")), "series");
+	assert.equal(
+		resolvePageKey(new URL("https://example.com/series/markdown-guide/")),
+		"series",
+	);
+	// 未登记的路径不点亮任何入口
+	assert.equal(
+		resolvePageKey(new URL("https://example.com/unknown-page/")),
+		"",
+	);
 });
 
 test("resolvePageKey handles subpath deployment with base override", () => {

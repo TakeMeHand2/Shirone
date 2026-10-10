@@ -58,7 +58,7 @@ $manifest.syntaxes | Where-Object id -eq "file-tree" | ConvertTo-Json -Depth 10
 | `forms` | 每种受支持输入的 `kind`、`pattern` 和可直接理解的 `example` |
 | `attributes` | 参数名、是否必填、允许值和实际默认值；没有参数时为空数组 |
 | `implementation` | 仓库内生产实现路径；纯第三方转换可以为空数组 |
-| `registeredIn` | 实际注册入口，通常是统一处理器或 `astro.config.mjs` |
+| `registeredIn` | 实际注册入口：统一处理器 `src/utils/markdown-processor.mjs`，或集成接线 `src/integration/index.ts` |
 | `styles` | 该语法依赖的样式所有者 |
 | `stylesheetPacks` | 顶层条件样式包注册表；每个包声明唯一 `id`、触发它的构建期 `syntaxes` 与实际 CSS `styles`，由服务端资源装配器直接消费 |
 | `runtime` | `mode`、客户端模块和可能产生的网络请求 |
@@ -72,7 +72,7 @@ $manifest.syntaxes | Where-Object id -eq "file-tree" | ConvertTo-Json -Depth 10
 
 1. 在独立演示文章中定义真实使用场景，不修改旧文章来承载新展示；
 2. 先固定作者输入、AST/DOM、非法输入回退、安全 allowlist 和 SSR 行为；
-3. 通过 `src/utils/markdown-processor.mjs` 注册，Expressive Code 集成则通过 `astro.config.mjs`；
+3. 通过 `src/utils/markdown-processor.mjs` 注册，Expressive Code 集成则通过 `src/integration/index.ts`；
 4. 增加生产实现、样式、单元测试、页面测试和正式作者文档；
 5. 在功能已经可用后添加 manifest 条目，并按 `id` 排序；
 6. 运行 `pnpm.cmd check:markdown-manifest` 和完整的 `pnpm.cmd check:manifest`；

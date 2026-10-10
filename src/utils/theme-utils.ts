@@ -1,6 +1,6 @@
 import {
-	MC_SPECS,
-	MC_STYLES,
+	isMcSpec,
+	isMcStyle,
 	type McSpec,
 	type McStyle,
 	resolveScheme,
@@ -64,14 +64,6 @@ const ROLE_TO_CSS: Record<string, string> = {
 	tertiaryDim: "--mc-tertiary-dim",
 	errorDim: "--mc-error-dim",
 };
-
-export function isMcStyle(v: string): v is McStyle {
-	return (MC_STYLES as readonly string[]).includes(v);
-}
-
-export function isMcSpec(v: string): v is McSpec {
-	return (MC_SPECS as readonly string[]).includes(v);
-}
 
 export function getStyle(): McStyle {
 	const stored = localStorage.getItem(STYLE_KEY);

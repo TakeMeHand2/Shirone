@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { toAbsoluteUrl, url } from "../src/utils/url-utils.ts";
+import {
+	getPostOgFileName,
+	getPostOgImageUrl,
+	OG_IMAGE_ROUTE_PREFIX,
+	toAbsoluteUrl,
+	url,
+} from "../src/utils/url-utils.ts";
 
 test("url() keeps external and data urls intact", () => {
 	assert.equal(
@@ -97,4 +103,24 @@ test("toAbsoluteUrl() handles edge cases gracefully", () => {
 	// When no base origin is provided, returns normalized path
 	assert.equal(toAbsoluteUrl("/_astro/cover.webp"), "/_astro/cover.webp");
 	assert.equal(toAbsoluteUrl("assets/cover.webp"), "/assets/cover.webp");
+});
+
+test("getPostOgFileName() maps content ids to the share card file name", () => {
+	// 文章页拼 og:image 与端点派生 getStaticPaths 参数都走这一对函数，
+	// 两边一旦各写一份规则，图挂了但构建依然全绿。
+	assert.equal(getPostOgFileName("first-post.md"), "first-post.png");
+	assert.equal(getPostOgFileName("guide/foo.mdx"), "guide/foo.png");
+	assert.equal(getPostOgFileName("notes/a/b.markdown"), "notes/a/b.png");
+	assert.equal(getPostOgFileName("no-extension"), "no-extension.png");
+});
+
+test("getPostOgImageUrl() serves the card under the /og/ prefix", () => {
+	assert.equal(getPostOgImageUrl("first-post.md"), "/og/first-post.png");
+	assert.equal(getPostOgImageUrl("guide/foo.mdx"), "/og/guide/foo.png");
+	assert.equal(
+		getPostOgImageUrl("guide/foo.mdx", "/blog/"),
+		"/blog/og/guide/foo.png",
+	);
+	// 端点目录必须与 OG_IMAGE_ROUTE_PREFIX 一致
+	assert.ok(getPostOgImageUrl("a.md").startsWith(`/${OG_IMAGE_ROUTE_PREFIX}`));
 });

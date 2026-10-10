@@ -557,7 +557,9 @@ test.describe("Mermaid diagrams", () => {
 					.closest("g")
 					?.querySelector<SVGElement>("rect.journey-section, rect.task");
 				const foreground = luminance(getComputedStyle(label).color);
-				const background = fill && luminance(getComputedStyle(fill).fill);
+				const background = fill
+					? luminance(getComputedStyle(fill).fill)
+					: null;
 				if (foreground === null || background === null) return 0;
 				const lighter = Math.max(foreground, background);
 				const darker = Math.min(foreground, background);
@@ -604,7 +606,9 @@ test.describe("Mermaid diagrams", () => {
 					const fill = node.querySelector<SVGElement>(".node-bkg");
 					const label = node.querySelector<SVGTextElement>("text");
 					const foreground = label && luminance(getComputedStyle(label).fill);
-					const background = fill && luminance(getComputedStyle(fill).fill);
+					const background = fill
+					? luminance(getComputedStyle(fill).fill)
+					: null;
 					if (foreground === null || background === null) {
 						return 0;
 					}

@@ -10,7 +10,7 @@ import { url } from "@utils/url-utils";
 import { momentsConfig, profileConfig } from "@/config";
 
 if (!momentsConfig.enable) {
-	return Astro.redirect("/404/");
+	return (await import("@utils/soft-404")).softNotFoundResponse();
 }
 
 const pageTitle = resolveI18nText(momentsConfig.title, I18nKey.moments);

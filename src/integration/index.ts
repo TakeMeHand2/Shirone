@@ -10,7 +10,9 @@ import {
 	isMusicBundleFile,
 	MUSIC_SIDEBAR_VIRTUAL_ID,
 	mdxOptions,
+	OG_FONT_VIRTUAL_ID,
 	prebundleSpecifiers,
+	ssrBundledSpecifiers,
 	svelteCompilerOptions,
 	swupForwardOptions,
 	swupOptions,
@@ -18,7 +20,11 @@ import {
 	viteBuildShared,
 } from "../config/integrationsConfig.ts";
 import { shironesFallbackResolver } from "./fallback-resolver.ts";
-import { buildFontDeclarations } from "./fonts.ts";
+import {
+	buildFontDeclarations,
+	type OgFontResolution,
+	resolveOgFontSource,
+} from "./fonts.ts";
 import {
 	invalidateConfigCache,
 	loadConfigModule,
@@ -49,6 +55,7 @@ export type {
 // This ensures Astro's typegen works correctly in both source and package modes.
 
 const RESOLVED_MUSIC_VIRTUAL_ID = `\0${MUSIC_SIDEBAR_VIRTUAL_ID}`;
+const RESOLVED_OG_FONT_VIRTUAL_ID = `\0${OG_FONT_VIRTUAL_ID}`;
 
 /**
  * Vite aliases mapping the theme's TypeScript path aliases onto the installed
@@ -134,6 +141,89 @@ function createMusicSidebarPlugin(
 					delete bundle[fileName];
 				}
 			}
+		},
+	};
+}
+
+/**
+ * 动态 OG 分享卡的字体通道。
+ *
+ * satori 需要字体**二进制**，而主题的字体文件在两种模式下的真实位置不同
+ * （repo 模式在仓库 `src/assets/fonts/`，npm 包模式在 `node_modules/shirones/`
+ * 下）。只有集成侧的 `resolvePaths()` 同时知道这两种布局，所以字体路径在这里
+ * 解析、并以虚拟模块的形式交给端点。
+ *
+ * 生成代码里内联的是**绝对路径**，且 `readFileSync` 只在模块被导入时执行一次
+ * （进程内缓存）：静态构建时整个 build 共用一份 15MB 缓冲区，而不是每张卡都读
+ * 一次盘；同时也避免把原始 TTF 复制进 `dist/`。
+ */
+function createOgFontPlugin(font: OgFontResolution) {
+	return {
+		name: "shirones:og-font",
+		enforce: "pre" as const,
+		resolveId(source: string) {
+			return source === OG_FONT_VIRTUAL_ID ? RESOLVED_OG_FONT_VIRTUAL_ID : null;
+		},
+		load(id: string) {
+			if (id !== RESOLVED_OG_FONT_VIRTUAL_ID) return null;
+			if (!font.path) {
+				// 站点没有任何 satori 可用的本地 TTF/OTF（例如 fontConfig 走
+				// `mode: "system"`）。这里不抛错：由告警说明原因，端点与页面
+				// 依据同一个常量一起退回到「不产出 / 不引用」。
+				return [
+					"export const ogCardFontAvailable = false;",
+					"export default function loadOgCardFont() { return null; }",
+				].join("\n");
+			}
+			return [
+				'import { readFileSync } from "node:fs";',
+				"let cached = null;",
+				"export const ogCardFontAvailable = true;",
+				`const FONT_PATH = ${JSON.stringify(font.path)};`,
+				"export default function loadOgCardFont() {",
+				"\tif (cached === null) cached = readFileSync(FONT_PATH);",
+				"\treturn cached;",
+				"}",
+			].join("\n");
+		},
+	};
+}
+
+/**
+ * 把指定的依赖解析成**绝对文件路径**，使其无法被 SSR 外部化。
+ *
+ * 裸标识符在服务端默认走「交给 Node 解析」这条路；只要包内部有 Node 解析不动的
+ * 写法（这里是无扩展名的相对导入），预渲染就会在运行时炸。返回绝对路径后，
+ * 它退化成 Vite 的一个普通模块，包内的相对导入由 Vite 自己解析。
+ * 详见 `ssrBundledSpecifiers` 的注释。
+ */
+function createBundledDepPlugin(
+	paths: ResolvedShironesPaths,
+	specifiers: string[],
+) {
+	// 以主题包的 `package.json` 为锚点解析，这样在 pnpm 的严格布局下也能找到
+	// 主题自己的依赖（用户项目根目录里并不一定有）。
+	const requireFromTheme = createRequire(
+		join(paths.packageRoot, "package.json"),
+	);
+	const resolved = new Map<string, string>();
+	for (const specifier of specifiers) {
+		try {
+			resolved.set(specifier, requireFromTheme.resolve(specifier));
+		} catch (error) {
+			// 解析不到就保持原样，交给 Vite 报它自己的错误：这里吞掉异常只会
+			// 把问题挪到更难定位的地方。
+			console.warn(
+				`[shirones] could not resolve "${specifier}" for SSR bundling: ${(error as Error).message}`,
+			);
+		}
+	}
+
+	return {
+		name: "shirones:bundled-deps",
+		enforce: "pre" as const,
+		resolveId(source: string) {
+			return resolved.get(source) ?? null;
 		},
 	};
 }
@@ -296,6 +386,21 @@ export function shirones(options: ShironesOptions = {}): AstroIntegration {
 					registryRef,
 				);
 
+				// OG 分享卡要的是字体二进制（satori 不接受 woff2），与子集化
+				// 管线是两条独立的取用路径，所以单独解析一次。
+				const ogFont = await resolveOgFontSource(paths, registryRef);
+				if (ogFont.path) {
+					logger.info(`[og] share card font: ${ogFont.family ?? "(unnamed)"}`);
+				} else {
+					logger.warn(
+						"[og] no local TTF/OTF font available, so dynamic share cards are skipped: " +
+							"`articleConfig.ogImage.enable` stays on but nothing is emitted, and " +
+							"articles without a cover fall back to the site default image. " +
+							'Add a `.ttf`/`.otf` file to `fontConfig.fontFamilies` (role "cjk") ' +
+							"or set `articleConfig.ogImage.enable: false`.",
+					);
+				}
+
 				// ── 4. Markdown processor ───────────────────────────────────────
 				const markdownModule = await loadPackageModule(
 					paths,
@@ -349,6 +454,8 @@ export function shirones(options: ShironesOptions = {}): AstroIntegration {
 							shironesFallbackResolver(paths),
 							shironesSsrNodeShims(),
 							createMusicSidebarPlugin(paths, musicEnabled),
+							createOgFontPlugin(ogFont),
+							createBundledDepPlugin(paths, ssrBundledSpecifiers),
 							(await import("@tailwindcss/vite")).default(),
 						],
 						optimizeDeps: {

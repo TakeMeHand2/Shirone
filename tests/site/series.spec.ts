@@ -29,7 +29,8 @@ async function openSitePage(
 		() =>
 			[...document.querySelectorAll(".onload-animation")].every(
 				(el) =>
-					el.offsetParent === null || getComputedStyle(el).opacity === "1",
+					(el as HTMLElement).offsetParent === null ||
+					getComputedStyle(el).opacity === "1",
 			),
 		undefined,
 		{ timeout: 15_000 },

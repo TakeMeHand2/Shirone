@@ -1341,7 +1341,7 @@ ${colours.bold}Project layout${colours.reset}
   src/layouts/              …same for layouts
   ${CONTENT_ROOT}/config/            site configuration (TypeScript, fully typed)
   ${CONTENT_ROOT}/config/data/       friends, projects, skills, timeline, …
-  ${CONTENT_ROOT}/content/           posts, moments, about
+  ${CONTENT_ROOT}/content/           posts, moments, about, guestbook
   public/                   static assets
 
 ${colours.bold}Next${colours.reset}

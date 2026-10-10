@@ -558,3 +558,102 @@ snapshotPathTemplate: "{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg
 
 **防回归**：`tests/site/layout-stability.spec.ts`（覆盖槽位预留、长短页宽度一致、长/短页双向导航、壁纸模式切换、页面滚动锁、无槽位时的补偿）。注意 Playwright 默认带 `--hide-scrollbars`，滚动条宽度为 0 时该契约完全不可观测，spec 必须显式关掉该默认参数。
 
+---
+
+## 11. Swup 站内导航
+
+### 11.1 `@swup/astro` 会静默丢弃大部分选项
+
+`@swup/astro` 的初始化脚本只把 5 个键传给 `new Swup(...)`：
+
+```text
+ignoreVisit / animationSelector / containers / cache / native / plugins
+```
+
+其余键——包括 `swupOptions` 与 `swupForwardOptions` 里的 `animateHistoryBrowsing`、
+`skipPopStateHandling`，以及任意 swup 核心选项如 `timeout`——**到不了运行时，也不会报错**。
+（`src/config/integrationsConfig.ts` 的 `swupForwardOptions` 注释已记录这一点。）
+
+因此要改 swup 核心选项时，只能在运行时补写，例如
+`window.swup.options.timeout = 12_000`（见 `src/layouts/Layout.astro` 的 `setup()`）。
+**验证方式是在浏览器里读 `window.swup.options`**，不要只改了配置就认为生效。
+
+### 11.2 钩子：`on()` 跑在默认行为之后，覆写要用 `before()`
+
+Swup 4 的钩子注册表把 `on()` 注册的处理器归入 **after** 组，`before()` 才在默认行为之前
+（`getHandlers` 的执行顺序是 before → 默认 → 普通 `on`）。
+
+要改「默认行为会读的值」（如 `visit.a11y.focus` / `visit.a11y.announce`），必须用
+`hooks.before(...)`；用 `on(...)` 会静默失效。参考 `src/layouts/Layout.astro` 的 a11y 脚本。
+
+### 11.3 换页不会自动清理「挂在 body 上」的东西
+
+Swup 只替换 `containers`，`document.body` 上的残留不会被带走。目前接入清理的三处：
+
+| 残留物 | 症状 | 清理位置 |
+|---|---|---|
+| 代码树全屏模态 + 滚动锁 | 新页面被残留遮罩挡住且滚不动（前进/后退尤其明显） | `utils/code-tree.ts`：`swup:visit:start` → `closeCodeTreeModal(true)` |
+| 瀑布流 `ResizeObserver` | 每次导航留下一个仍在观察已脱离容器的 observer | `utils/masonry.ts` 的 `pruneDetachedMasonry()`，由 `layout-mode` 每次导航调用 |
+| 文章内 `<audio>` | 上一篇文章的音频在后台继续播放 | `utils/audio-reader.ts`：`swup:visit:start` 暂停并归零 |
+
+新增任何「模态 / 全局监听 / observer / 媒体实例」时，都要先问一句：换页之后谁负责清理？
+
+### 11.4 进度条必须在失败路径上收敛
+
+`RouteProgress` 除 `swup:visit:start` / `swup:page:view` 外，还监听
+`swup:visit:abort`、`swup:fetch:error`、`swup:fetch:timeout`；
+只监听 `page:view` 会在请求失败时让进度条永远转下去。
+
+
+## 12. 构建期图片渲染（satori + resvg）
+
+动态 OG 分享卡（`src/pages/og/[...slug].ts`）是主题里唯一在构建期画位图的地方：
+satori 把元素树画成 SVG，resvg 再栅格化成 PNG。它的失效方式几乎都是**静默**的
+——构建成功、图片合法、只是内容不对，所以下面四条都值得记住。
+
+### 12.1 `children` 不能写进 `style` 对象
+
+satori 会把节点的 **`props` 里除 `style` / `children` 之外的键**当成 CSS 声明解析。
+如果把 `children` 混进 `style`（即 `{ type, props: { style: { …, children: [...] } } }`），
+satori 会拿着整棵子树当 CSS 值去 `.trim()`，报出：
+
+```text
+inputValue.trim is not a function
+  in CSS rule `children: [object Object],[object Object],…`.
+```
+
+报错里只有一个数组，完全看不出是哪一层。`src/utils/og-card.ts` 的 `el()` 因此只接受
+**一个平铺的 props 对象**，由它负责把 `children` 拆出去，调用点没有写错的空间。
+
+### 12.2 `justifyContent: "space-between"` 会丢掉最后一个子节点
+
+列方向 + `height: "100%"` + 三个子节点的最小复现里，**第三个节点完全不出现在产物中**，
+不报错。因此卡片一律使用**绝对定位**（固定 1200×630 画布本来就该如此），
+不依赖任何流式分布。
+
+> 这类「元素树正确但渲染结果少东西」的问题，断言元素树是查不出来的。
+> 判据必须落在渲染结果上——见 `tests/og-card-render.test.mjs`（用矢量图元数量的
+> **差分**判断某一行有没有画出来，不需要图像解码库，也不需要黄金图）。
+
+### 12.3 SSR 里外部化的依赖可能根本加载不了
+
+`@material/material-color-utilities` 的内部 ESM 是无扩展名的相对导入
+（`scheme/scheme_content.js` → `../dynamiccolor/dynamic_scheme`）。Vite / rolldown
+解析得动，Node 解析不动，所以只要它以**裸标识符**留在 SSR 产物里，预渲染就会抛
+`Cannot find module …/dynamic_scheme`。主题的 HCT 引擎一直只跑在浏览器，是 OG 卡
+第一次把它带进构建期链路。
+
+**不要指望 `vite.ssr.noExternal`**：本仓跑 Vite 8 的 environment API，
+`vite-plugin-environment` 会整体覆写每个 environment 的 `resolve.noExternal`，
+只保留自己 crawl 出来的清单——写在 `vite.ssr.noExternal` 里的值到不了最终配置，
+**也不报错**。正确做法是在 `resolveId` 里把它解析成绝对路径
+（`src/config/integrationsConfig.ts` 的 `ssrBundledSpecifiers` + `shirones:bundled-deps`）：
+绝对路径不是裸标识符，不会被外部化，包内的无扩展名相对导入由 Vite 自己解析。
+
+### 12.4 不要把主题字体喂给 `?url`
+
+satori 只吃 TTF/OTF 二进制。用 `import font from "….ttf?url"` 取 URL 会在构建期把
+**原始 15MB 字体**复制进 `dist/_astro/`，再想办法把它读回来——既浪费产物体积，
+也绕过了字体子集化管线。字体路径应当由集成解析（只有它同时知道仓库模式与
+npm 包模式的根目录）后通过虚拟模块 `virtual:shirone-og-font` 交给端点，
+`readFileSync` 在进程内缓存一次。

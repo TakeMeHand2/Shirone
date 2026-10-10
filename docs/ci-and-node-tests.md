@@ -1,6 +1,22 @@
 # CI and Node Test Contract
 
-This project runs unit tests directly with Node. CI uses Node 22 and Node 24. Astro/Vite supplies TypeScript, aliases, and extension resolution during development, but `node --test` does not; code loaded by tests must work in both environments.
+This project runs unit tests directly with Node. Astro/Vite supplies TypeScript, aliases, and extension resolution during development, but `node --test` does not; code loaded by tests must work in both environments.
+
+## What CI actually runs
+
+`.github/workflows/ci.yml` has four jobs:
+
+| Job | Contents |
+| --- | --- |
+| `quality` | `biome ci ./src` — **blocking** (a failure fails the run) |
+| `checks` | `astro check`, `pnpm check:manifest`, `pnpm type-check`, `node --test "tests/**/*.test.mjs"` (Node 22) |
+| `build` | `pnpm build` on Node 22 and 24 |
+| `e2e` | `pnpm test:ci` (Playwright, Node 22) |
+
+Two things are easy to get wrong here:
+
+- **`pnpm type-check` covers `src/` *and* `tests/`** via `tsconfig.check.json`; the root `tsconfig.json` stays `src`-only for the editor and `astro check`. Tests were outside the type system for a long time, which let assertions reference non-existent `I18nKey` members and silently pass. If you add a test path that TypeScript cannot resolve, this is the step that fails.
+- **`e2e` runs `pnpm test:ci`, not `pnpm test`.** That is `playwright test --grep-invert @visual`: pixel baselines only hold for the platform that generated them, so the `@visual` group is a **local, pre-release** gate. Run full `pnpm test` on the machine that owns the baselines before releasing — see `rules/visual-regression.md` §8.
 
 ## Runtime boundaries
 
@@ -17,9 +33,12 @@ After changing Markdown processing, i18n modules, or test loading paths, run:
 pnpm.cmd exec biome ci ./src
 npx.cmd astro check
 pnpm.cmd check:manifest
+pnpm.cmd type-check
 node --test "tests/**/*.test.mjs"
 git diff --check
 ```
+
+Node's strip-only loader accepts `.ts` imports (the locale modules rely on this), but the same rule as above applies: no runtime `enum`, and relative imports need explicit extensions.
 
 Do not run `astro check` in parallel with content-sync tests. Astro check triggers content synchronization, while `tests/content/*` uses temporary repository fixtures; concurrent runs can cause false failures such as empty stderr. Run the complete unit suite separately.
 

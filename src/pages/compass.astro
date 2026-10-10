@@ -11,7 +11,7 @@ import { compassConfig } from "@/config/compassConfig";
 import { compassData } from "../data/compass";
 
 if (!compassConfig.enable) {
-	return Astro.redirect("/404/");
+	return (await import("@utils/soft-404")).softNotFoundResponse();
 }
 
 const pageTitle = resolveI18nText(compassConfig.title, I18nKey.compass);

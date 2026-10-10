@@ -31,6 +31,13 @@ export const articleConfig: ArticleConfig = withUserConfig("article", {
 		// 生成海报时是否默认包含文章封面（封面不可用时自动降级为无封面排版）。
 		includeCover: true,
 	},
+	ogImage: {
+		// 为**没有封面**的文章构建动态分享卡（`/og/<文章 id>.png`）。
+		// 有封面时文章页直接用封面，不会引用分享卡。关闭后端点零产出；
+		// 站点若没有任何本地 TTF/OTF 字体（如 fontConfig 走 "system" 模式），
+		// 端点也会自动退化为零产出并打印一条 [og] 告警，详见 docs/font-system.md §六.5。
+		enable: true,
+	},
 });
 
 const MAX_DISCOVERY_COUNT = 6;
@@ -72,6 +79,13 @@ export function resolveArticleShareOptions(
 ): ArticleShareOptions | null {
 	if (!config.share.enable) return null;
 	return { includeCover: config.share.includeCover };
+}
+
+/** OG 分享卡配置解析：关闭时返回 null，端点与文章页回退链据此短路。 */
+export function resolveOgImageOptions(
+	config: Pick<ArticleConfig, "ogImage">,
+): ArticleConfig["ogImage"] | null {
+	return config.ogImage.enable ? config.ogImage : null;
 }
 
 export function resolveLastUpdatedNoticeOptions(

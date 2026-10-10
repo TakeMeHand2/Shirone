@@ -4,6 +4,7 @@ import type { Translation } from "../translation.ts";
 export const zh_CN: Translation = {
 	[Key.home]: "主页",
 	[Key.about]: "关于",
+	[Key.guestbook]: "留言板",
 	[Key.archive]: "归档",
 	[Key.archiveGroup]: "归档分组",
 	[Key.archiveGroupYear]: "按年份",
@@ -158,6 +159,7 @@ export const zh_CN: Translation = {
 	[Key.commentsLoading]: "正在加载评论...",
 	[Key.commentsLoadFailed]: "评论加载失败",
 	[Key.commentsRequiresJavaScript]: "评论区需要启用 JavaScript 才能显示",
+	[Key.commentGreeting]: "留句话给我吧～",
 
 	[Key.uncategorized]: "未分类",
 	[Key.noTags]: "无标签",
@@ -343,4 +345,7 @@ export const zh_CN: Translation = {
 	[Key.live2dStatusReload]: "重新加载",
 	[Key.live2dStatusRest]: "看板娘休息中",
 	[Key.live2dMenuExpression]: "换表情",
+	[Key.live2dExpressionSwitched]: "已切换到表情：{name}",
+	[Key.a11yNavigatedTo]: "已跳转到：{title}",
+	[Key.a11yNewPageAt]: "新页面：{url}",
 };

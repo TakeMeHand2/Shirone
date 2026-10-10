@@ -349,7 +349,7 @@ variables.styl  --mc-* → 语义令牌（--primary、--surface-container-low…
 
 ### 9.1 当前状态（2026-08）
 
-- **site 级测试保留**（`tests/site/`，真实页面）：视觉回归（4 页面 × light/dark）、axe 双模式、TOC、文章页（copy-link）、SSR 图标渲染、reduced-motion。
+- **site 级测试保留**（`tests/site/`，真实页面）：视觉回归（6 用例 × light/dark）、axe 双模式、站内导航后的焦点与播报、TOC、文章页（copy-link）、SSR 图标渲染、reduced-motion。
 - **atoms 级测试已移除**：原子测试页（`src/pages/atoms-*-test.astro`）、演示页（`src/components/atoms/*Demo.svelte`）、`tests/atoms/`（spec + helpers）已删除；**组件文件全部保留**（含 Tier B/C 库存原子）。历史测试记录在 git 中可追溯，未来组件落地/复用时按本节约定重建。
 - 组件质量仍以官方 Material Web（`research/material-web/tokens/versions/v0_192`）为基准。
 

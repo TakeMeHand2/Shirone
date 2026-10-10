@@ -12,7 +12,11 @@ import { expect, test } from "@playwright/test";
 function runningCardAnimations(): number {
 	return Array.from(document.querySelectorAll(".m3-blog-postcard"))
 		.flatMap((el) => el.getAnimations())
-		.filter((a) => a.playState === "running" || a.playState === "pending")
+		.filter(
+			(a) =>
+				a.playState === "running" ||
+				(a.playState as string) === "pending",
+		)
 		.length;
 }
 

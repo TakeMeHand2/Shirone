@@ -203,7 +203,8 @@ test.describe("Live2D hit areas", () => {
  *
  * 模型自带的表情既不会被动作触发（motion 曲线只驱动 Parameter，没有可见性曲线也没有
  * Meta.ExpressionIds），oml2d 也没有换表情入口，所以主题补了一个菜单项。
- * 这里锁住两件事：配置归一化（未开启时零副作用）与真实点击能逐个切换表情。
+ * 这里锁住三件事：配置归一化（未开启时零副作用）、真实点击能逐个切换表情，
+ * 以及**切换真的把表情写进了模型**。
  */
 test.describe("Live2D expression menu", () => {
 	test("menu config normalises and stays opt-in", () => {
@@ -271,6 +272,12 @@ test.describe("Live2D expression menu", () => {
 			"true",
 		);
 
+		// 结果播报区：可视隐藏，但必须是活的 live region
+		const status = page.locator("#shirone-expression-status");
+		await expect(status).toHaveCount(1);
+		await expect(status).toHaveAttribute("aria-live", "polite");
+		await expect(status).toHaveAttribute("aria-atomic", "true");
+
 		// 菜单闲置时用 opacity 收起，悬停展开后才可点（走真实交互路径）
 		await page.locator("#oml2d-stage").hover();
 		await expect
@@ -291,9 +298,21 @@ test.describe("Live2D expression menu", () => {
 			return (text ?? "").trim();
 		};
 
+		// 播报区：气泡（唯一的视觉反馈）是装饰性内容，读屏用户只能靠这里拿到结果。
+		const readStatus = async () =>
+			(
+				await page
+					.locator("#shirone-expression-status")
+					.textContent({ timeout: 5_000 })
+			)?.trim() ?? "";
+
 		await item.click();
 		await expect.poll(readTip, { timeout: 10_000 }).not.toBe("");
 		const first = await readTip();
+
+		// 播报文案必须带上当前表情名，且占位符已被替换掉
+		await expect.poll(readStatus, { timeout: 10_000 }).toContain(first);
+		expect(await readStatus()).not.toContain("{name}");
 
 		// 配置里带连点冷却，等过冷却再点第二次
 		await page.waitForTimeout((options.expressionMenu.cooldown ?? 400) + 300);
@@ -308,7 +327,205 @@ test.describe("Live2D expression menu", () => {
 			)
 			.not.toBe("");
 
+		// 第二次切换后播报区跟着更新
+		const second = await readTip();
+		await expect.poll(readStatus, { timeout: 10_000 }).toContain(second);
+
 		expect(id).toBe("shirone-expression");
+	});
+
+	/**
+	 * 切换必须真的写进模型。
+	 *
+	 * 上面的测试只覆盖「气泡文案变了」，所以当手动补帧用了毫秒基准、而帧循环用秒基准、
+	 * 导致混合权重恒为 0 时，它依然全绿 —— 模型其实一个参数都没变。这里把机制本身锁住：
+	 *   1) 每次切换后表情队列恒为 1（是「替换」，不是两条条目叠加）；
+	 *   2) 混合权重能达到 1（真正参与混合）；
+	 *   3) 表情声明的参数在 core.update() 那一刻被写入（真的进了这一帧的渲染）。
+	 */
+	test("a switch really writes the expression into the model", async ({
+		page,
+	}) => {
+		const options = resolveLive2dOptions(live2dConfig);
+		if (!options?.expressionMenu) {
+			test.skip();
+			return;
+		}
+
+		// 挂件把 stage 留在闭包里没有对外暴露；SDK 是 UMD，会先给 globalThis 赋一个空的
+		// OML2D 对象、再把 loadOml2d 挂上去。用属性访问器拦住这两步即可在初始化前包住它，
+		// 拿到 stage.models.model —— 仅测试用，生产侧不多出任何全局变量。
+		await page.addInitScript(() => {
+			Object.defineProperty(window, "OML2D", {
+				configurable: true,
+				set(obj: Record<string, unknown>) {
+					Object.defineProperty(obj, "loadOml2d", {
+						configurable: true,
+						set(fn: (options: unknown) => unknown) {
+							Object.defineProperty(obj, "loadOml2d", {
+								configurable: true,
+								writable: true,
+								value: function (this: unknown, incoming: unknown) {
+									const stage = fn.call(this, incoming);
+									(
+										window as unknown as { __live2dStage?: unknown }
+									).__live2dStage = stage;
+									return stage;
+								},
+							});
+						},
+					});
+					Object.defineProperty(window, "OML2D", {
+						configurable: true,
+						writable: true,
+						value: obj,
+					});
+				},
+			});
+		});
+
+		await page.goto("/");
+		await page.waitForFunction(
+			() =>
+				Boolean(
+					(
+						window as unknown as {
+							__live2dStage?: {
+								models?: { model?: { internalModel?: unknown } };
+							};
+						}
+					).__live2dStage?.models?.model?.internalModel,
+				),
+			{ timeout: 90_000 },
+		);
+
+		// 一帧的顺序是 saveParameters() → 写表情参数 → coreModel.update() → loadParameters()，
+		// 帧外读参数只会读到被还原的基准值，所以必须在 core.update() 内部采样。
+		await page.evaluate(() => {
+			const stage = (
+				window as unknown as {
+					__live2dStage: {
+						models: {
+							model: {
+								internalModel: {
+									coreModel: {
+										update: () => void;
+										getParameterValueById: (parameterId: string) => number;
+									};
+									motionManager: { expressionManager: unknown };
+								};
+							};
+						};
+					};
+				}
+			).__live2dStage;
+			const internal = stage.models.model.internalModel;
+			const core = internal.coreModel;
+			const manager = internal.motionManager.expressionManager as unknown as {
+				queueManager: {
+					_motions?: Array<{ _stateWeight: number; _motion: unknown }>;
+				};
+			};
+			const original = core.update.bind(core);
+			const sample = () => {
+				const queue = manager.queueManager._motions ?? [];
+				const motion = queue[0]?._motion as
+					| { _parameters?: Array<{ parameterId: string }> }
+					| undefined;
+				const parameterId = motion?._parameters?.[0]?.parameterId;
+				return {
+					queueLength: queue.length,
+					weight: queue[0]?._stateWeight ?? 0,
+					parameterId: parameterId ?? null,
+					value:
+						parameterId == null
+							? null
+							: Number(core.getParameterValueById(parameterId)),
+				};
+			};
+			(
+				window as unknown as {
+					__sampleExpression: () => {
+						queueLength: number;
+						weight: number;
+						parameterId: string | null;
+						value: number | null;
+					};
+				}
+			).__sampleExpression = sample;
+			core.update = () => {
+				(
+					window as unknown as { __expressionSample?: unknown }
+				).__expressionSample = sample();
+				original();
+			};
+		});
+
+		const readSample = () =>
+			page.evaluate(
+				() =>
+					(
+						window as unknown as {
+							__expressionSample?: {
+								queueLength: number;
+								weight: number;
+								parameterId: string | null;
+								value: number | null;
+							};
+						}
+					).__expressionSample ?? null,
+			);
+
+		const item = page.locator("#shirone-expression");
+		await expect(item).toHaveCount(1, { timeout: 60_000 });
+		await page.locator("#oml2d-stage").hover();
+		await page.waitForTimeout(500);
+
+		await item.click();
+		// 1) 队列恒为 1、2) 权重达到 1、3) 表情声明的参数被写进这一帧
+		await expect
+			.poll(
+				async () => {
+					const sample = await readSample();
+					return sample && sample.queueLength === 1 && sample.weight >= 0.99
+						? sample
+						: null;
+				},
+				{ timeout: 15_000 },
+			)
+			.not.toBeNull();
+
+		const applied = await readSample();
+		expect(applied?.parameterId).toBeTruthy();
+		const appliedValue = applied?.value ?? null;
+
+		// 连点：冷却过后立刻再切一次，队列必须仍然是 1（叠加会表现为 ≥2）
+		await page.waitForTimeout((options.expressionMenu.cooldown ?? 400) + 200);
+		await item.click();
+		await page.waitForTimeout(300);
+		expect((await readSample())?.queueLength).toBe(1);
+
+		// 清空队列后，该参数必须回到基线 —— 证明上面读到的差值确实来自这个表情，
+		// 而不是 Idle 动作或物理的抖动。
+		await page.evaluate(() => {
+			const stage = (
+				window as unknown as {
+					__live2dStage: {
+						models: { model: { internalModel: { motionManager: unknown } } };
+					};
+				}
+			).__live2dStage;
+			const internal = stage.models.model.internalModel;
+			(
+				internal.motionManager as unknown as {
+					expressionManager: { stopAllExpressions?: () => void };
+				}
+			).expressionManager.stopAllExpressions?.();
+		});
+		await page.waitForTimeout(300);
+		const cleared = await readSample();
+		expect(cleared?.parameterId).toBe(applied?.parameterId);
+		expect(cleared?.value).not.toBe(appliedValue);
 	});
 });
 

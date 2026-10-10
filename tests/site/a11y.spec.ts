@@ -27,6 +27,7 @@ const pages = [
 	{ name: "时间线", path: "/timeline/" },
 	{ name: "受保护相册", path: "/albums/EncryptedExample/" },
 	{ name: "关于", path: "/about/" },
+	{ name: "留言板", path: "/guestbook/" },
 	{ name: "文章页", path: "/posts/guide/" },
 	{ name: "MDX文章页", path: "/posts/mdx-showcase/" },
 	{ name: "系列文章页", path: "/posts/markdown-extended/" },

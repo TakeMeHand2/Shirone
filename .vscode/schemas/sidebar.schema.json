@@ -183,6 +183,12 @@
                         {
                           "type": "string",
                           "enum": [
+                            "guestbook"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
                             "categories"
                           ]
                         },
@@ -368,6 +374,12 @@
                           "type": "string",
                           "enum": [
                             "about"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "guestbook"
                           ]
                         },
                         {
@@ -563,6 +575,12 @@
                         {
                           "type": "string",
                           "enum": [
+                            "guestbook"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
                             "categories"
                           ]
                         },
@@ -753,6 +771,12 @@
                         {
                           "type": "string",
                           "enum": [
+                            "guestbook"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
                             "categories"
                           ]
                         },
@@ -929,6 +953,12 @@
                           "type": "string",
                           "enum": [
                             "about"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "guestbook"
                           ]
                         },
                         {
@@ -1115,6 +1145,12 @@
                         {
                           "type": "string",
                           "enum": [
+                            "guestbook"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
                             "categories"
                           ]
                         },
@@ -1291,6 +1327,12 @@
                           "type": "string",
                           "enum": [
                             "about"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "guestbook"
                           ]
                         },
                         {
@@ -1495,6 +1537,12 @@
                         {
                           "type": "string",
                           "enum": [
+                            "guestbook"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
                             "categories"
                           ]
                         },
@@ -1670,6 +1718,199 @@
                           "type": "string",
                           "enum": [
                             "about"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "guestbook"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "categories"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "tags"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "series"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "rss"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "atom"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "post"
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "description": "限定显示的页面，省略或空数组表示所有页面"
+              }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "quote"
+                ]
+              },
+              "enable": {
+                "type": "boolean"
+              },
+              "slot": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "top"
+                    ]
+                  },
+                  {
+                    "type": "string",
+                    "enum": [
+                      "sticky"
+                    ]
+                  }
+                ]
+              },
+              "column": {
+                "anyOf": [
+                  {},
+                  {
+                    "type": "string",
+                    "enum": [
+                      "primary"
+                    ]
+                  },
+                  {
+                    "type": "string",
+                    "enum": [
+                      "secondary"
+                    ]
+                  }
+                ]
+              },
+              "pages": {
+                "anyOf": [
+                  {},
+                  {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "notFound"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "home"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "archive"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "friends"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "moments"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "anime"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "compass"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "skills"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "projects"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "devices"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "games"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "timeline"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "albums"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "about"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "guestbook"
                           ]
                         },
                         {

@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
+import { fileURLToPath } from "node:url";
 import {
 	expressiveCodeShared,
 	IMAGE_ENDPOINT_ROUTE,
@@ -12,6 +15,11 @@ import {
 	TRAILING_SLASH,
 	viteBuildShared,
 } from "../src/config/integrationsConfig.ts";
+
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
+const packageJson = JSON.parse(
+	readFileSync(join(repoRoot, "package.json"), "utf8"),
+);
 
 /**
  * 这些断言守的是「两个 Astro 配置入口共享同一份选项」这个约定本身。
@@ -89,6 +97,26 @@ describe("shared integrations config", () => {
 		]);
 		for (const collections of Object.values(iconInclude)) {
 			assert.deepEqual(collections, ["*"]);
+		}
+	});
+
+	it("keeps every runtime icon collection in dependencies", () => {
+		// 页面可达的模块会**静态** import 这些图标集（例如
+		// `src/plugins/markdown/core/file-tree-icons.mjs` 直接引 simple-icons，
+		// 且 iconInclude 把它们声明为运行时图标集）。归到 devDependencies 时，
+		// 本仓的源码模式照常能跑（node_modules 扁平，解析得到），
+		// 但**包模式**安装后构建会找不到模块——本仓测不出来。
+		// 契约见 docs/packaging-contract.md。
+		for (const name of Object.keys(iconInclude)) {
+			const spec = `@iconify-json/${name}`;
+			assert.ok(
+				packageJson.dependencies?.[spec],
+				`${spec} is page-reachable and must be in dependencies, not devDependencies`,
+			);
+			assert.ok(
+				!packageJson.devDependencies?.[spec],
+				`${spec} is listed in both dependencies and devDependencies`,
+			);
 		}
 	});
 

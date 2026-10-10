@@ -4,6 +4,7 @@ import type { Translation } from "../translation.ts";
 export const zh_TW: Translation = {
 	[Key.home]: "首頁",
 	[Key.about]: "關於",
+	[Key.guestbook]: "留言板",
 	[Key.archive]: "彙整",
 	[Key.archiveGroup]: "彙整分組",
 	[Key.archiveGroupYear]: "依年份",
@@ -158,6 +159,7 @@ export const zh_TW: Translation = {
 	[Key.commentsLoading]: "正在載入評論...",
 	[Key.commentsLoadFailed]: "評論載入失敗",
 	[Key.commentsRequiresJavaScript]: "評論區需要啟用 JavaScript 才能顯示",
+	[Key.commentGreeting]: "留句話給我吧～",
 
 	[Key.uncategorized]: "未分類",
 	[Key.noTags]: "無標籤",
@@ -342,4 +344,7 @@ export const zh_TW: Translation = {
 	[Key.live2dStatusReload]: "重新載入",
 	[Key.live2dStatusRest]: "看板娘休息中",
 	[Key.live2dMenuExpression]: "換表情",
+	[Key.live2dExpressionSwitched]: "已切換到表情：{name}",
+	[Key.a11yNavigatedTo]: "已跳轉到：{title}",
+	[Key.a11yNewPageAt]: "新頁面：{url}",
 };

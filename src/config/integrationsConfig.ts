@@ -268,6 +268,30 @@ export const prebundleSpecifiers: string[] = [
 ];
 
 /**
+ * 必须以**绝对路径**交给 Vite（从而被打进服务端包）的依赖。
+ *
+ * `@material/material-color-utilities` 的内部 ESM 是无扩展名的相对导入
+ * （`scheme/scheme_content.js` → `../dynamiccolor/dynamic_scheme`）。Vite / rolldown
+ * 解析这种写法没问题，Node 的 ESM 解析器不行，所以只要这个包以**裸标识符**
+ * 出现在 SSR 产物里，预渲染就会抛 `Cannot find module .../dynamic_scheme`。
+ *
+ * 为什么不用 `vite.ssr.noExternal`（直觉上正确的那个开关）：本仓跑的是 Vite 8
+ * 的 environment API，Astro 的 `vite-plugin-environment` 会**整体覆写**每个
+ * environment 的 `resolve.noExternal`，只保留自己 crawl 出来的清单——写在
+ * `vite.ssr.noExternal` 里的值到不了最终配置，也不会报错，又是一个不通电的绿灯。
+ *
+ * 因此改为在 `resolveId` 里把它解析成绝对文件路径：绝对路径不是裸标识符，
+ * 不会被外部化，Vite 会照常解析包内的无扩展名相对导入。
+ *
+ * 这个问题在动态 OG 分享卡之前不存在：主题的 HCT 引擎一直只跑在浏览器
+ * （`DisplaySettings.svelte` / `theme-utils.ts`），是分享卡第一次把同一套配色
+ * 解析带进了构建期预渲染链路。
+ */
+export const ssrBundledSpecifiers: string[] = [
+	"@material/material-color-utilities",
+];
+
+/**
  * 可选音乐侧栏的虚拟模块 id。
  *
  * 两侧的插件对象本身不共享（解析出来的侧栏路径不同：源码模式指向
@@ -276,6 +300,23 @@ export const prebundleSpecifiers: string[] = [
  * 所以收敛到这里。
  */
 export const MUSIC_SIDEBAR_VIRTUAL_ID = "virtual:shirone-music-sidebar";
+
+/**
+ * 动态 OG 分享卡的字体虚拟模块 id。
+ *
+ * 由 `src/integration/index.ts` 的 `shirones:og-font` 插件提供，默认导出
+ * `() => Uint8Array | null`（satori 只接受 TTF/OTF 二进制）。
+ *
+ * 为什么必须是虚拟模块，而不是 `import font from "...ttf?url"`：
+ * 1. `?url` 会在构建期把 **15MB 的原始 TTF** 复制进 `dist/_astro/`，只为让
+ *    端点再把它读回来——纯浪费的产物体积，且绕过了字体子集化管线；
+ * 2. satori 需要的是字节，不是 URL；运行期取字节只能靠 `fetch`，而静态构建
+ *    没有服务器可 fetch。
+ * 真正可用的路径解析必须发生在集成里（`resolvePaths` 同时知道 repo 模式与
+ * npm 包模式各自的根目录），因此插件返回的模块在 `load()` 时把**绝对路径**
+ * 内联进生成代码，导入时才 `readFileSync`。
+ */
+export const OG_FONT_VIRTUAL_ID = "virtual:shirone-og-font";
 
 /** 关掉音乐组件时，`generateBundle` 阶段要从产物里剔除的文件。 */
 export function isMusicBundleFile(fileName: string): boolean {

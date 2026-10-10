@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "quote configuration override",
+  "description": "Shirone quote config schema generated from @/types/quoteConfig.QuoteConfig",
+  "type": "object",
+  "properties": {
+    "enable": {
+      "type": "boolean",
+      "description": "总开关（false 时 widget 不渲染，零 DOM、零请求）"
+    },
+    "provider": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "local"
+          ]
+        },
+        {
+          "type": "string",
+          "enum": [
+            "hitokoto"
+          ]
+        }
+      ],
+      "description": "数据源：\n- \"local\"：构建期语料（src/data/quotes.ts），零外部请求（默认）\n- \"hitokoto\"：运行时拉取一言 API（外部请求，需显式开启）"
+    },
+    "api": {
+      "anyOf": [
+        {},
+        {
+          "type": "string"
+        }
+      ],
+      "description": "一言 API 地址（provider 为 \"hitokoto\" 时生效，默认官方接口）"
+    },
+    "timeout": {
+      "anyOf": [
+        {},
+        {
+          "type": "number"
+        }
+      ],
+      "description": "一言请求超时（毫秒，默认 5000；超时或失败回退本地语料）"
+    }
+  },
+  "additionalProperties": false
+}

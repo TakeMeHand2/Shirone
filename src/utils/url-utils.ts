@@ -13,6 +13,40 @@ export function removeFileExtension(id: string): string {
 	return id.replace(/\.(md|mdx|markdown)$/i, "");
 }
 
+/**
+ * 动态 OG 分享卡的目录前缀（站点 URL 形态，无前导斜杠）。
+ * 端点路由 `src/pages/og/[...slug].ts` 必须落在同一前缀下。
+ */
+export const OG_IMAGE_ROUTE_PREFIX = "og/";
+
+/**
+ * 文章集合条目 id → OG 卡相对路径（如 `guide/foo.png`）。
+ *
+ * 这是**唯一**一处把条目 id 映射成 OG 文件名的地方：文章页拼 `og:image`
+ * 与端点派生 `getStaticPaths` 参数都走它。两处各写一遍正则的话，
+ * 一旦 ext 列表或命名规则改动，页面会静默指向不存在的图片（图挂了但构建全绿），
+ * 而任何构建期校验都发现不了。
+ */
+export function getPostOgFileName(entryId: string): string {
+	return `${removeFileExtension(entryId)}.png`;
+}
+
+/**
+ * 文章集合条目 id → 站点内的 OG 卡 URL（如 `/og/guide/foo.png`，含 base）。
+ *
+ * 注意：端点本身命名参数为 `[...slug]`，其值就是 `getPostOgFileName()` 的结果；
+ * 不要手工拼 `og/` —— 前缀只应来自 `OG_IMAGE_ROUTE_PREFIX`。
+ */
+export function getPostOgImageUrl(
+	entryId: string,
+	baseUrlOverride?: string,
+): string {
+	return url(
+		`/${OG_IMAGE_ROUTE_PREFIX}${getPostOgFileName(entryId)}`,
+		baseUrlOverride,
+	);
+}
+
 export function pathsEqual(path1: string, path2: string): boolean {
 	const normalizedPath1 = path1.replace(/^\/|\/$/g, "").toLowerCase();
 	const normalizedPath2 = path2.replace(/^\/|\/$/g, "").toLowerCase();

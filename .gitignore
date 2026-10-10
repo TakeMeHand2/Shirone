@@ -66,7 +66,8 @@ research/
 .playwright-cli/
 test-results/
 playwright-report/
-tests/site/visual.spec.ts-snapshots/
+# 视觉回归黄金图必须入库：不入库 -> CI 与本地都无基线，回归测试形同虚设。
+# 见 rules/visual-regression.md。
 
 # Lighthouse local reports
 artifacts/lighthouse/*

@@ -4,6 +4,7 @@ import type { Translation } from "../translation.ts";
 export const vi: Translation = {
 	[Key.home]: "Trang chủ",
 	[Key.about]: "Giới thiệu",
+	[Key.guestbook]: "Sổ lưu bút",
 	[Key.archive]: "Kho bài",
 	[Key.archiveGroup]: "Nhóm kho bài",
 	[Key.archiveGroupYear]: "Theo năm",
@@ -168,6 +169,7 @@ export const vi: Translation = {
 	[Key.commentsLoading]: "Đang tải bình luận...",
 	[Key.commentsLoadFailed]: "Không thể tải bình luận",
 	[Key.commentsRequiresJavaScript]: "Bình luận yêu cầu JavaScript để hiển thị",
+	[Key.commentGreeting]: "Để lại cho mình một lời nhé～",
 
 	[Key.uncategorized]: "Chưa phân loại",
 	[Key.noTags]: "Chưa có thẻ",
@@ -357,4 +359,7 @@ export const vi: Translation = {
 	[Key.live2dStatusReload]: "Tải lại",
 	[Key.live2dStatusRest]: "Linh vật đang nghỉ ngơi",
 	[Key.live2dMenuExpression]: "Đổi biểu cảm",
+	[Key.live2dExpressionSwitched]: "Đã chuyển sang biểu cảm {name}",
+	[Key.a11yNavigatedTo]: "Đã chuyển đến: {title}",
+	[Key.a11yNewPageAt]: "Trang mới tại {url}",
 };

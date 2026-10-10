@@ -716,7 +716,7 @@
 				"src/plugins/expressive-code/custom-copy-button.ts",
 				"src/plugins/expressive-code/language-badge.ts"
 			],
-			"registeredIn": "astro.config.mjs",
+			"registeredIn": "src/integration/index.ts",
 			"styles": ["src/styles/markdown/expressive-code.css"],
 			"runtime": {
 				"mode": "client-enhanced",

@@ -69,6 +69,16 @@
         }
       },
       "additionalProperties": false
+    },
+    "ogImage": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "type": "boolean",
+          "description": "是否为**没有封面**的文章构建动态 OG 分享卡（`/og/<文章 id>.png`，1200×630）。\n\n纯构建期产物：不引入任何客户端 JS。有封面时文章页优先用封面，端点也\n不为这些文章出图。关闭时（或站点没有任何本地 TTF/OTF 字体时）端点零产出，\n`og:image` 回退到站点默认图（与历史行为一致）。"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

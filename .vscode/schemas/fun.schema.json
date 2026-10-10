@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "fun configuration override",
+  "description": "Shirone fun config schema generated from @/types/funConfig.FunConfig",
+  "type": "object",
+  "properties": {
+    "enable": {
+      "type": "boolean",
+      "description": "总开关（false 时全部彩蛋零开销）"
+    },
+    "konami": {
+      "type": "boolean",
+      "description": "Konami 秘技樱花雨（↑ ↑ ↓ ↓ ← → ← → B A 触发）"
+    }
+  },
+  "additionalProperties": false
+}

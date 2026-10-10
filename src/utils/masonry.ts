@@ -80,20 +80,56 @@ export function packMasonry(container: HTMLElement): void {
 	}
 }
 
+/** 每个容器一个观察者；Swup 换页后旧容器脱离文档，必须主动回收。 */
+const observers = new Map<HTMLElement, ResizeObserver>();
+const pendingFrames = new Map<HTMLElement, number>();
+
+function disposeMasonry(container: HTMLElement): void {
+	const frameId = pendingFrames.get(container);
+	if (frameId !== undefined) {
+		cancelAnimationFrame(frameId);
+		pendingFrames.delete(container);
+	}
+	observers.get(container)?.disconnect();
+	observers.delete(container);
+}
+
+/**
+ * 回收已脱离文档的容器的观察者。
+ *
+ * 为什么需要：`setupMasonry` 每次挂接都会 `new ResizeObserver`，而 Swup 换页后
+ * 旧容器被丢弃、不会再有人对它调用清理——不回收就会随导航次数累积，
+ * 且旧容器因被观察者强引用而无法释放。列表页 → 非列表页的跳转不会调用
+ * `setupMasonry`，所以 `layout-mode` 会在每次导航都显式调用本函数。
+ */
+export function pruneDetachedMasonry(): void {
+	for (const container of observers.keys()) {
+		if (!container.isConnected) disposeMasonry(container);
+	}
+}
+
 /**
  * 挂接瀑布流生命周期：立即 pack + 容器宽度变化（换列数）时重排。
  * swup 内容替换后容器是新元素，需对新区块重新调用。
  */
 export function setupMasonry(container: HTMLElement): void {
 	packMasonry(container);
+	pruneDetachedMasonry();
+	// 同一容器被重复挂接时先释放旧的，避免叠加多个观察者
+	disposeMasonry(container);
 	if (typeof ResizeObserver === "undefined") return;
-	let frameId: number | null = null;
+
 	const observer = new ResizeObserver(() => {
-		if (frameId !== null) cancelAnimationFrame(frameId);
-		frameId = requestAnimationFrame(() => {
-			frameId = null;
-			packMasonry(container);
-		});
+		const frameId = pendingFrames.get(container);
+		if (frameId !== undefined) cancelAnimationFrame(frameId);
+		pendingFrames.set(
+			container,
+			requestAnimationFrame(() => {
+				pendingFrames.delete(container);
+				packMasonry(container);
+			}),
+		);
 	});
 	observer.observe(container);
+	observers.set(container, observer);
 }

@@ -23,12 +23,15 @@ import {
 	BANNER_HEIGHT,
 	BANNER_HEIGHT_EXTEND,
 	BANNER_HEIGHT_HOME,
+	COMPACT_PANEL_OVERLAPS_BANNER_HEIGHT,
 	DARK_MODE,
 	DEFAULT_THEME,
 	LIGHT_MODE,
 	MAIN_PANEL_OVERLAPS_BANNER_HEIGHT,
 } from "../constants/constants";
 import { defaultFavicons } from "../constants/icon";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
 import type {
 	BannerSourceItem,
 	BannerSourceValue,
@@ -47,11 +50,22 @@ interface Props {
 	description?: string;
 	lang?: string;
 	setOGTypeArticle?: boolean;
+	/** 置为 true 时输出 `<meta name="robots" content="noindex, follow">`。
+	 *  用于 404 这类不应进入索引但仍应被跟随链接的页面。 */
+	noindex?: boolean;
 	page?: SidebarPage;
 }
 
-let { title, banner, ogImage, description, lang, setOGTypeArticle, page } =
-	Astro.props;
+let {
+	title,
+	banner,
+	ogImage,
+	description,
+	lang,
+	setOGTypeArticle,
+	noindex,
+	page,
+} = Astro.props;
 
 const initialPage =
 	page ?? (pathsEqual(Astro.url.pathname, url("/")) ? "home" : undefined);
@@ -137,6 +151,11 @@ const hasMonoFont =
 		<meta name="description" content={description || pageTitle}>
 		<meta name="author" content={profileConfig.name}>
 
+		<!-- canonical 必须输出：站点同时存在 `posts/xxx` 与自定义 permalink 两条可达
+		     路径，缺 canonical 时同一内容会被当成两个 URL 收录。 -->
+		<link rel="canonical" href={canonicalUrl}>
+		{noindex && <meta name="robots" content="noindex, follow">}
+
 		<meta property="og:site_name" content={siteConfig.title}>
 		<meta property="og:url" content={canonicalUrl}>
 		<meta property="og:title" content={pageTitle}>
@@ -172,7 +191,7 @@ const hasMonoFont =
 			/>
 		))}
 
-		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT_EXTEND, configHue, lightTheme, darkTheme, defaultWallpaperMode, defaultTexturePreset, defaultTextureOpacity, textureEnabled}}>
+		<script is:inline define:vars={{DEFAULT_THEME, LIGHT_MODE, DARK_MODE, AUTO_MODE, BANNER_HEIGHT, BANNER_HEIGHT_EXTEND, BANNER_HEIGHT_HOME, MAIN_PANEL_OVERLAPS_BANNER_HEIGHT, COMPACT_PANEL_OVERLAPS_BANNER_HEIGHT, configHue, lightTheme, darkTheme, defaultWallpaperMode, defaultTexturePreset, defaultTextureOpacity, textureEnabled}}>
 			const theme = localStorage.getItem('theme') || DEFAULT_THEME;
 			let isDark = false;
 			switch (theme) {
@@ -221,6 +240,19 @@ const hasMonoFont =
 			let offset = Math.floor(window.innerHeight * (BANNER_HEIGHT_EXTEND / 100));
 			offset = offset - offset % 4;
 			document.documentElement.style.setProperty('--banner-height-extend', `${offset}px`);
+
+			/* Banner 高度与内容面板叠压量在此下发（原先靠 define:vars 的行内样式，
+			   但行内样式无法被 CSS 媒体查询覆盖，移动端收口带调不窄）。
+			   必须写在 documentElement 上且早于 <body> 解析，避免首帧用错值。
+			   --banner-panel-overlap 收窄后，--banner-content-top 会因 var() 引用
+			   自动重算，无需在此重复赋值。 */
+			const isCompactViewport = window.matchMedia('(max-width: 767.98px)').matches;
+			document.documentElement.style.setProperty('--banner-height-home', `${BANNER_HEIGHT_HOME}vh`);
+			document.documentElement.style.setProperty('--banner-height', `${BANNER_HEIGHT}vh`);
+			document.documentElement.style.setProperty(
+				'--banner-panel-overlap',
+				`${isCompactViewport ? COMPACT_PANEL_OVERLAPS_BANNER_HEIGHT : MAIN_PANEL_OVERLAPS_BANNER_HEIGHT}rem`,
+			);
 		</script>
 		<style define:vars={{
 			configHue,
@@ -270,11 +302,7 @@ const hasMonoFont =
 @import "../styles/variables.styl"
 </style>
 
-<style is:global define:vars={{
-	'banner-height-home': `${BANNER_HEIGHT_HOME}vh`,
-	'banner-height': `${BANNER_HEIGHT}vh`,
-	'banner-panel-overlap': `${MAIN_PANEL_OVERLAPS_BANNER_HEIGHT}rem`,
-}}>
+<style is:global>
 @reference "../styles/main.css";
 	@layer components {
 		:root {
@@ -295,14 +323,13 @@ const hasMonoFont =
 	}
 	@media (max-width: 1023.98px) {
 		:root { --banner-stage-height: max(70vh, 28rem); }
-		@media (max-width: 479.98px) { :root { --banner-panel-overlap: var(--m3e-space-2); } }
-		@media (min-width: 480px) and (max-width: 767.98px) { :root { --banner-panel-overlap: var(--m3e-space-2); } }
 		html[data-wallpaper-mode="banner"] body[data-current-page="home"][data-banner-has-mobile="true"] #main-layout { top: var(--banner-content-top); }
 		html[data-wallpaper-mode="banner"] body[data-current-page="home"][data-banner-has-mobile="true"] #top-row { height: calc(var(--banner-stage-height) - 4.5rem); }
 		body[data-banner-layout="compact"] #top-row { height: auto; }
 	}
 	@media (min-width: 480px) and (max-width: 767.98px) { :root { --banner-stage-height: max(75vh, 31.25rem); } }
 	@media (min-width: 768px) and (max-width: 1023.98px) { :root { --banner-stage-height: max(70vh, 31.25rem); } }
+
 </style>
 
 <script>
@@ -346,6 +373,19 @@ document.addEventListener("click", async (event) => {
 const setup = () => {
 	if (!window.swup || window.__shironeNavigationBound) return;
 	window.__shironeNavigationBound = true;
+
+	/**
+	 * Swup 默认 `timeout: 0`（永不超时）——请求挂起时既不失败也不超时，
+	 * 进度条会一直转、用户以为页面卡住。给一个上限，超时后走 Swup 自身的
+	 * 失败退化路径（history.back + location.assign 整页跳转）。
+	 *
+	 * 为什么只能在这里写：`@swup/astro` 的初始化脚本只把
+	 * `ignoreVisit / animationSelector / containers / cache / native / plugins`
+	 * 传给 Swup 构造器，**其余选项一律被静默丢弃**——`swupOptions` /
+	 * `swupForwardOptions` 里的非上述键都到不了运行时。
+	 */
+	window.swup.options.timeout = 12_000;
+
 	let scrollStarted = false;
 	let visitActive = false;
 	let finishTimer: number | undefined;
@@ -396,6 +436,55 @@ new MutationObserver(scrollFunction).observe(document.body, { attributes: true, 
 window.addEventListener(WALLPAPER_MODE_CHANGE_EVENT, () => requestAnimationFrame(scrollFunction));
 document.addEventListener('swup:page:view', scrollFunction);
 scrollFunction();
+</script>
+
+<!--
+  Swup 路由无障碍：接管「焦点落点」与「读屏播报」。
+
+  @swup/a11y-plugin 的默认行为在本主题不成立，有两点必须改写：
+
+  1. 焦点：插件默认把焦点移到 `<body>`（≈ 文档顶部），读屏用户导航后失去上下文。
+  2. 播报：插件用**文档级** `querySelector("h1")` 取标题。但 Banner 的 `<h1>` 在
+     每个页面都存在于 DOM 中（只靠 CSS 切换可见性），文档级查询会永远命中它，
+     播报就永远是 Banner 标题而不是当前页；默认文案还只有英文。
+
+  为什么不给插件传 options：`@swup/astro` 把 `accessibility` 声明为 `boolean`，
+  传对象会破坏类型契约（运行期虽能透传）。
+
+  为什么挂 `before("visit:end")` 而不是 `on(...)`：Swup 4 里 `on()` 注册的处理器
+  归入 **after** 组，跑在默认行为之后，覆写会失效；`before` 组才是默认行为之前。
+  `visit:end` 是核心钩子，始终存在，因此不依赖插件是否建过 `content:*` 钩子。
+  契约见 rules/a11y.md §3。
+-->
+<script is:inline define:vars={{ a11yNavigatedTo: i18n(I18nKey.a11yNavigatedTo), a11yNewPageAt: i18n(I18nKey.a11yNewPageAt) }}>
+	(() => {
+		const CONTENT_SELECTOR = "#swup-container";
+		const HEADING_SELECTOR = CONTENT_SELECTOR + " h1, " + CONTENT_SELECTOR + " h2";
+
+		const setup = () => {
+			if (!window.swup || !window.swup.hooks) return;
+
+			window.swup.hooks.before("visit:end", (visit) => {
+				// 无障碍插件未启用时 visit.a11y 不存在，保持插件默认行为即可。
+				if (!visit.a11y) return;
+
+				visit.a11y.focus = CONTENT_SELECTOR;
+
+				const heading = document.querySelector(HEADING_SELECTOR);
+				const label =
+					heading?.getAttribute("aria-label") ||
+					heading?.textContent?.trim();
+				const title =
+					label ||
+					document.title ||
+					a11yNewPageAt.replace("{url}", window.location.href);
+				visit.a11y.announce = a11yNavigatedTo.replace("{title}", title);
+			});
+		};
+
+		if (window.swup && window.swup.hooks) setup();
+		else document.addEventListener("swup:enable", setup, { once: true });
+	})();
 </script>
 
 <script>

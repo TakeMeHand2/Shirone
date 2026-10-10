@@ -9,7 +9,10 @@ import { getMarkdownStylesheetAssets } from "@utils/markdown-assets";
 import { aboutConfig } from "@/config/aboutConfig";
 
 if (!aboutConfig.enable) {
-	return Astro.redirect("/404/");
+	// 动态导入：本分支在功能启用时永远不执行，静态 import 会把它拖进每个页面的
+	// 模块图；同时 Astro frontmatter 的类型分析不把「顶层 return 里的引用」
+	// 计入使用，静态导入会被报成 ts(6133) 未使用（假报）。
+	return (await import("@utils/soft-404")).softNotFoundResponse();
 }
 
 const pageTitle = resolveI18nText(aboutConfig.title, I18nKey.about);

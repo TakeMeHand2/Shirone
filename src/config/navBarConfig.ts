@@ -7,6 +7,7 @@ import { compassConfig } from "@/config/compassConfig";
 import { devicesConfig } from "@/config/devicesConfig";
 import { friendsConfig } from "@/config/friendsConfig";
 import { gamesConfig } from "@/config/gamesConfig";
+import { guestbookConfig } from "@/config/guestbookConfig";
 import { momentsConfig } from "@/config/momentsConfig";
 import { projectsConfig } from "@/config/projectsConfig";
 import { seriesConfig } from "@/config/seriesConfig";
@@ -128,6 +129,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		icon: "material-symbols:info-outline-rounded",
 		pageKey: "about",
 	},
+	Guestbook: {
+		name: i18n(I18nKey.guestbook),
+		url: "/guestbook/",
+		icon: "material-symbols:forum-outline-rounded",
+		pageKey: "guestbook",
+	},
 	GitHub: {
 		name: "GitHub",
 		url: "https://github.com/TakeMeHand2",
@@ -160,6 +167,7 @@ const defaultNavBarConfig: NavBarConfig = {
 				// LinkPresets.Categories,
 				// LinkPresets.Tags,
 				LinkPresets.About,
+				LinkPresets.Guestbook,
 				LinkPresets.GitHub,
 			],
 		},
@@ -194,6 +202,7 @@ const unavailableFeatureRoutes: ReadonlySet<string> = new Set([
 	...(gamesConfig.enable ? [] : ["/games"]),
 	...(timelineConfig.enable ? [] : ["/timeline"]),
 	...(aboutConfig.enable ? [] : ["/about"]),
+	...(guestbookConfig.enable ? [] : ["/guestbook"]),
 	...(seriesConfig.enable ? [] : ["/series"]),
 ]);
 

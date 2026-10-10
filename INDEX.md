@@ -52,6 +52,11 @@ GitHub Actions 的 [`ci.yml`](.github/workflows/ci.yml) 运行 Biome、`astro ch
 - 可选功能默认关闭时必须满足零额外负担：不输出占位 DOM、不发起外部请求、不增加主 bundle。
 - 纯 SSR 页面不应无端添加 hydration 指令；需要交互的组件才使用 `client:load`、`client:visible` 或 `client:only`。
 - 部署 URL 或 `base` 变更后，应重新构建并验证资源链接和 Swup 导航，不能只替换托管平台域名。
+- **基线安全响应头**同时下发在两处：`vercel.json`（Vercel）与 `public/_headers`（Netlify / Cloudflare Pages）。
+  两处必须一致，由 `tests/security-headers.test.mjs` 守住。默认**不下发 CSP**，原因见 `public/_headers` 内注释。
+- **静态托管无法为已存在的页面返回真正的 404。** 功能被配置关闭时，页面通过
+  `src/utils/soft-404.ts` 返回一份带 `noindex` 的最小文档，避免 200 软 404 被搜索引擎收录；
+  真正的 404 状态码需要服务端参与。
 
 ## 相关文档
 

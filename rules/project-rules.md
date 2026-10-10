@@ -106,7 +106,7 @@ npx.cmd playwright test      # site 级全量测试
 ```
 
 测试覆盖（`tests/`）：
-- `tests/site/`：视觉回归（4 页面 × light/dark）、axe 双模式（真实页面）、TOC、文章页、SSR 图标渲染、reduced-motion；
+- `tests/site/`：视觉回归（6 用例 × light/dark）、axe 双模式（真实页面）、站内导航后的焦点与播报（`swup-a11y.spec.ts`）、TOC、文章页、SSR 图标渲染、reduced-motion；
 
 ---
 

@@ -4,6 +4,7 @@ import type { Translation } from "../translation.ts";
 export const en: Translation = {
 	[Key.home]: "Home",
 	[Key.about]: "About",
+	[Key.guestbook]: "Guestbook",
 	[Key.archive]: "Archive",
 	[Key.archiveGroup]: "Group archive by",
 	[Key.archiveGroupYear]: "By Year",
@@ -167,6 +168,7 @@ export const en: Translation = {
 	[Key.commentsLoadFailed]: "Failed to load comments.",
 	[Key.commentsRequiresJavaScript]:
 		"Comments require JavaScript to be displayed.",
+	[Key.commentGreeting]: "Leave me a message～",
 
 	[Key.uncategorized]: "Uncategorized",
 	[Key.noTags]: "No Tags",
@@ -357,4 +359,7 @@ export const en: Translation = {
 	[Key.live2dStatusReload]: "Reload",
 	[Key.live2dStatusRest]: "The mascot is resting",
 	[Key.live2dMenuExpression]: "Switch expression",
+	[Key.live2dExpressionSwitched]: "Expression switched to {name}",
+	[Key.a11yNavigatedTo]: "Navigated to: {title}",
+	[Key.a11yNewPageAt]: "New page at {url}",
 };

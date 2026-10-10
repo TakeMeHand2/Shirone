@@ -4,6 +4,7 @@ import type { Translation } from "../translation.ts";
 export const es: Translation = {
 	[Key.home]: "Inicio",
 	[Key.about]: "Sobre mí",
+	[Key.guestbook]: "Libro de visitas",
 	[Key.archive]: "Archivo",
 	[Key.archiveGroup]: "Agrupar archivo por",
 	[Key.archiveGroupYear]: "Por año",
@@ -168,6 +169,7 @@ export const es: Translation = {
 	[Key.commentsLoadFailed]: "Error al cargar comentarios",
 	[Key.commentsRequiresJavaScript]:
 		"Los comentarios requieren JavaScript para mostrarse",
+	[Key.commentGreeting]: "Déjame un mensaje～",
 
 	[Key.uncategorized]: "Sin categoría",
 	[Key.noTags]: "Sin etiquetas",
@@ -360,4 +362,7 @@ export const es: Translation = {
 	[Key.live2dStatusReload]: "Recargar",
 	[Key.live2dStatusRest]: "La mascota está descansando",
 	[Key.live2dMenuExpression]: "Cambiar expresión",
+	[Key.live2dExpressionSwitched]: "Expresión cambiada a {name}",
+	[Key.a11yNavigatedTo]: "Navegaste a: {title}",
+	[Key.a11yNewPageAt]: "Nueva página en {url}",
 };

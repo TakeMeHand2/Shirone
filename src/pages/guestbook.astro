@@ -1,0 +1,73 @@
+---
+import { getEntry, render } from "astro:content";
+import Card from "@components/atoms/display/Card.svelte";
+import Markdown from "@components/content/Markdown.astro";
+import CommentSection from "@components/organisms/comment/CommentSection.astro";
+import I18nKey from "@i18n/i18nKey";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { resolveI18nText } from "@utils/i18n-utils";
+import { getMarkdownStylesheetAssets } from "@utils/markdown-assets";
+import { url } from "@utils/url-utils";
+import {
+	commentConfig,
+	guestbookConfig,
+	resolveCommentOptions,
+	siteConfig,
+} from "@/config";
+
+if (!guestbookConfig.enable) {
+	// 动态导入：本分支在功能启用时永远不执行，静态 import 会把它拖进每个页面的
+	// 模块图；同时 Astro frontmatter 的类型分析不把「顶层 return 里的引用」
+	// 计入使用，静态导入会被报成 ts(6133) 未使用（假报）。
+	return (await import("@utils/soft-404")).softNotFoundResponse();
+}
+
+const pageTitle = resolveI18nText(guestbookConfig.title, I18nKey.guestbook);
+const pageDescription = resolveI18nText(
+	guestbookConfig.description,
+	I18nKey.guestbook,
+);
+
+// 评论区是否可用完全由 commentConfig 决定（provider 与全局开关），
+// 这里只把结果透给布局的 hasComments —— 它驱动 data-has-comments 与「跳到评论」
+// 悬浮按钮；CommentSection 自身还会再判定一次并短路。
+const commentsEnabled = resolveCommentOptions(commentConfig) !== null;
+
+/**
+ * 开场白是**可选**内容。
+ *
+ * 与「关于」页不同：关于页在主题里已经存在，`spec/about.md` 一定随初始化脚手架
+ * 落地；留言板是后加的页面，升级上来的既有用户不会有这个文件。此时若像关于页
+ * 那样直接抛错，一次升级就会让构建失败——而留言板的主体本来就是评论，
+ * 开场白缺失只该退化成「没有引言」，不该阻断构建。
+ */
+const guestbookEntry = await getEntry("spec", "guestbook");
+const guestbook = guestbookEntry ? await render(guestbookEntry) : null;
+const GuestbookBody = guestbook?.Content ?? null;
+const markdownStylesheetAssets = guestbook
+	? await getMarkdownStylesheetAssets(
+			guestbook.remarkPluginFrontmatter.markdownSyntaxes,
+		)
+	: [];
+---
+<MainGridLayout title={pageTitle} description={pageDescription} page="guestbook" hasComments={commentsEnabled}>
+    {markdownStylesheetAssets.map(({ pack, css }) => <style is:inline slot="head" data-swup-optional={pack} set:html={css}></style>)}
+    {GuestbookBody && (
+        <div class="flex w-full rounded-[var(--shape-corner-l)] overflow-hidden relative min-h-32 mb-4">
+            <Card color="var(--card-bg)" radius="l" class="z-10 p-6 lg:p-8 relative w-full">
+                <Markdown class="mt-2">
+                    <GuestbookBody />
+                </Markdown>
+            </Card>
+        </div>
+    )}
+    <CommentSection
+        context={{
+            /* 稳定标识：留言板不随文章/分页变化，所有 provider 都用同一个键 */
+            key: "guestbook",
+            path: url("/guestbook/"),
+            title: pageTitle,
+            language: siteConfig.lang,
+        }}
+    />
+</MainGridLayout>

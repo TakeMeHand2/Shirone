@@ -102,6 +102,12 @@
               {
                 "type": "string",
                 "enum": [
+                  "guestbook"
+                ]
+              },
+              {
+                "type": "string",
+                "enum": [
                   "categories"
                 ]
               },

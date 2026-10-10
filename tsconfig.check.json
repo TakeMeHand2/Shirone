@@ -1,0 +1,18 @@
+{
+	// 类型检查闸门专用配置：覆盖 src 与 tests。
+	// 编辑器与 astro check 仍使用根 tsconfig.json（仅 src；TS 不解析 .astro）。
+	//
+	// 为什么单独一份：`tests/` 曾长期游离在类型系统之外，导致测试里引用了
+	// 并不存在的 `I18nKey` 成员也无人发觉（断言恒为 undefined 却一直“通过”）。
+	// 把 tests 纳入同一份配置，可让这类错误在 `pnpm type-check` 阶段直接暴露。
+	"extends": "./tsconfig.json",
+	"include": ["src/**/*", "tests/**/*"],
+	// node:test 的 .mjs 用例由 `node --test` 负责，TS 不检查它们。
+	"exclude": ["tests/**/*.test.mjs"],
+	"compilerOptions": {
+		"noEmit": true,
+		"declaration": false,
+		// 少数浏览器侧用例直接 import 主题的 `.mjs` 运行时模块。
+		"allowJs": true
+	}
+}

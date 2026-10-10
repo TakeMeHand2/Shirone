@@ -25,10 +25,40 @@ const commentKeys = [
 	I18nKey.commentsLoading,
 	I18nKey.commentsLoadFailed,
 	I18nKey.commentsRequiresJavaScript,
+	I18nKey.commentGreeting,
 ];
+
+/**
+ * 镜像 Giscus.astro 的 resolveThemeUrl：站点内路径（以 "/" 开头）在运行时补成
+ * 绝对 URL —— giscus 的 iframe 会把相对路径解析到 giscus.app 而不是本站。
+ */
+function resolveThemeUrl(value: string, base: string): string {
+	if (!value.startsWith("/") || value.startsWith("//")) return value;
+	return new URL(value, base).href;
+}
 
 const twikooScriptUrl =
 	"https://cdn.jsdelivr.net/npm/twikoo@1.7.19/dist/twikoo.min.js";
+
+/**
+ * 最小合法 giscus 配置。`CommentConfig` 要求 `twikoo` 与 `giscus` 同时存在
+ * （只有 `provider` 决定实际使用哪一个），因此仅校验 twikoo/none 分支的用例
+ * 也需要一份类型合法的 giscus 占位。
+ */
+const GISCUS_STUB: GiscusConfig = {
+	repo: "owner/repo",
+	repoId: "R_placeholder",
+	category: "Announcements",
+	categoryId: "DIC_placeholder",
+	mapping: "pathname",
+	strict: false,
+	reactionsEnabled: true,
+	emitMetadata: false,
+	inputPosition: "bottom",
+	theme: { light: "light", dark: "dark" },
+	lang: "auto",
+	scriptUrl: "https://giscus.app/client.js",
+};
 
 async function mockTwikoo(page: Page) {
 	await page.route(twikooScriptUrl, async (route) => {
@@ -94,9 +124,14 @@ async function mockTwikoo(page: Page) {
 
 const giscusScriptUrl = "https://giscus.app/client.js";
 
-async function mockGiscus(page: Page) {
+async function mockGiscus(page: Page, options: { commentCount?: number } = {}) {
 	// 模拟 giscus client.js 的真实挂载语义：不要求预置 .giscus 容器，
 	// 在 script 之后自建容器并注入 iframe；widget 页面回显 postMessage 以验证主题转发。
+	// 传入 commentCount 时，再按 data-emit-metadata 的真实行为回传 Discussion 元数据。
+	const metadata =
+		options.commentCount === undefined
+			? ""
+			: `window.parent.postMessage({ giscus: { discussion: { id: "D_test" }, totalCommentCount: ${options.commentCount} } }, "*");`;
 	await page.route("https://giscus.app/widget*", async (route) => {
 		await route.fulfill({
 			contentType: "text/html",
@@ -104,6 +139,7 @@ async function mockGiscus(page: Page) {
 				window.addEventListener("message", function (e) {
 					if (e.data && e.data.giscus) window.parent.postMessage(e.data, "*");
 				});
+				${metadata}
 			</script></body></html>`,
 		});
 	});
@@ -160,6 +196,7 @@ test.describe("Comment System - Configuration & Architecture", () => {
 					"https://cdn.jsdelivr.net/npm/twikoo@1.6.41/dist/twikoo.all.min.js",
 				lang: "auto",
 			},
+			giscus: GISCUS_STUB,
 		};
 		expect(resolveCommentOptions(disabledConfig)).toBeNull();
 
@@ -173,6 +210,7 @@ test.describe("Comment System - Configuration & Architecture", () => {
 					"https://cdn.jsdelivr.net/npm/twikoo@1.6.41/dist/twikoo.all.min.js",
 				lang: "auto",
 			},
+			giscus: GISCUS_STUB,
 		};
 		expect(resolveCommentOptions(noneProviderConfig)).toBeNull();
 
@@ -186,6 +224,7 @@ test.describe("Comment System - Configuration & Architecture", () => {
 					"https://cdn.jsdelivr.net/npm/twikoo@1.6.41/dist/twikoo.all.min.js",
 				lang: "auto",
 			},
+			giscus: GISCUS_STUB,
 		};
 		expect(resolveCommentOptions(missingEnvIdConfig)).toBeNull();
 	});
@@ -202,31 +241,22 @@ test.describe("Comment System - Configuration & Architecture", () => {
 				lang: "auto",
 				placeholder: "Comment guidance",
 			},
+			giscus: GISCUS_STUB,
 		};
 
 		const resolved = resolveCommentOptions(validConfig);
 		expect(resolved).not.toBeNull();
 		expect(resolved?.provider).toBe("twikoo");
 		expect(resolved?.lazy).toBe(true);
-		expect(resolved?.twikoo.envId).toBe("https://twikoo.mysqil.com");
-		expect(resolved?.twikoo.placeholder).toBe("Comment guidance");
+		if (resolved?.provider !== "twikoo") {
+			throw new Error("expected the twikoo provider to resolve");
+		}
+		expect(resolved.twikoo.envId).toBe("https://twikoo.mysqil.com");
+		expect(resolved.twikoo.placeholder).toBe("Comment guidance");
 	});
 
 	test("resolveCommentOptions returns null for giscus with missing required ids", () => {
-		const baseGiscus: GiscusConfig = {
-			repo: "owner/repo",
-			repoId: "R_placeholder",
-			category: "Announcements",
-			categoryId: "DIC_placeholder",
-			mapping: "pathname",
-			strict: false,
-			reactionsEnabled: true,
-			emitMetadata: false,
-			inputPosition: "bottom",
-			theme: { light: "light", dark: "dark" },
-			lang: "auto",
-			scriptUrl: "https://giscus.app/client.js",
-		};
+		const baseGiscus: GiscusConfig = GISCUS_STUB;
 		const twikooStub = {
 			envId: "",
 			scriptUrl: "",
@@ -604,9 +634,9 @@ test.describe("Comment System - Configuration & Architecture", () => {
 	}) => {
 		await page.goto("/posts/guide/", { waitUntil: "networkidle" });
 
-		const result = await page.evaluate(async () => {
+		const result = await page.evaluate(async (modulePath: string) => {
 			// 动态引入 script-loader 模块
-			const { loadScriptOnce } = await import("/src/utils/script-loader.ts");
+			const { loadScriptOnce } = await import(modulePath);
 
 			// Mock 创建一个测试用的 inline blob script URL
 			const blob = new Blob(
@@ -628,7 +658,7 @@ test.describe("Comment System - Configuration & Architecture", () => {
 				executionCount: (window as Window & { __mockScriptLoaded?: number })
 					.__mockScriptLoaded,
 			};
-		});
+		}, "/src/utils/script-loader.ts");
 
 		expect(result.scriptTagCount).toBe(1);
 		expect(result.executionCount).toBe(1);
@@ -676,8 +706,12 @@ test.describe("Comment System - Configuration & Architecture", () => {
 		expect(widgetUrl.searchParams.get("lang")).toBe(
 			await wrapper.getAttribute("data-giscus-lang"),
 		);
+		// theme 走的是站点内路径时会由组件在运行时补成绝对 URL（见 resolveThemeUrl）
 		expect(widgetUrl.searchParams.get("theme")).toBe(
-			await wrapper.getAttribute("data-giscus-theme-light"),
+			resolveThemeUrl(
+				(await wrapper.getAttribute("data-giscus-theme-light")) ?? "",
+				page.url(),
+			),
 		);
 	});
 
@@ -779,5 +813,65 @@ test.describe("Comment System - Configuration & Architecture", () => {
 		await expect(
 			page.locator(".shirone-giscus-wrapper iframe.giscus-frame"),
 		).toHaveCount(1);
+	});
+
+	test("comment section renders the manga panel shell", async ({ page }) => {
+		test.skip(
+			!giscusUiEnabled,
+			"评论未启用或 provider 非 giscus，跳过 giscus UI 测试",
+		);
+		await mockGiscus(page);
+		await page.goto("/posts/guide/");
+		await page.locator("#comments").scrollIntoViewIfNeeded();
+
+		// 外壳改用「分格漫画」面板，不再套 Card 原子（避免 DESIGN.md 禁止的嵌套卡片）
+		await expect(page.locator("#comments .shirone-comment__panel")).toHaveCount(
+			1,
+		);
+		await expect(page.locator("#comments .m3-card")).toHaveCount(0);
+		await expect(page.locator("#comments-title")).toBeVisible();
+		// 角色对话框文案来自 i18n，不能为空
+		await expect(page.locator(".shirone-comment__bubble")).not.toBeEmpty();
+	});
+
+	test("character sticker follows the giscus comment count", async ({
+		page,
+	}) => {
+		test.skip(
+			!giscusUiEnabled,
+			"评论未启用或 provider 非 giscus，跳过 giscus UI 测试",
+		);
+		await mockGiscus(page, { commentCount: 0 });
+		await page.goto("/posts/guide/");
+		await page.locator("#comments").scrollIntoViewIfNeeded();
+
+		// 贴纸是纯装饰：整组 aria-hidden，且不吃指针事件
+		await expect(page.locator(".shirone-comment__stickers")).toHaveAttribute(
+			"aria-hidden",
+			"true",
+		);
+		// 0 条评论 → 角色切到「安静」那枚
+		await expect(page.locator("[data-comment-section]")).toHaveAttribute(
+			"data-sticker",
+			"calm",
+		);
+	});
+
+	test("character sticker keeps its default when no count arrives", async ({
+		page,
+	}) => {
+		test.skip(
+			!giscusUiEnabled,
+			"评论未启用或 provider 非 giscus，跳过 giscus UI 测试",
+		);
+		await mockGiscus(page);
+		await page.goto("/posts/guide/");
+		await page.locator("#comments").scrollIntoViewIfNeeded();
+
+		// 拿不到评论数（未回传元数据）时应停在默认的 wink，不能空着不显示
+		await expect(page.locator("[data-comment-section]")).toHaveAttribute(
+			"data-sticker",
+			"wink",
+		);
 	});
 });

@@ -198,8 +198,8 @@ test.describe("Site motion", () => {
 test.describe("layout shift motion primitive", () => {
 	test("animates a target displaced by source resizing", async ({ page }) => {
 		await page.goto("/archive/");
-		const result = await page.evaluate(async () => {
-			const { observeLayoutShifts } = await import("/src/utils/motion.ts");
+		const result = await page.evaluate(async (modulePath: string) => {
+			const { observeLayoutShifts } = await import(modulePath);
 			const host = document.createElement("div");
 			const source = document.createElement("div");
 			const target = document.createElement("div");
@@ -228,7 +228,7 @@ test.describe("layout shift motion primitive", () => {
 				animationCount: animation ? 1 : 0,
 				fromTransform: String(frames[0]?.transform),
 			};
-		});
+		}, "/src/utils/motion.ts");
 
 		expect(result.layoutDelta).toBeGreaterThan(100);
 		expect(result.visualDelta).toBeLessThan(20);
@@ -239,8 +239,8 @@ test.describe("layout shift motion primitive", () => {
 	test("snaps without animation when motion is reduced", async ({ page }) => {
 		await page.emulateMedia({ reducedMotion: "reduce" });
 		await page.goto("/archive/");
-		const animationCount = await page.evaluate(async () => {
-			const { observeLayoutShifts } = await import("/src/utils/motion.ts");
+		const animationCount = await page.evaluate(async (modulePath: string) => {
+			const { observeLayoutShifts } = await import(modulePath);
 			const host = document.createElement("div");
 			const source = document.createElement("div");
 			const target = document.createElement("div");
@@ -256,7 +256,7 @@ test.describe("layout shift motion primitive", () => {
 			stop();
 			host.remove();
 			return count;
-		});
+		}, "/src/utils/motion.ts");
 
 		expect(animationCount).toBe(0);
 	});

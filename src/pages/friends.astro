@@ -7,7 +7,7 @@ import { friendsConfig } from "@/config/friendsConfig";
 import { getFriendsList } from "../data/friends";
 
 if (!friendsConfig.enable) {
-	return Astro.redirect("/404/");
+	return (await import("@utils/soft-404")).softNotFoundResponse();
 }
 
 const pageTitle = resolveI18nText(friendsConfig.title, I18nKey.friends);

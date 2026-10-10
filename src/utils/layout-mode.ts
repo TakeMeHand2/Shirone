@@ -11,7 +11,7 @@
  */
 import { postListConfig } from "@/config/postListConfig";
 import type { PostListMode } from "@/types/postListConfig";
-import { packMasonry, setupMasonry } from "./masonry";
+import { packMasonry, pruneDetachedMasonry, setupMasonry } from "./masonry";
 import { flipFromRect, prefersReducedMotion } from "./motion";
 
 const MODE_KEY = "post-list-mode";
@@ -48,6 +48,9 @@ function setModeClasses(container: HTMLElement, mode: PostListMode): void {
 
 /** 把访客偏好应用到位的容器（swup 内容替换后 / 首载兜底，无动画） */
 export function applyStoredLayoutMode(container: HTMLElement | null): void {
+	// 即使本页没有列表容器（如从列表页跳到文章页），也要回收上一页遗留的
+	// 瀑布流观察者——否则它永远观察着一个已脱离文档的容器。
+	pruneDetachedMasonry();
 	if (!container) return;
 	setModeClasses(container, getStoredMode());
 	// 新容器需要重新挂接瀑布流（ResizeObserver 绑在旧容器上会随之失效）

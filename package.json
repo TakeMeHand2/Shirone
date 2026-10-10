@@ -52,13 +52,14 @@
     "lighthouse:mobile": "node scripts/lighthouse/run.mjs --device=mobile",
     "lighthouse": "node scripts/lighthouse/run.mjs --device=desktop",
     "astro": "astro",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc -p tsconfig.check.json --noEmit",
     "schemas": "node scripts/content/generate-config-schemas.mjs",
     "new-post": "node scripts/new-post.js",
     "format": "biome format --write ./src",
     "lint": "biome check --write ./src",
     "preinstall": "npx only-allow pnpm",
     "test": "playwright test",
+    "test:ci": "playwright test --grep-invert @visual",
     "perf:measure": "node scripts/perf/measure.mjs"
   },
   "dependencies": {
@@ -78,6 +79,7 @@
     "@iconify-json/fa6-regular": "^1.2.4",
     "@iconify-json/fa6-solid": "^1.2.4",
     "@iconify-json/material-symbols": "^1.2.93",
+    "@iconify-json/simple-icons": "^1.2.97",
     "@iconify/svelte": "^5.2.2",
     "@material/material-color-utilities": "^0.4.0",
     "@panzoom/panzoom": "4.6.2",
@@ -115,13 +117,14 @@
     "typescript": "^6.0.3",
     "unified": "11.0.5",
     "unist-util-visit": "^5.1.0",
-    "yaml": "^2.9.1"
+    "yaml": "^2.9.1",
+    "satori": "^0.47.1",
+    "@resvg/resvg-js": "^2.6.2"
   },
   "devDependencies": {
     "@astrojs/ts-plugin": "^1.10.12",
     "@axe-core/playwright": "^4.13.0",
     "@biomejs/biome": "2.5.14",
-    "@iconify-json/simple-icons": "^1.2.97",
     "@lhci/cli": "0.15.1",
     "@playwright/test": "^1.63.0",
     "@swup/scroll-plugin": "3.3.2",

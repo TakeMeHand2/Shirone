@@ -147,6 +147,22 @@
     "./.vscode/schemas/series.schema.json": [
       "config/series.yaml",
       "config/series.yml"
+    ],
+    "./.vscode/schemas/cover.schema.json": [
+      "config/cover.yaml",
+      "config/cover.yml"
+    ],
+    "./.vscode/schemas/guestbook.schema.json": [
+      "config/guestbook.yaml",
+      "config/guestbook.yml"
+    ],
+    "./.vscode/schemas/quote.schema.json": [
+      "config/quote.yaml",
+      "config/quote.yml"
+    ],
+    "./.vscode/schemas/fun.schema.json": [
+      "config/fun.yaml",
+      "config/fun.yml"
     ]
   }
 }

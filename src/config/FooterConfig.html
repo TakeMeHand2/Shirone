@@ -4,7 +4,13 @@
   内容将注入在页脚版权信息上方；若文件留空或仅保留注释，则不会产生任何额外的 DOM 结构。
   注意：注释块会被构建期剥离，不会输出到页面。
 -->
-<div style="text-align:center;font-size:0.85em;opacity:0.75;">
+<!--
+  降一级观感要用**令牌**，不要用 opacity：`opacity: 0.75` 会按比例压暗前景，
+  浅色主题下把这段文字的实际对比度拉到 WCAG AA 之下（axe 的 color-contrast
+  判为 serious，且全站每页都会命中）。`--on-surface-variant` 本身就是
+  「次要文字」的语义色，对比度由配色引擎保证，换种子色也不会失效。
+-->
+<div style="text-align:center;font-size:0.85em;color:var(--on-surface-variant);">
   本站已运行 <span id="site-days">…</span> 天
 </div>
 <script>

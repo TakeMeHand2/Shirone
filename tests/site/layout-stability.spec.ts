@@ -18,7 +18,7 @@ import { expect, test } from "@playwright/test";
  */
 const CLASSIC_SCROLLBAR_LAUNCH = {
 	launchOptions: { ignoreDefaultArgs: ["--hide-scrollbars"] },
-} as const;
+};
 
 // `launchOptions` 会强制新 worker，Playwright 只允许在文件顶层声明
 test.use(CLASSIC_SCROLLBAR_LAUNCH);

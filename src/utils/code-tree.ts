@@ -106,7 +106,7 @@ function switchCodeTreeFile(
 	}
 }
 
-function closeCodeTreeModal(): void {
+function closeCodeTreeModal(immediate = false): void {
 	if (!activeModalDialog) return;
 
 	const dialog = activeModalDialog;
@@ -136,7 +136,9 @@ function closeCodeTreeModal(): void {
 		lastFocusedExpandBtn = null;
 	};
 
-	if (prefersReducedMotion()) {
+	// `immediate` 用于站内导航：那时旧的代码树容器马上要被替换，
+	// 不能等动画结束再解锁滚动，否则新页面会被残留的模态挡住且滚不动。
+	if (immediate || prefersReducedMotion()) {
 		restoreDom();
 	} else {
 		dialog.classList.add("closing");
@@ -208,6 +210,13 @@ export function initCodeTrees(): void {
 	if (typeof document === "undefined") return;
 	if (codeTreesInitialized) return;
 	codeTreesInitialized = true;
+
+	// 全屏模态挂在 document.body 上、滚动锁也在 document 上，Swup 换页都不会
+	// 自动带走它们：不主动关闭，新页面会被残留的模态遮住且无法滚动
+	// （浏览器前进/后退尤其明显）。用 immediate 跳过退场动画，保证同步解锁。
+	document.addEventListener("swup:visit:start", () => {
+		closeCodeTreeModal(true);
+	});
 
 	// Delegated click handler
 	document.addEventListener("click", (event) => {

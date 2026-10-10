@@ -4,6 +4,7 @@ import type { Translation } from "../translation.ts";
 export const id: Translation = {
 	[Key.home]: "Beranda",
 	[Key.about]: "Tentang",
+	[Key.guestbook]: "Buku tamu",
 	[Key.archive]: "Arsip",
 	[Key.archiveGroup]: "Kelompokkan arsip",
 	[Key.archiveGroupYear]: "Berdasarkan tahun",
@@ -170,6 +171,7 @@ export const id: Translation = {
 	[Key.commentsLoadFailed]: "Gagal memuat komentar",
 	[Key.commentsRequiresJavaScript]:
 		"Komentar memerlukan JavaScript untuk ditampilkan",
+	[Key.commentGreeting]: "Tinggalkan pesan untukku～",
 
 	[Key.uncategorized]: "Tanpa Kategori",
 	[Key.noTags]: "Tanpa Tag",
@@ -363,4 +365,7 @@ export const id: Translation = {
 	[Key.live2dStatusReload]: "Muat ulang",
 	[Key.live2dStatusRest]: "Maskot sedang istirahat",
 	[Key.live2dMenuExpression]: "Ganti ekspresi",
+	[Key.live2dExpressionSwitched]: "Ekspresi diganti ke {name}",
+	[Key.a11yNavigatedTo]: "Berpindah ke: {title}",
+	[Key.a11yNewPageAt]: "Halaman baru di {url}",
 };
